@@ -3,9 +3,13 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="20dp"
     android:layout_marginTop="20dp"
+    android:id="@+id/btn_dashboard"
     android:clickable="true"
+    android:focusable="true"
+    custom:layout_behavior="@string/appbar_scrolling_view_behavior"
     android:layout_height="wrap_content"
     xmlns:android="http://schemas.android.com/apk/res/android">
+
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
         custom:cardBackgroundColor="#20000000"

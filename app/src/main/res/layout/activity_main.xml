@@ -6,47 +6,49 @@
     android:layout_height="match_parent"
     android:layout_gravity="top"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_weight="1.2"
         android:layout_height="0dp">
 
-    <androidx.cardview.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:translationZ="8dp"
-        app:cardBackgroundColor="#00000000"
-        android:translationY="-8dp"
-        app:cardCornerRadius="43dp">
-        <ImageView
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:visibility="invisible"
+            android:layout_height="wrap_content"
+            android:translationZ="8dp"
+            app:cardBackgroundColor="#00000000"
+            android:translationY="-8dp"
+            app:cardCornerRadius="43dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:visibility="invisible"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:src="@drawable/ic_headercgpabook_1" />
+        </androidx.cardview.widget.CardView>
+
+        <ImageView
+            android:id="@+id/header"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:adjustViewBounds="true"
-            android:src="@drawable/ic_headercgpabook_1" />
-    </androidx.cardview.widget.CardView>
+            android:src="@drawable/ic_headercgpabook_1"
+            android:translationZ="10dp" />
 
-    <ImageView
-        android:id="@+id/header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="true"
-        android:src="@drawable/ic_headercgpabook_1"
-        android:translationZ="10dp" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAllCaps="false"
-        android:fontFamily="@font/montserrat_regular"
-        android:textSize="25sp"
-        android:translationZ="11dp"
-        android:layout_marginTop="-60dp"
-        android:layout_marginLeft="17dp"
-        android:textStyle="bold"
-        android:letterSpacing="0.37"
-        android:layout_below="@id/header"
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAllCaps="false"
+            android:fontFamily="@font/montserrat_regular"
+            android:textSize="25sp"
+            android:translationZ="11dp"
+            android:layout_marginTop="-60dp"
+            android:layout_marginLeft="17dp"
+            android:textStyle="bold"
+            android:letterSpacing="0.37"
+            android:layout_below="@id/header"
         android:text="CGPABook"/>
 
     </RelativeLayout>

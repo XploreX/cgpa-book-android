@@ -6,22 +6,22 @@
     android:layout_height="match_parent"
     android:layout_gravity="top"
     android:orientation="horizontal"
-    tools:context=".MainActivity">
+    tools:context=".activity.MainActivity">
+
     <ImageView
         android:id="@+id/header"
-        android:layout_alignParentStart="true"
         android:adjustViewBounds="true"
         android:layout_width="wrap_content"
         android:translationZ="20dp"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_headercgpabook_1"/>
+        android:src="@drawable/ic_headercgpabook_1" />
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
         android:orientation="vertical">
+
         <Button
             android:id="@+id/googlesignin"
             android:layout_marginBottom="24dp"

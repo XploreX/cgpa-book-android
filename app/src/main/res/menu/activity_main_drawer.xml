@@ -23,8 +23,14 @@
     </item>
     <item android:title="Others">
         <menu>
-            <item android:title="Share" android:checkable="true"/>
-            <item android:title="Feedback" android:checkable="true"/>
+            <item
+                android:title="Share"
+                android:checkable="true"
+                android:id="@+id/nav_share" />
+            <item
+                android:title="Feedback"
+                android:checkable="true"
+                android:id="@+id/nav_feedback" />
         </menu>
     </item>
 </menu>

@@ -1,20 +1,34 @@
-package com.example.cgpabook
+package com.example.cgpabook.activity
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.cgpabook.R
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.updatecgpa)
-        hideSystemUI()
-        val intent = Intent(this,NavigationActivity::class.java)
-        startActivity(intent)
+        setContentView(R.layout.activity_main)
+//        hideSystemUI()
+        val intent = Intent(this, SearchActivity::class.java)
+        val array: ArrayList<String> = ArrayList<String>(Arrays.asList("hi", "hello", "test"))
+        intent.putStringArrayListExtra("List", array)
+        startActivityForResult(intent, 5)
+        finish()
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == 5) {
+            if (resultCode == Activity.RESULT_OK) {
+                val string = data?.getStringExtra("selected")
+                println(string)
+            }
+        }
     }
 
     private fun hideSystemUI() {

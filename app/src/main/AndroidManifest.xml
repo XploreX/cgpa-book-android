@@ -10,11 +10,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".NavigationActivity"
-            android:label="@string/title_activity_navigation"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"></activity>
+            android:name=".activity.SearchActivity"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activity.NavigationActivity"
+            android:label="@string/title_activity_navigation"
+            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
+        <activity
+            android:name=".activity.MainActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
