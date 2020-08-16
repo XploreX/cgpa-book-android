@@ -2,20 +2,19 @@ package com.example.cgpabook.activity
 
 import android.os.Bundle
 import android.view.Menu
-import android.view.MenuItem
 import android.widget.RelativeLayout
 import android.widget.Toast
-import com.google.android.material.navigation.NavigationView
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.drawerlayout.widget.DrawerLayout
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
+import com.example.cgpabook.CollegeChoose
 import com.example.cgpabook.R
-import com.example.cgpabook.ui.gallery.GalleryFragment
 import com.example.cgpabook.ui.home.HomeFragment
 import com.example.cgpabook.ui.slideshow.SlideshowFragment
+import com.google.android.material.navigation.NavigationView
 
 class NavigationActivity : AppCompatActivity() {
 
@@ -48,6 +47,10 @@ class NavigationActivity : AppCompatActivity() {
 //        )
 //        setupActionBarWithNavController(navController, appBarConfiguration)
 //        navView.setupWithNavController(navController)
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment, HomeFragment())//.addToBackStack("Home")
+            .commit()
+        navView.setCheckedItem(R.id.nav_home)
         navView.setNavigationItemSelectedListener {
             val id = it.itemId
             when (id) {
@@ -64,13 +67,14 @@ class NavigationActivity : AppCompatActivity() {
                 }
                 R.id.nav_gallery -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.nav_host_fragment, GalleryFragment())
-                        .addToBackStack("Gallery").commit()
+                        .replace(R.id.nav_host_fragment, CollegeChoose()).addToBackStack("Gallery")
+                        .commit()
                 }
                 R.id.nav_slideshow -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.nav_host_fragment, SlideshowFragment())
-                        .addToBackStack("Slideshow").commit()
+                        .addToBackStack("Slideshow")
+                        .commit()
                 }
             }
             drawerLayout.closeDrawers()

@@ -2,23 +2,23 @@ package com.example.cgpabook.activity
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import com.example.cgpabook.R
-import java.util.*
-import kotlin.collections.ArrayList
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val intent = Intent(this, NavigationActivity::class.java)
+        startActivity(intent)
 //        hideSystemUI()
-        val intent = Intent(this, SearchActivity::class.java)
-        val array: ArrayList<String> = ArrayList<String>(Arrays.asList("hi", "hello", "test"))
-        intent.putStringArrayListExtra("List", array)
-        startActivityForResult(intent, 5)
-        finish()
+//        val intent = Intent(this, SearchActivity::class.java)
+//        val array: ArrayList<String> = ArrayList<String>(Arrays.asList("hi", "hello", "test"))
+//        intent.putStringArrayListExtra("List", array)
+//        startActivityForResult(intent, 5)
+//        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
