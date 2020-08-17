@@ -18,7 +18,7 @@ class MainActivity : AppCompatActivity() {
 //        val array: ArrayList<String> = ArrayList<String>(Arrays.asList("hi", "hello", "test"))
 //        intent.putStringArrayListExtra("List", array)
 //        startActivityForResult(intent, 5)
-//        finish()
+        finish()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

@@ -1,11 +1,10 @@
 package com.example.cgpabook.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.EditText
-import androidx.core.widget.addTextChangedListener
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cgpabook.R
@@ -30,7 +29,7 @@ class SearchActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerview)
         recyclerView.layoutManager = linearLayoutManager
         changedArrayList = arrayList
-        recyclerAdapter = RecyclerAdapter(changedArrayList, applicationContext)
+        recyclerAdapter = RecyclerAdapter(changedArrayList, this)
         recyclerView.adapter = recyclerAdapter
         findViewById<EditText>(R.id.search_bar).addTextChangedListener(
             object : TextWatcher {

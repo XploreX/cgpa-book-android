@@ -10,7 +10,6 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cgpabook.R
 import com.example.cgpabook.extensions.inflate
-import kotlinx.coroutines.withContext
 
 class RecyclerAdapter(var array: ArrayList<String>, var context: Context) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
@@ -33,8 +32,8 @@ class RecyclerAdapter(var array: ArrayList<String>, var context: Context) :
             val textView: TextView = holder.itemname
             val intent = Intent()
             intent.putExtra("selected", textView.text)
-//            (context as Activity).setResult(Activity.RESULT_OK,intent);
-//            (context as Activity).finish()
+            (context as Activity).setResult(Activity.RESULT_OK, intent)
+            (context as Activity).finish()
         }
     }
 

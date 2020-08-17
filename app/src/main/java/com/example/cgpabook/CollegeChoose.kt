@@ -1,14 +1,19 @@
 package com.example.cgpabook
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.cgpabook.activity.SearchActivity
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -24,6 +29,7 @@ class CollegeChoose : Fragment() {
     // TODO: Rename and change types of parameters
     private var param1: String? = null
     private var param2: String? = null
+    private var idlist: ArrayList<EditText> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +48,43 @@ class CollegeChoose : Fragment() {
         val ll = v.findViewById<LinearLayout>(R.id.llcollegeselect)
         val arrayList: ArrayList<String> =
             ArrayList(Arrays.asList("Select College", "Select Course", "Select Semester"))
-        for (i in arrayList) {
+        idlist.clear()
+        for (j in 0 until arrayList.size) {
+            val i = arrayList.get(j)
             val b = inflater.inflate(R.layout.college_choose_button, ll, false)
             b.findViewById<TextView>(R.id.txtcollege).text = i
             ll.addView(b)
+            val editText = b.findViewById<EditText>(R.id.college_choose)
+            editText.setOnClickListener {
+                val intent = Intent(context, SearchActivity::class.java)
+                intent.putStringArrayListExtra(
+                    "List",
+                    ArrayList<String>(Arrays.asList("hehe", "haha"))
+                )
+                startActivityForResult(intent, j)
+                idlist.add(editText)
+            }
         }
         return v
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        println(resultCode)
+        println(requestCode)
+        if (resultCode == Activity.RESULT_OK) {
+            for (j in 0 until idlist.size) {
+                if (j == requestCode) {
+                    if (data != null) {
+                        println(data.getStringExtra("selected"))
+                        idlist.get(j).setText(data.getStringExtra("selected"))
+                    } else {
+                        println("data=null")
+                    }
+                }
+
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     companion object {

@@ -1,33 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="25dp"
-    app:cardBackgroundColor="@color/yellow"
-    app:cardCornerRadius="25dp"
-    app:cardElevation="7dp">
+    android:layout_margin="15dp"
+    android:orientation="vertical">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/txtcollege"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_horizontal"
+        android:gravity="center"
+        android:text="@string/txtcollegechoose"
+        android:textColor="@color/black"
+        android:textSize="16sp" />
+
+    <EditText
+        android:id="@+id/college_choose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/txtcollege"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            android:text="@string/txtcollegechoose"
-            android:textColor="@color/black"
-            android:textSize="16sp" />
-
-        <EditText
-            android:id="@+id/college_choose"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="@string/select" />
-    </LinearLayout>
-</androidx.cardview.widget.CardView>
+        android:clickable="true"
+        android:focusable="false"
+        android:hint="@string/select"
+        android:textAlignment="center" />
+</LinearLayout>
