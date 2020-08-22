@@ -9,7 +9,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.cgpabook.R
-import com.example.cgpabook.extensions.inflate
+import com.example.cgpabook.utils.inflate
 
 class RecyclerAdapter(var array: ArrayList<String>, var context: Context) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {

@@ -46,7 +46,7 @@ class SearchActivity : AppCompatActivity() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val regex: String = ".*" + s.toString() + ".*"
-                    val pattern: Pattern = Pattern.compile(regex)
+                    val pattern: Pattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE)
                     changedArrayList = arrayList.filter { str ->
                         pattern.matcher(str).matches()
                     } as ArrayList<String>

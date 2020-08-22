@@ -10,8 +10,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import com.example.cgpabook.CollegeChoose
 import com.example.cgpabook.R
+import com.example.cgpabook.ui.gallery.CollegeChoose
 import com.example.cgpabook.ui.home.HomeFragment
 import com.example.cgpabook.ui.slideshow.SlideshowFragment
 import com.google.android.material.navigation.NavigationView
@@ -67,7 +67,10 @@ class NavigationActivity : AppCompatActivity() {
                 }
                 R.id.nav_gallery -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.nav_host_fragment, CollegeChoose()).addToBackStack("Gallery")
+                        .replace(
+                            R.id.nav_host_fragment,
+                            CollegeChoose()
+                        ).addToBackStack("Gallery")
                         .commit()
                 }
                 R.id.nav_slideshow -> {

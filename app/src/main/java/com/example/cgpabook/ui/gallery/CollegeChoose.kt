@@ -1,6 +1,8 @@
-package com.example.cgpabook
+package com.example.cgpabook.ui.gallery
 
 import android.app.Activity
+import android.app.ProgressDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +12,13 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.android.volley.Request
+import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
+import com.example.cgpabook.R
+import com.example.cgpabook.activity.MySingleton
 import com.example.cgpabook.activity.SearchActivity
+import com.example.cgpabook.utils.JSONArrayRequestCached
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,6 +57,7 @@ class CollegeChoose : Fragment() {
         val arrayList: ArrayList<String> =
             ArrayList(Arrays.asList("Select College", "Select Course", "Select Semester"))
         idlist.clear()
+        val queue = MySingleton.getInstance(context as Context)
         for (j in 0 until arrayList.size) {
             val i = arrayList.get(j)
             val b = inflater.inflate(R.layout.college_choose_button, ll, false)
@@ -57,13 +66,29 @@ class CollegeChoose : Fragment() {
             val editText = b.findViewById<EditText>(R.id.college_choose)
             editText.setOnClickListener {
                 val intent = Intent(context, SearchActivity::class.java)
-                intent.putStringArrayListExtra(
-                    "List",
-                    ArrayList<String>(Arrays.asList("hehe", "haha"))
-                )
-                startActivityForResult(intent, j)
-                idlist.add(editText)
+                val url = "http://cgpa-book.herokuapp.com/academia/college-list"
+                val progressDialog = ProgressDialog(context)
+                progressDialog.show()
+                val jsonObjectRequest: JsonArrayRequest =
+                    JSONArrayRequestCached(
+                        Request.Method.GET, url, null,
+                        Response.Listener { it ->
+                            val arrayList = ArrayList<String>()
+                            for (i in 0 until it.length())
+                                arrayList.add(it.get(i).toString())
+                            println(arrayList)
+                            println(j)
+                            intent.putStringArrayListExtra("List", arrayList)
+                            progressDialog.hide()
+                            startActivityForResult(intent, j)
+                        },
+                        Response.ErrorListener { error ->
+                            // TODO: Handle error
+                        }
+                    )
+                queue?.addToRequestQueue(jsonObjectRequest)
             }
+            idlist.add(editText)
         }
         return v
     }

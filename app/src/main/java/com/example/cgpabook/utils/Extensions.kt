@@ -1,4 +1,4 @@
-package com.example.cgpabook.extensions
+package com.example.cgpabook.utils
 
 import android.view.LayoutInflater
 import android.view.View
