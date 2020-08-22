@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.gallery.CollegeChoose">
+    tools:context=".ui.updateCGPA.CollegeChoose">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -28,6 +28,8 @@
         </androidx.cardview.widget.CardView>
 
         <ImageView
+            android:id="@+id/btnnext"
+            android:contentDescription="@string/go_to_update_cgpa"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_below="@id/cvcollege"

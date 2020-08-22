@@ -50,12 +50,12 @@ class JSONArrayRequestCached(
                 )
             )
             println(jsonString)
-            return Response.success<JSONArray>(
+            return Response.success(
                 jsonString,
                 cacheEntry
             )
         } catch (e: UnsupportedEncodingException) {
-            return Response.error<JSONArray>(ParseError(e))
+            return Response.error(ParseError(e))
         }
     }
 }

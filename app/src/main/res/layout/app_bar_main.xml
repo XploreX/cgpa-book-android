@@ -22,7 +22,7 @@
 
     <!--    </com.google.android.material.appbar.AppBarLayout>-->
 
-    <include layout="@layout/dashboard_button" />
+<!--    <include layout="@layout/dashboard_button" />-->
 
     <include layout="@layout/content_main" />
 

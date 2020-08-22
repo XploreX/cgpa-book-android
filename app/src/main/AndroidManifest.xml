@@ -15,12 +15,15 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".activity.SearchActivity"
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".activity.NavigationActivity"
             android:label="@string/title_activity_navigation"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
+            android:screenOrientation="portrait"
             android:name=".activity.MainActivity"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>

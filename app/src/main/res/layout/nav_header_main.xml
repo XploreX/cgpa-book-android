@@ -18,7 +18,6 @@
         android:layout_height="wrap_content">
 
     <ImageView
-        android:id="@+id/imageView"
         android:layout_width="75dp"
         android:layout_height="75dp"
         android:contentDescription="@string/nav_header_desc"
@@ -45,7 +44,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CGPA: 8.23"
+            android:text="@string/dummy_cgpa"
             android:layout_gravity="start"
             android:textColor="@color/white"
             />
@@ -55,7 +54,6 @@
 
     <TextView
         android:layout_marginTop="12dp"
-        android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_gravity="start"
         android:layout_height="wrap_content"

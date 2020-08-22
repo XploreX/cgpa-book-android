@@ -1,5 +1,5 @@
 package com.example.cgpabook.classes
 
-class database {
+class CollegeChooseModel {
     var name: String = ""
 }

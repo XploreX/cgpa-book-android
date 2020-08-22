@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.home.HomeFragment">
+    tools:context=".ui.updateCGPA.EnterMarksFragment">
     <!--    <include layout="@layout/dashboard_button"/>-->
 
     <LinearLayout
@@ -23,7 +23,6 @@
                 android:id="@+id/detailscard"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_cardbg"
                 app:cardCornerRadius="48dp"
                 app:cardElevation="10dp"
                 android:layout_gravity="center_horizontal">
@@ -75,6 +74,7 @@
 
            </androidx.cardview.widget.CardView>
            <ImageView
+               android:layout_marginEnd="25dp"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:translationZ="25dp"
@@ -82,7 +82,7 @@
                android:clickable="true"
                android:focusable="true"
                android:layout_marginTop="-25dp"
-               android:layout_marginRight="25dp"
+               android:contentDescription="@string/undo"
                android:layout_below="@id/detailscard"
                android:src="@drawable/ic_bx_bx_undo"/>
        </RelativeLayout>
@@ -91,11 +91,13 @@
            android:layout_width="wrap_content"
            android:layout_height="100dp"/>
        <LinearLayout
+           style="?android:attr/buttonBarStyle"
            android:layout_width="wrap_content"
            android:orientation="horizontal"
            android:layout_gravity="center_horizontal"
            android:layout_height="wrap_content">
            <Button
+               style="?android:attr/buttonBarButtonStyle"
                android:layout_marginEnd="12dp"
                android:layout_height="wrap_content"
                android:layout_width="0dp"
@@ -106,6 +108,7 @@
                android:background="@drawable/buttons"/>
 
            <Button
+               style="?android:attr/buttonBarButtonStyle"
                android:layout_marginEnd="12dp"
                android:layout_width="0dp"
                android:layout_weight="1"
@@ -115,6 +118,7 @@
                android:text="1"
                android:background="@drawable/buttons"/>
            <Button
+               style="?android:attr/buttonBarButtonStyle"
                android:layout_width="0dp"
                android:layout_weight="1"
                android:textStyle="bold"

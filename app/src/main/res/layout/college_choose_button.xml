@@ -16,6 +16,7 @@
         android:textSize="16sp" />
 
     <EditText
+        android:inputType="none"
         android:id="@+id/college_choose"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

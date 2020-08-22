@@ -22,6 +22,7 @@
             app:cardCornerRadius="43dp">
 
             <ImageView
+                android:contentDescription="@string/none"
                 android:layout_width="match_parent"
                 android:visibility="invisible"
                 android:layout_height="wrap_content"
@@ -30,6 +31,7 @@
         </androidx.cardview.widget.CardView>
 
         <ImageView
+            android:contentDescription="@string/nav_header_desc"
             android:id="@+id/header"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -45,11 +47,11 @@
             android:textSize="25sp"
             android:translationZ="11dp"
             android:layout_marginTop="-60dp"
-            android:layout_marginLeft="17dp"
+            android:layout_marginStart="17dp"
             android:textStyle="bold"
             android:letterSpacing="0.37"
             android:layout_below="@id/header"
-        android:text="CGPABook"/>
+            android:text="@string/app_name" />
 
     </RelativeLayout>
     <LinearLayout
@@ -58,38 +60,35 @@
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_marginBottom="25dp"
-        android:layout_centerInParent="true"
-        android:layout_below="@id/header"
         android:layout_weight="1"
         android:layout_height="0dp">
+
         <Button
             android:id="@+id/googlesignin"
             android:layout_marginBottom="24dp"
-            android:layout_centerHorizontal="true"
             android:layout_width="317dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textAllCaps="false"
-            android:text="Sign in with Google"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="50dp"
+            android:gravity="start|center_vertical"
+            android:paddingStart="50dp"
+            android:paddingEnd="50dp"
+            android:text="@string/sign_in_with_google"
             android:letterSpacing="0.2"
-            android:background="@drawable/ic_googlesignin"/>
+            android:background="@drawable/ic_googlesignin" />
 
         <Button
-            android:id="@+id/fbsignin"
-            android:gravity="left|center_vertical"
-            android:paddingLeft="50dp"
-            android:layout_below="@id/googlesignin"
+            android:gravity="start|center_vertical"
+            android:paddingStart="50dp"
+            android:paddingEnd="50dp"
             android:textAllCaps="false"
-            android:layout_centerHorizontal="true"
             android:layout_width="317dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textColor="#FFFFFF"
             android:letterSpacing="0.2"
-            android:text="Sign in with Facebook"
-            android:background="@drawable/ic_fbsignin"/>
+            android:text="@string/sign_in_with_facebook"
+            android:background="@drawable/ic_fbsignin" />
     </LinearLayout>
 
 </LinearLayout>

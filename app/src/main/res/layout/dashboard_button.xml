@@ -3,7 +3,6 @@
     xmlns:custom="http://schemas.android.com/apk/res-auto"
     android:layout_marginStart="20dp"
     android:layout_marginTop="20dp"
-    android:id="@+id/btn_dashboard"
     android:clickable="true"
     android:focusable="true"
     custom:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -19,12 +18,14 @@
         android:translationZ="5dp"
         android:layout_height="wrap_content">
         <ImageView
+            android:contentDescription="@string/none"
             android:layout_width="wrap_content"
             android:visibility="invisible"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_navbutton"/>
     </androidx.cardview.widget.CardView>
     <ImageView
+        android:contentDescription="@string/dashboard_button"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:translationZ="10dp"

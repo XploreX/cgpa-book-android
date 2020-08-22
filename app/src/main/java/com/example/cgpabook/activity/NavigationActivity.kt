@@ -2,18 +2,15 @@ package com.example.cgpabook.activity
 
 import android.os.Bundle
 import android.view.Menu
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import com.example.cgpabook.R
-import com.example.cgpabook.ui.gallery.CollegeChoose
-import com.example.cgpabook.ui.home.HomeFragment
-import com.example.cgpabook.ui.slideshow.SlideshowFragment
+import com.example.cgpabook.ui.Profile.ProfileFragment
+import com.example.cgpabook.ui.updateCGPA.CollegeChoose
 import com.google.android.material.navigation.NavigationView
 
 class NavigationActivity : AppCompatActivity() {
@@ -24,59 +21,37 @@ class NavigationActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
-//        val toolbar: Toolbar = findViewById(R.id.toolbar)
-//        setSupportActionBar(toolbar)
-
-//        val fab: FloatingActionButton = findViewById(R.id.fab)
-//        fab.setOnClickListener { view ->
-//            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                .setAction("Action", null).show()
-//        }
-        findViewById<RelativeLayout>(R.id.btn_dashboard).setOnClickListener {
-            drawerLayout.openDrawer(GravityCompat.START)
-        }
         val navView: NavigationView = findViewById(R.id.nav_view)
-//        val navController = findNavController(R.id.nav_host_fragment)
         drawerLayout = findViewById(R.id.drawer_layout)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
-//        appBarConfiguration = AppBarConfiguration(
-//            setOf(
-//                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow
-//            ), drawerLayout
-//        )
-//        setupActionBarWithNavController(navController, appBarConfiguration)
-//        navView.setupWithNavController(navController)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.nav_host_fragment, HomeFragment())//.addToBackStack("Home")
+            .replace(
+                R.id.nav_host_fragment,
+                ProfileFragment()
+            )//.addToBackStack("Home")
             .commit()
-        navView.setCheckedItem(R.id.nav_home)
+        navView.setCheckedItem(R.id.nav_profile)
         navView.setNavigationItemSelectedListener {
-            val id = it.itemId
-            when (id) {
+            when (it.itemId) {
                 R.id.nav_feedback -> {
                     Toast.makeText(this@NavigationActivity, "Feedback", Toast.LENGTH_SHORT).show()
                 }
                 R.id.nav_share -> {
                     Toast.makeText(this@NavigationActivity, "Share", Toast.LENGTH_SHORT).show()
                 }
-                R.id.nav_home -> {
+                R.id.nav_profile -> {
                     supportFragmentManager.beginTransaction()
-                        .replace(R.id.nav_host_fragment, HomeFragment()).addToBackStack("Home")
+                        .replace(
+                            R.id.nav_host_fragment,
+                            ProfileFragment()
+                        ).addToBackStack(getString(R.string.menu_profile))
                         .commit()
                 }
-                R.id.nav_gallery -> {
+                R.id.nav_update_cgpa -> {
                     supportFragmentManager.beginTransaction()
                         .replace(
                             R.id.nav_host_fragment,
                             CollegeChoose()
-                        ).addToBackStack("Gallery")
-                        .commit()
-                }
-                R.id.nav_slideshow -> {
-                    supportFragmentManager.beginTransaction()
-                        .replace(R.id.nav_host_fragment, SlideshowFragment())
-                        .addToBackStack("Slideshow")
+                        ).addToBackStack(getString(R.string.menu_select_college))
                         .commit()
                 }
             }
