@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/buttonBarButtonStyle"
+    android:layout_width="0dp"
+    android:layout_height="wrap_content"
+    android:layout_margin="4dp"
+    android:layout_weight="1"
+    android:background="@drawable/buttons"
+    android:text="1"
+    android:textColor="#000000"
+    android:textStyle="bold" />

@@ -3,6 +3,8 @@ package com.example.cgpabook.utils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.widget.FrameLayout
 import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import androidx.annotation.LayoutRes
@@ -49,6 +51,10 @@ fun Fragment.dashBoardButton(v: View) {
 }
 
 fun Fragment.progressBarInit(v: View): ProgressBar {
+    activity!!.window.setFlags(
+        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+    )
     val progressBar =
         ProgressBar(context)
     val params = RelativeLayout.LayoutParams(
@@ -64,5 +70,14 @@ fun Fragment.progressBarInit(v: View): ProgressBar {
     )
     (v as ViewGroup).addView(relativeLayout, frameparams)
     progressBar.visibility = View.VISIBLE
+    val progressOverlay = v.findViewById<FrameLayout>(R.id.progress_overlay)
+    progressOverlay.visibility = View.VISIBLE
     return progressBar
+}
+
+fun Fragment.progressBarDestroy(v: View, p: ProgressBar) {
+    val progressOverlay = v.findViewById<FrameLayout>(R.id.progress_overlay)
+    activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    progressOverlay.visibility = View.GONE
+    p.visibility = View.GONE
 }

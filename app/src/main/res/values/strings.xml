@@ -25,5 +25,6 @@
     <string name="search_icon">search icon</string>
     <string name="undo">undo</string>
     <string name="search">Search</string>
+    <string name="choose_your_grade">Choose Your Grade:</string>
     <!-- TODO: Remove or change this placeholder text -->
 </resources>

@@ -5,19 +5,25 @@ import com.android.volley.NetworkResponse
 import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
-import com.android.volley.toolbox.JsonArrayRequest
-import org.json.JSONArray
+import com.android.volley.toolbox.JsonObjectRequest
+import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 
-class JSONArrayRequestCached(
+class JSONObjectRequestCached(
     method: Int,
     url: String?,
-    jsonRequest: JSONArray?,
-    listener: Response.Listener<JSONArray>?,
+    jsonRequest: JSONObject?,
+    listener: Response.Listener<JSONObject>?,
     errorListener: Response.ErrorListener?
-) : JsonArrayRequest(method, url, jsonRequest, listener, errorListener) {
-    override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONArray> {
+) : JsonObjectRequest(
+    method,
+    url,
+    jsonRequest,
+    listener,
+    errorListener
+) {
+    override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONObject> {
         try {
             var cacheEntry =
                 HttpHeaderParser.parseCacheHeaders(response)
@@ -45,12 +51,11 @@ class JSONArrayRequestCached(
                     HttpHeaderParser.parseDateAsEpoch(headerValue)
             }
             cacheEntry.responseHeaders = response.headers
-            val jsonString = JSONArray(
+            val jsonString = JSONObject(
                 String(
                     response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers))
                 )
             )
-            println(jsonString)
             return Response.success(
                 jsonString,
                 cacheEntry

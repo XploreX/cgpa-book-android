@@ -17,6 +17,7 @@ import com.example.cgpabook.activity.MySingleton
 import com.example.cgpabook.activity.SearchActivity
 import com.example.cgpabook.utils.JSONArrayRequestCached
 import com.example.cgpabook.utils.dashBoardButton
+import com.example.cgpabook.utils.progressBarDestroy
 import com.example.cgpabook.utils.progressBarInit
 
 
@@ -35,7 +36,7 @@ class CollegeChoose : Fragment() {
         val queue = MySingleton.getInstance(context as Context)
         for (j in 0 until arrayList.size) {
             val i = arrayList[j]
-            val b = inflater.inflate(R.layout.college_choose_button, ll, false)
+            val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
             b.findViewById<TextView>(R.id.txtcollege).text = i
             ll.addView(b)
             val editText = b.findViewById<EditText>(R.id.college_choose)
@@ -55,7 +56,7 @@ class CollegeChoose : Fragment() {
                             println(j)
                             intent.putStringArrayListExtra("List", arrayList)
 //                            progressDialog.hide()
-                            progressBar.visibility = View.GONE
+                            progressBarDestroy(v, progressBar)
                             startActivityForResult(intent, j)
                         },
                         Response.ErrorListener { error ->
@@ -64,6 +65,7 @@ class CollegeChoose : Fragment() {
                                 "Network/Server Issue. Please try again",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            progressBarDestroy(v, progressBar)
                         }
                     )
                 queue?.addToRequestQueue(jsonObjectRequest)
