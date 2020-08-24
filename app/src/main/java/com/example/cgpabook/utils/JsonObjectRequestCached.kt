@@ -5,21 +5,21 @@ import com.android.volley.NetworkResponse
 import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
-import com.android.volley.toolbox.JsonObjectRequest
+import com.android.volley.toolbox.JsonRequest
 import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 
-class JSONObjectRequestCached(
+class JsonObjectRequestCached(
     method: Int,
     url: String?,
     jsonRequest: JSONObject?,
     listener: Response.Listener<JSONObject>?,
     errorListener: Response.ErrorListener?
-) : JsonObjectRequest(
+) : JsonRequest<JSONObject>(
     method,
     url,
-    jsonRequest,
+    jsonRequest.toString(),
     listener,
     errorListener
 ) {

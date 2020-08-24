@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.cgpabook.R
+import com.example.cgpabook.utils.dashBoardButton
 
 class ProfileFragment : Fragment() {
 
@@ -13,6 +14,8 @@ class ProfileFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
+        val v = inflater.inflate(R.layout.fragment_profile, container, false)
+        dashBoardButton(v)
+        return v
     }
 }

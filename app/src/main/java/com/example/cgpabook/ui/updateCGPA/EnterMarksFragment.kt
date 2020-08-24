@@ -17,7 +17,7 @@ class EnterMarksFragment : Fragment() {
     lateinit var llv: LinearLayout
     lateinit var grades: ArrayList<String>
     lateinit var llh: LinearLayout
-    lateinit var data: ArrayList<SubjectsData>
+    var data: ArrayList<SubjectsData> = ArrayList()
     var index: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater,

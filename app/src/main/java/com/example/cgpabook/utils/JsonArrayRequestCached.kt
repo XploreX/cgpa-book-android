@@ -5,18 +5,19 @@ import com.android.volley.NetworkResponse
 import com.android.volley.ParseError
 import com.android.volley.Response
 import com.android.volley.toolbox.HttpHeaderParser
-import com.android.volley.toolbox.JsonArrayRequest
+import com.android.volley.toolbox.JsonRequest
 import org.json.JSONArray
+import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 
-class JSONArrayRequestCached(
+class JsonArrayRequestCached(
     method: Int,
     url: String?,
-    jsonRequest: JSONArray?,
+    jsonRequest: JSONObject,
     listener: Response.Listener<JSONArray>?,
     errorListener: Response.ErrorListener?
-) : JsonArrayRequest(method, url, jsonRequest, listener, errorListener) {
+) : JsonRequest<JSONArray>(method, url, jsonRequest.toString(), listener, errorListener) {
     override fun parseNetworkResponse(response: NetworkResponse?): Response<JSONArray> {
         try {
             var cacheEntry =
