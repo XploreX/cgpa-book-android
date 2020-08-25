@@ -63,18 +63,23 @@ class CollegeChoose : Fragment() {
             b.findViewById<TextView>(R.id.txtcollege).text = i.name
             ll.addView(b)
             val editText = b.findViewById<EditText>(R.id.college_choose)
+            if (j != 0)
+                editText.isEnabled = false
             editText.setOnClickListener {
                 val intent = Intent(context, SearchActivity::class.java)
                 val url = i.url
-                for (temp in 0 until requiredbody.size)
-                    body.put(
-                        requiredbody[temp],
-                        ll.findViewById<EditText>(temp).text.split('(')[0].trim()
-                    )
+                if (j + 1 < arrayList.size)
+                    for (temp in 0 until requiredbody.size)
+                        body.put(
+                            requiredbody[temp],
+                            ll.findViewById<EditText>(temp).text.split('(')[0].trim()
+                        )
                 body.put("ignorecase", "true")
                 println(body)
-                for (k in j + 1 until arrayList.size)
+                for (k in j + 1 until arrayList.size) {
                     ll.findViewById<EditText>(k).setText("")
+                    ll.findViewById<EditText>(k).isEnabled = false
+                }
                 val progressBar = progressBarInit(v)
                 val jsonObjectRequest =
                     JsonArrayRequestCached(
@@ -133,6 +138,8 @@ class CollegeChoose : Fragment() {
                     if (data != null) {
                         println(data.getStringExtra("selected"))
                         idlist[j].setText(data.getStringExtra("selected")!!.split("(")[0].trim())
+                        if (j + 1 < idlist.size)
+                            idlist[j + 1].isEnabled = true
                     } else {
                         Toast.makeText(context, "Some error occurred", Toast.LENGTH_SHORT).show()
                     }
