@@ -51,7 +51,6 @@ class JsonArrayRequestCached(
                     response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers))
                 )
             )
-            println(jsonString)
             return Response.success(
                 jsonString,
                 cacheEntry

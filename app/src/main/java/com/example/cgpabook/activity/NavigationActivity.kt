@@ -12,6 +12,7 @@ import androidx.navigation.ui.navigateUp
 import com.example.cgpabook.R
 import com.example.cgpabook.ui.Profile.ProfileFragment
 import com.example.cgpabook.ui.updateCGPA.CollegeChoose
+import com.example.cgpabook.ui.updateCGPA.NewCreditsFragment
 import com.google.android.material.navigation.NavigationView
 
 class NavigationActivity : AppCompatActivity() {
@@ -27,7 +28,7 @@ class NavigationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.nav_host_fragment,
-                ProfileFragment()
+                NewCreditsFragment()
             )//.addToBackStack("Home")
             .commit()
         navView.setCheckedItem(R.id.nav_profile)

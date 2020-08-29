@@ -9,13 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.toolbox.JsonArrayRequest
 import com.example.cgpabook.R
 import com.example.cgpabook.activity.MySingleton
 import com.example.cgpabook.activity.SearchActivity
 import com.example.cgpabook.classes.CollegeChooseModel
-import com.example.cgpabook.utils.JsonArrayRequestCached
+import com.example.cgpabook.ui.SharedViewModel
+import com.example.cgpabook.utils.addparams
 import com.example.cgpabook.utils.dashBoardButton
 import com.example.cgpabook.utils.progressBarDestroy
 import com.example.cgpabook.utils.progressBarInit
@@ -24,6 +27,7 @@ import org.json.JSONObject
 
 class CollegeChoose : Fragment() {
     private var idlist: ArrayList<EditText> = ArrayList()
+    private lateinit var viewModel: SharedViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,24 +35,27 @@ class CollegeChoose : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_college_choose, container, false)
         val ll = v.findViewById<LinearLayout>(R.id.llcollegeselect)
+        val domainurl = "http://cgpa-book.herokuapp.com"
+        viewModel = activity?.run { ViewModelProviders.of(this)[SharedViewModel::class.java] }
+            ?: throw Exception("Invalid Activity")
         val arrayList: ArrayList<CollegeChooseModel> =
             ArrayList(
                 listOf(
                     CollegeChooseModel(
                         "Select College",
-                        "http://cgpa-book.herokuapp.com/academia/college-list"
+                        "$domainurl/academia/college-list?"
                     ),
                     CollegeChooseModel(
                         "Select Course",
-                        "http://cgpa-book.herokuapp.com/academia/course-list"
+                        "$domainurl/academia/course-list?"
                     ),
                     CollegeChooseModel(
                         "Select Branch",
-                        "http://cgpa-book.herokuapp.com/academia/branch-list"
+                        "$domainurl/academia/branch-list?"
                     ),
                     CollegeChooseModel(
                         "Select Semester",
-                        "http://cgpa-book.herokuapp.com/academia/semester-list"
+                        "$domainurl/academia/semester-list?"
                     )
                 )
             )
@@ -63,27 +70,29 @@ class CollegeChoose : Fragment() {
             b.findViewById<TextView>(R.id.txtcollege).text = i.name
             ll.addView(b)
             val editText = b.findViewById<EditText>(R.id.college_choose)
-            if (j != 0)
+            if (j != 0 && b.findViewById<EditText>(R.id.college_choose).text.toString() != "")
                 editText.isEnabled = false
             editText.setOnClickListener {
                 val intent = Intent(context, SearchActivity::class.java)
-                val url = i.url
-                if (j + 1 < arrayList.size)
-                    for (temp in 0 until requiredbody.size)
+                var url = i.url
+                for (temp in 0 until j)
+                    if (ll.findViewById<EditText>(temp).text.split('(')[0].trim() != "") {
                         body.put(
                             requiredbody[temp],
                             ll.findViewById<EditText>(temp).text.split('(')[0].trim()
                         )
+                    }
                 body.put("ignorecase", "true")
-                println(body)
+                url = addparams(url, body)
+                println(url)
                 for (k in j + 1 until arrayList.size) {
                     ll.findViewById<EditText>(k).setText("")
                     ll.findViewById<EditText>(k).isEnabled = false
                 }
                 val progressBar = progressBarInit(v)
                 val jsonObjectRequest =
-                    JsonArrayRequestCached(
-                        Request.Method.GET, url, body,
+                    JsonArrayRequest(
+                        Request.Method.GET, url, null,
                         Response.Listener {
                             val arrayList = ArrayList<String>()
                             for (i in 0 until it.length())
@@ -96,6 +105,9 @@ class CollegeChoose : Fragment() {
                             startActivityForResult(intent, j)
                         },
                         Response.ErrorListener {
+                            print(JSONObject(String(it.networkResponse.data)))
+                            print(it.networkResponse.allHeaders)
+                            print(it.networkResponse.statusCode)
                             Toast.makeText(
                                 context,
                                 "Network/Server Issue. Please try again",
@@ -110,10 +122,10 @@ class CollegeChoose : Fragment() {
             idlist.add(editText)
         }
         dashBoardButton(v)
-        v.findViewById<ImageView>(R.id.btnnext).setOnClickListener {
+        fun validateerror(): Boolean {
             var flag: Boolean = true
             for (i in 0 until arrayList.size) {
-                var temp = ll.findViewById<EditText>(i)
+                val temp = ll.findViewById<EditText>(i)
                 if (temp.text.toString() == "") {
                     temp.error = "Required"
                     flag = false
@@ -121,11 +133,17 @@ class CollegeChoose : Fragment() {
                     temp.error = null
                 }
             }
+            return flag
+        }
+        v.findViewById<ImageView>(R.id.btnnext).setOnClickListener {
+
+            val flag = validateerror()
             if (flag)
                 activity!!.supportFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, EnterMarksFragment())
                     .addToBackStack(getString(R.string.menu_update_cgpa)).commit()
         }
+
         return v
     }
 
@@ -136,7 +154,6 @@ class CollegeChoose : Fragment() {
             for (j in 0 until idlist.size) {
                 if (j == requestCode) {
                     if (data != null) {
-                        println(data.getStringExtra("selected"))
                         idlist[j].setText(data.getStringExtra("selected")!!.split("(")[0].trim())
                         if (j + 1 < idlist.size)
                             idlist[j + 1].isEnabled = true
@@ -144,7 +161,6 @@ class CollegeChoose : Fragment() {
                         Toast.makeText(context, "Some error occurred", Toast.LENGTH_SHORT).show()
                     }
                 }
-
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

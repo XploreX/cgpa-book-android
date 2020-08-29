@@ -1,18 +1,18 @@
 package com.example.cgpabook.utils
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import android.widget.FrameLayout
-import android.widget.ProgressBar
-import android.widget.RelativeLayout
+import android.widget.*
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.example.cgpabook.R
+import org.json.JSONObject
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
     return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
@@ -81,3 +81,47 @@ fun Fragment.progressBarDestroy(v: View, p: ProgressBar) {
     progressOverlay.visibility = View.GONE
     p.visibility = View.GONE
 }
+
+fun Fragment.createllh(llv: ViewGroup): LinearLayout {
+    val llh = LinearLayout(context)
+    val params = ViewGroup.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT,
+        ViewGroup.LayoutParams.WRAP_CONTENT
+    )
+    llh.orientation = LinearLayout.HORIZONTAL
+    llv.addView(llh, params)
+    return llh
+}
+
+fun Fragment.addButton(
+    llh: ViewGroup,
+    text: String,
+    button: Int,
+    color: Int,
+    bar: (m: View) -> Unit
+) {
+    val v = LayoutInflater.from(context).inflate(R.layout.grade_buttons, llh, false) as Button
+    v.text = text
+    v.setTextColor(resources.getColor(color, null))
+    v.setOnClickListener {
+        bar(v)
+    }
+    llh.addView(v, v.layoutParams)
+    v.background = resources.getDrawable(button, null)
+}
+
+fun addparams(url: String, body: JSONObject): String {
+    var newurl = url
+    var first: Boolean = true
+    for (key in body.keys()) {
+        val value: String = body.getString(key)
+        if (first != true) {
+            newurl += "&"
+        }
+        if (value.trim() != "")
+            newurl += Uri.encode(key) + '=' + Uri.encode(value)
+        first = false
+    }
+    return newurl
+}
+

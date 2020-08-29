@@ -2,15 +2,17 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="15dp"
     android:orientation="vertical">
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="15dp" />
 
     <TextView
         android:id="@+id/txtcollege"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="center_horizontal"
-        android:gravity="center"
+        android:gravity="center_vertical"
         android:text="@string/txtcollegechoose"
         android:textColor="@color/black"
         android:textSize="16sp" />
@@ -24,4 +26,8 @@
         android:focusable="false"
         android:hint="@string/select"
         android:textAlignment="center" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="15dp" />
 </LinearLayout>
