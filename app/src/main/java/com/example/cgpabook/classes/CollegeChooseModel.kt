@@ -11,7 +11,7 @@ data class CollegeChooseModel(var name: String, var url: String) {
     lateinit var tv: TextView
     fun setParv(v: View) {
         pv = v
-        et = v.findViewById(R.id.txtcollege)
-        tv = v.findViewById(R.id.college_choose)
+        tv = v.findViewById(R.id.txtcollege)
+        et = v.findViewById(R.id.college_choose)
     }
 }

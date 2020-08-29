@@ -7,7 +7,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.android.volley.Request
@@ -26,8 +28,9 @@ import org.json.JSONObject
 
 
 class CollegeChoose : Fragment() {
-    private var idlist: ArrayList<EditText> = ArrayList()
+    //    private var idlist: ArrayList<EditText> = ArrayList()
     private lateinit var viewModel: SharedViewModel
+    private lateinit var arrayList: ArrayList<CollegeChooseModel>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,7 +41,7 @@ class CollegeChoose : Fragment() {
         val domainurl = "http://cgpa-book.herokuapp.com"
         viewModel = activity?.run { ViewModelProviders.of(this)[SharedViewModel::class.java] }
             ?: throw Exception("Invalid Activity")
-        val arrayList: ArrayList<CollegeChooseModel> =
+        arrayList =
             ArrayList(
                 listOf(
                     CollegeChooseModel(
@@ -60,34 +63,34 @@ class CollegeChoose : Fragment() {
                 )
             )
 
-        idlist.clear()
         val body = JSONObject()
         val requiredbody = ArrayList<String>(listOf("college", "course", "branch", "semester"))
         val queue = MySingleton.getInstance(context as Context)
         for (j in 0 until arrayList.size) {
             val i = arrayList[j]
             val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
-            b.findViewById<TextView>(R.id.txtcollege).text = i.name
+            arrayList[j].setParv(b)
+            arrayList[j].tv.text = i.name
             ll.addView(b)
-            val editText = b.findViewById<EditText>(R.id.college_choose)
-            if (j != 0 && b.findViewById<EditText>(R.id.college_choose).text.toString() != "")
-                editText.isEnabled = false
-            editText.setOnClickListener {
+            val et = arrayList[j].et
+            if (j != 0 && et.text.toString() != "")
+                et.isEnabled = false
+            et.setOnClickListener {
                 val intent = Intent(context, SearchActivity::class.java)
                 var url = i.url
                 for (temp in 0 until j)
-                    if (ll.findViewById<EditText>(temp).text.split('(')[0].trim() != "") {
+                    if (arrayList[temp].et.text.split('(')[0].trim() != "") {
                         body.put(
                             requiredbody[temp],
-                            ll.findViewById<EditText>(temp).text.split('(')[0].trim()
+                            arrayList[temp].et.text.split('(')[0].trim()
                         )
                     }
                 body.put("ignorecase", "true")
                 url = addparams(url, body)
                 println(url)
                 for (k in j + 1 until arrayList.size) {
-                    ll.findViewById<EditText>(k).setText("")
-                    ll.findViewById<EditText>(k).isEnabled = false
+                    arrayList[k].et.setText("")
+                    arrayList[k].et.isEnabled = false
                 }
                 val progressBar = progressBarInit(v)
                 val jsonObjectRequest =
@@ -118,14 +121,12 @@ class CollegeChoose : Fragment() {
                     )
                 queue?.addToRequestQueue(jsonObjectRequest)
             }
-            b.findViewById<EditText>(R.id.college_choose).id = j
-            idlist.add(editText)
         }
         dashBoardButton(v)
         fun validateerror(): Boolean {
             var flag: Boolean = true
             for (i in 0 until arrayList.size) {
-                val temp = ll.findViewById<EditText>(i)
+                val temp = arrayList[i].et
                 if (temp.text.toString() == "") {
                     temp.error = "Required"
                     flag = false
@@ -151,12 +152,14 @@ class CollegeChoose : Fragment() {
         println(resultCode)
         println(requestCode)
         if (resultCode == Activity.RESULT_OK) {
-            for (j in 0 until idlist.size) {
+            for (j in 0 until arrayList.size) {
                 if (j == requestCode) {
                     if (data != null) {
-                        idlist[j].setText(data.getStringExtra("selected")!!.split("(")[0].trim())
-                        if (j + 1 < idlist.size)
-                            idlist[j + 1].isEnabled = true
+                        arrayList[j].et.setText(
+                            data.getStringExtra("selected")!!.split("(")[0].trim()
+                        )
+                        if (j + 1 < arrayList.size)
+                            arrayList[j + 1].et.isEnabled = true
                     } else {
                         Toast.makeText(context, "Some error occurred", Toast.LENGTH_SHORT).show()
                     }
