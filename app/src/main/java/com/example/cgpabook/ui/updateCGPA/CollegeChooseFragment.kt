@@ -14,16 +14,12 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.toolbox.JsonArrayRequest
 import com.example.cgpabook.R
 import com.example.cgpabook.activity.MySingleton
 import com.example.cgpabook.activity.SearchActivity
 import com.example.cgpabook.classes.CollegeChooseModel
 import com.example.cgpabook.ui.SharedViewModel
-import com.example.cgpabook.utils.addparams
-import com.example.cgpabook.utils.dashBoardButton
-import com.example.cgpabook.utils.progressBarDestroy
-import com.example.cgpabook.utils.progressBarInit
+import com.example.cgpabook.utils.*
 import org.json.JSONObject
 
 
@@ -63,7 +59,6 @@ class CollegeChoose : Fragment() {
                 )
             )
 
-        val body = JSONObject()
         val requiredbody = ArrayList<String>(listOf("college", "course", "branch", "semester"))
         val queue = MySingleton.getInstance(context as Context)
         for (j in 0 until arrayList.size) {
@@ -73,9 +68,10 @@ class CollegeChoose : Fragment() {
             arrayList[j].tv.text = i.name
             ll.addView(b)
             val et = arrayList[j].et
-            if (j != 0 && et.text.toString() != "")
+            if (j != 0 && et.text.toString() == "")
                 et.isEnabled = false
             et.setOnClickListener {
+                val body = JSONObject()
                 val intent = Intent(context, SearchActivity::class.java)
                 var url = i.url
                 for (temp in 0 until j)
@@ -94,7 +90,7 @@ class CollegeChoose : Fragment() {
                 }
                 val progressBar = progressBarInit(v)
                 val jsonObjectRequest =
-                    JsonArrayRequest(
+                    JsonArrayRequestCached(
                         Request.Method.GET, url, null,
                         Response.Listener {
                             val arrayList = ArrayList<String>()
@@ -108,14 +104,13 @@ class CollegeChoose : Fragment() {
                             startActivityForResult(intent, j)
                         },
                         Response.ErrorListener {
-                            print(JSONObject(String(it.networkResponse.data)))
-                            print(it.networkResponse.allHeaders)
-                            print(it.networkResponse.statusCode)
-                            Toast.makeText(
-                                context,
-                                "Network/Server Issue. Please try again",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            if (!errorhandler(it)) {
+                                Toast.makeText(
+                                    context,
+                                    "Network/Server Issue. Please try again",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
                             progressBarDestroy(v, progressBar)
                         }
                     )

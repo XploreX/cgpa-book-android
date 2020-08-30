@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.android.volley.VolleyError
 import com.example.cgpabook.R
 import org.json.JSONObject
 
@@ -123,5 +124,13 @@ fun addparams(url: String, body: JSONObject): String {
         first = false
     }
     return newurl
+}
+
+fun Fragment.errorhandler(it: VolleyError): Boolean {
+    if (it.networkResponse == null || it.networkResponse.statusCode != 400)
+        return false
+    val ob = JSONObject(String(it.networkResponse.data))
+    Toast.makeText(context, ob.getString("message"), Toast.LENGTH_SHORT).show()
+    return true
 }
 

@@ -14,7 +14,7 @@ import java.nio.charset.Charset
 class JsonArrayRequestCached(
     method: Int,
     url: String?,
-    jsonRequest: JSONObject,
+    jsonRequest: JSONObject?,
     listener: Response.Listener<JSONArray>?,
     errorListener: Response.ErrorListener?
 ) : JsonRequest<JSONArray>(method, url, jsonRequest.toString(), listener, errorListener) {
