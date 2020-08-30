@@ -61,63 +61,71 @@ class CollegeChoose : Fragment() {
 
         val requiredbody = ArrayList<String>(listOf("college", "course", "branch", "semester"))
         val queue = MySingleton.getInstance(context as Context)
-        for (j in 0 until arrayList.size) {
-            val i = arrayList[j]
-            val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
-            arrayList[j].setParv(b)
-            arrayList[j].tv.text = i.name
-            ll.addView(b)
-            val et = arrayList[j].et
-            if (j != 0 && et.text.toString() == "")
-                et.isEnabled = false
-            et.setOnClickListener {
-                val body = JSONObject()
-                val intent = Intent(context, SearchActivity::class.java)
-                var url = i.url
-                for (temp in 0 until j)
-                    if (arrayList[temp].et.text.split('(')[0].trim() != "") {
-                        body.put(
-                            requiredbody[temp],
-                            arrayList[temp].et.text.split('(')[0].trim()
-                        )
-                    }
-                body.put("ignorecase", "true")
-                url = addparams(url, body)
-                println(url)
-                for (k in j + 1 until arrayList.size) {
-                    arrayList[k].et.setText("")
-                    arrayList[k].et.isEnabled = false
-                }
-                val progressBar = progressBarInit(v)
-                val jsonObjectRequest =
-                    JsonArrayRequestCached(
-                        Request.Method.GET, url, null,
-                        Response.Listener {
-                            val arrayList = ArrayList<String>()
-                            for (i in 0 until it.length())
-                                arrayList.add(it.get(i).toString())
-                            println(arrayList)
-                            println(j)
-                            intent.putStringArrayListExtra("List", arrayList)
-//                            progressDialog.hide()
-                            progressBarDestroy(v, progressBar)
-                            startActivityForResult(intent, j)
-                        },
-                        Response.ErrorListener {
-                            if (!errorhandler(it)) {
-                                Toast.makeText(
-                                    context,
-                                    "Network/Server Issue. Please try again",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                            progressBarDestroy(v, progressBar)
+
+        fun makelayouts() {
+            for (j in 0 until arrayList.size) {
+                val i = arrayList[j]
+                val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
+                arrayList[j].setParv(b)
+                arrayList[j].tv.text = i.name
+                ll.addView(b)
+                val et = arrayList[j].et
+                if (j != 0 && et.text.toString() == "")
+                    et.isEnabled = false
+                et.setOnClickListener {
+                    val body = JSONObject()
+                    val intent = Intent(context, SearchActivity::class.java)
+                    var url = i.url
+                    for (temp in 0 until j)
+                        if (arrayList[temp].et.text.split('(')[0].trim() != "") {
+                            body.put(
+                                requiredbody[temp],
+                                arrayList[temp].et.text.split('(')[0].trim()
+                            )
                         }
-                    )
-                queue?.addToRequestQueue(jsonObjectRequest)
+                    body.put("ignorecase", "true")
+                    url = addparams(url, body)
+                    println(url)
+                    for (k in j + 1 until arrayList.size) {
+                        arrayList[k].et.setText("")
+                        arrayList[k].et.isEnabled = false
+                    }
+                    val progressBar = progressBarInit(v)
+                    val jsonObjectRequest =
+                        JsonArrayRequestCached(
+                            Request.Method.GET, url, null,
+                            Response.Listener {
+                                val arrayList = ArrayList<String>()
+                                for (i in 0 until it.length())
+                                    arrayList.add(it.get(i).toString())
+                                println(arrayList)
+                                println(j)
+                                intent.putStringArrayListExtra("List", arrayList)
+//                            progressDialog.hide()
+                                progressBarDestroy(v, progressBar)
+                                startActivityForResult(intent, j)
+                            },
+                            Response.ErrorListener {
+                                if (!errorhandler(it)) {
+                                    Toast.makeText(
+                                        context,
+                                        "Network/Server Issue. Please try again",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                progressBarDestroy(v, progressBar)
+                            }
+                        )
+                    queue?.addToRequestQueue(jsonObjectRequest)
+                }
             }
         }
-        dashBoardButton(v)
+        Runnable {
+            makelayouts()
+        }.run()
+        Runnable {
+            dashBoardButton(v)
+        }.run()
         fun validateerror(): Boolean {
             var flag: Boolean = true
             for (i in 0 until arrayList.size) {

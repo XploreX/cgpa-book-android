@@ -1,18 +1,13 @@
 package com.example.cgpabook.activity
 
 import android.os.Bundle
-import android.view.Menu
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.navigateUp
 import com.example.cgpabook.R
 import com.example.cgpabook.ui.Profile.ProfileFragment
 import com.example.cgpabook.ui.updateCGPA.CollegeChoose
-import com.example.cgpabook.ui.updateCGPA.NewCreditsFragment
 import com.google.android.material.navigation.NavigationView
 
 class NavigationActivity : AppCompatActivity() {
@@ -27,7 +22,7 @@ class NavigationActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.nav_host_fragment,
-                NewCreditsFragment()
+                ProfileFragment()
             )//.addToBackStack("Home")
             .commit()
         navView.setCheckedItem(R.id.nav_profile)
