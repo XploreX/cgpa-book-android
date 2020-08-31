@@ -5,7 +5,10 @@ import android.widget.EditText
 import android.widget.TextView
 import com.example.cgpabook.R
 
-data class CollegeChooseModel(var name: String, var url: String) {
+data class CollegeChooseModel(
+    var name: String, var url: String,
+    var id: String
+) {
     lateinit var pv: View
     lateinit var et: EditText
     lateinit var tv: TextView

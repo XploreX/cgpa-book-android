@@ -11,6 +11,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.android.volley.Request
 import com.android.volley.Response
@@ -42,19 +43,23 @@ class CollegeChoose : Fragment() {
                 listOf(
                     CollegeChooseModel(
                         "Select College",
-                        "$domainurl/academia/college-list?"
+                        "$domainurl/academia/college-list?",
+                        "college"
                     ),
                     CollegeChooseModel(
                         "Select Course",
                         "$domainurl/academia/course-list?"
+                        , "course"
                     ),
                     CollegeChooseModel(
                         "Select Branch",
                         "$domainurl/academia/branch-list?"
+                        , "branch"
                     ),
                     CollegeChooseModel(
                         "Select Semester",
                         "$domainurl/academia/semester-list?"
+                        , "semester"
                     )
                 )
             )
@@ -66,12 +71,17 @@ class CollegeChoose : Fragment() {
             for (j in 0 until arrayList.size) {
                 val i = arrayList[j]
                 val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
-                arrayList[j].setParv(b)
-                arrayList[j].tv.text = i.name
+                i.setParv(b)
+                viewModel.getElement<String>(arrayList[j].id).observe(this, Observer { t ->
+                    arrayList[j].et.setText(t)
+                })
+                i.tv.text = i.name
                 ll.addView(b)
-                val et = arrayList[j].et
-                if (j != 0 && et.text.toString() == "")
+                val et = i.et
+                val value = viewModel.getVal<String>(arrayList[j].id)
+                if (j != 0 && value.toString().trim() == "") {
                     et.isEnabled = false
+                }
                 et.setOnClickListener {
                     val body = JSONObject()
                     val intent = Intent(context, SearchActivity::class.java)
@@ -87,7 +97,7 @@ class CollegeChoose : Fragment() {
                     url = addparams(url, body)
                     println(url)
                     for (k in j + 1 until arrayList.size) {
-                        arrayList[k].et.setText("")
+                        viewModel.setVal(arrayList[k].id, "")
                         arrayList[k].et.isEnabled = false
                     }
                     val progressBar = progressBarInit(v)
@@ -141,7 +151,7 @@ class CollegeChoose : Fragment() {
         }
         v.findViewById<ImageView>(R.id.btnnext).setOnClickListener {
 
-            val flag = validateerror()
+            val flag = true//validateerror()
             if (flag)
                 activity!!.supportFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, EnterMarksFragment())
@@ -158,7 +168,8 @@ class CollegeChoose : Fragment() {
             for (j in 0 until arrayList.size) {
                 if (j == requestCode) {
                     if (data != null) {
-                        arrayList[j].et.setText(
+                        viewModel.setVal(
+                            arrayList[j].id,
                             data.getStringExtra("selected")!!.split("(")[0].trim()
                         )
                         if (j + 1 < arrayList.size)

@@ -13,6 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.android.volley.VolleyError
 import com.example.cgpabook.R
+import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
@@ -127,10 +128,22 @@ fun addparams(url: String, body: JSONObject): String {
 }
 
 fun Fragment.errorhandler(it: VolleyError): Boolean {
-    if (it.networkResponse == null || it.networkResponse.statusCode != 400)
+    if (it.networkResponse == null)
         return false
     val ob = JSONObject(String(it.networkResponse.data))
     Toast.makeText(context, ob.getString("message"), Toast.LENGTH_SHORT).show()
     return true
+}
+
+fun Fragment.errorhandler(ob: JSONObject): Boolean {
+    if (!ob.has("message"))
+        return false
+    Toast.makeText(context, ob.getString("message"), Toast.LENGTH_SHORT).show()
+    return true
+}
+
+fun Fragment.goToProfile() {
+    activity!!.supportFragmentManager.popBackStack(resources.getString(R.string.menu_profile), 0)
+    activity!!.findViewById<NavigationView>(R.id.nav_view).setCheckedItem(R.id.nav_profile)
 }
 

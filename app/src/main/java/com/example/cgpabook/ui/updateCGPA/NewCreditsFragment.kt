@@ -24,18 +24,20 @@ class NewCreditsFragment : Fragment() {
         v.findViewById<EditText>(R.id.college_choose).setOnClickListener {
             Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
         }
-        var llh: LinearLayout = createllh(llv)
-        for (i in 1..9) {
-            if (i % 3 == 1 && i != 1) {
-                llh = createllh(llv)
+        Runnable {
+            var llh: LinearLayout = createllh(llv)
+            for (i in 1..9) {
+                if (i % 3 == 1 && i != 1) {
+                    llh = createllh(llv)
+                }
+                addButton(
+                    llh,
+                    i.toString(),
+                    R.drawable.credits_button,
+                    R.color.white
+                ) { m -> buttononclick(m) }
             }
-            addButton(
-                llh,
-                i.toString(),
-                R.drawable.credits_button,
-                R.color.white
-            ) { m -> buttononclick(m) }
-        }
+        }.run()
         return v
 
     }

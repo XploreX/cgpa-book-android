@@ -2,22 +2,23 @@ package com.example.cgpabook.ui
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import org.json.JSONObject
 
 class SharedViewModel : ViewModel() {
-    val Name = MutableLiveData<String>()
-    val cgpa = MutableLiveData<Float>()
-    val uistuff = HashMap<Int, MutableLiveData<String>>()
-    var index = 0
+    private val uiStuff = JSONObject()//HashMap<String, MutableLiveData<String>>()
 
-    init {
-        cgpa.value = 0.0F
+    fun <T> getElement(s: String): MutableLiveData<T> {
+        if (!uiStuff.has(s))
+            uiStuff.put(s, MutableLiveData<T>())
+        return uiStuff.get(s) as MutableLiveData<T>
     }
 
-    fun newUi(s: String): Int {
-        if (uistuff[index] != null)
-            return -1
-        uistuff[index] = (MutableLiveData(s))
-        index++
-        return uistuff.size - 1
+    fun <T> setVal(k: String, s: T) {
+        val temp = getElement<T>(k)
+        temp.value = s
+    }
+
+    fun <T> getVal(s: String): T? {
+        return getElement<T>(s).value
     }
 }
