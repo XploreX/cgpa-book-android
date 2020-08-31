@@ -8,7 +8,7 @@ import com.android.volley.toolbox.Volley
 class MySingleton private constructor(private val ctx: Context) {
     private var requestQueue: RequestQueue?
 
-    fun getRequestQueue(): RequestQueue? {
+    private fun getRequestQueue(): RequestQueue? {
         if (requestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
@@ -16,6 +16,7 @@ class MySingleton private constructor(private val ctx: Context) {
         }
         return requestQueue
     }
+
     fun <T> addToRequestQueue(req: Request<T>?) {
         getRequestQueue()!!.add(req)
     }

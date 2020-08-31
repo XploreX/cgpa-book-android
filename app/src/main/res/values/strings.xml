@@ -3,15 +3,12 @@
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
 
     <string name="menu_profile">Profile</string>
     <string name="menu_update_cgpa">Update CGPA</string>
     <string name="menu_select_college">Select College</string>
     <string name="txtcollegechoose">Select College</string>
     <string name="select">Select</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="nav_share">Share</string>
     <string name="nav_feedback">Feedback</string>
     <string name="nav_group_options">Options</string>

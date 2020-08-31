@@ -43,7 +43,7 @@
                             android:id="@+id/txt_subjectsleft"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Subjects Left: 4"
+                            android:text=""
                             android:textStyle="bold"
                             android:textSize="16sp"
                             android:textColor="#000000"
@@ -54,7 +54,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:gravity="end"
-                            android:text="@string/dummy_cgpa"
+                            android:text=""
                             android:textColor="#000000"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -63,26 +63,23 @@
                     <TextView
                         android:id="@+id/txt_credits"
                         android:textColor="#000000"
-                        android:layout_marginRight="16dp"
                         android:layout_marginTop="16dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="monospace"
-                        android:text="Credits: 4" />
+                        android:text="" />
 
                     <TextView
                         android:id="@+id/txt_subname"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:layout_marginRight="16dp"
                         android:fontFamily="monospace"
-                        android:text="Subject Name: Mathematics"
+                        android:text=""
                         android:textColor="#000000" />
 
                     <TextView
                         android:layout_width="wrap_content"
-                        android:layout_marginRight="16dp"
                         android:layout_marginTop="8dp"
                         android:textColor="#000000"
                         android:fontFamily="monospace"

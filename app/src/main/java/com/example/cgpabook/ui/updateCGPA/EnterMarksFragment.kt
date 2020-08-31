@@ -23,13 +23,13 @@ import org.json.JSONObject
 
 class EnterMarksFragment : Fragment() {
 
-    lateinit var llv: LinearLayout
+    private lateinit var llv: LinearLayout
     private lateinit var viewModel: SharedViewModel
-    lateinit var grades: ArrayList<String>
-    lateinit var llh: LinearLayout
-    lateinit var grades_schema: JSONObject
-    var subjects_data: ArrayList<SubjectsData> = ArrayList()
-    var index: Int = 0
+    private lateinit var grades: ArrayList<String>
+    private lateinit var llh: LinearLayout
+    private lateinit var gradesSchema: JSONObject
+    private var subjectsData: ArrayList<SubjectsData> = ArrayList()
+    private var index: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -59,7 +59,7 @@ class EnterMarksFragment : Fragment() {
                 val subdata = it.getJSONArray("subjects")
                 for (i in 0 until subdata.length()) {
                     val temp = subdata.getJSONObject(i)
-                    subjects_data.add(
+                    subjectsData.add(
                         SubjectsData(
                             temp.getString("subject"),
                             temp.getString("subjectCode"),
@@ -81,13 +81,14 @@ class EnterMarksFragment : Fragment() {
 //            val result = bundle.getString("bundleKey")
 //            // Do something with the result...
 //        }
-        grades_schema = JSONObject()
+        //TODO("use api for grades_scheme")
+        gradesSchema = JSONObject()
         grades = ArrayList(listOf("O", "A+", "A", "B+", "B", "C", "F"))
         for (i in 0 until grades.size) {
             if (grades[i] == "F")
-                grades_schema.put("F", 0)
+                gradesSchema.put("F", 0)
             else
-                grades_schema.put(grades[i], 10 - i)
+                gradesSchema.put(grades[i], 10 - i)
         }
         llv = v.findViewById(R.id.llv_grade_button)
         Runnable {
@@ -106,7 +107,6 @@ class EnterMarksFragment : Fragment() {
 //        addButton(llh,"2")
 //        addButton(llh,"3")
         return v
-        TODO("use api for grades_scheme")
     }
 
     //    fun addButton(llh: ViewGroup, text: String) {
@@ -117,17 +117,17 @@ class EnterMarksFragment : Fragment() {
 //        }
 //        llh.addView(v, v.layoutParams)
 //    }
-    fun buttononclick(v: View) {
+    private fun buttononclick(v: View) {
         index++
         calculatecgpa((v as Button).text.toString())
-        if (index == subjects_data.size) {
+        if (index == subjectsData.size) {
             goToProfile()
         } else
             updateSub()
     }
 
     private fun calculatecgpa(grade: String) {
-        val point: Float = grades_schema[grade].toString().toFloat()
+        val point: Float = gradesSchema[grade].toString().toFloat()
         viewModel.setVal(
             "semcreds",
             (viewModel.getVal<Float>("semcreds")
@@ -155,7 +155,7 @@ class EnterMarksFragment : Fragment() {
         })
         viewModel.getElement<Int>("subdataindex").observe(this, Observer {
             view!!.findViewById<TextView>(R.id.txt_subjectsleft).text =
-                "Subjects Left: " + (subjects_data.size - index - 1)
+                "Subjects Left: " + (subjectsData.size - index - 1)
         })
         viewModel.getElement<Float>("cgpa").observe(this, Observer {
             view!!.findViewById<TextView>(R.id.txt_cgpa).text = "CGPA: $it"
@@ -163,8 +163,8 @@ class EnterMarksFragment : Fragment() {
     }
 
     private fun updateSub() {
-        viewModel.setVal("subject", subjects_data[index].subName)
-        viewModel.setVal("credits", subjects_data[index].credits)
+        viewModel.setVal("subject", subjectsData[index].subName)
+        viewModel.setVal("credits", subjectsData[index].credits)
         viewModel.setVal("subdataindex", index)
     }
 }

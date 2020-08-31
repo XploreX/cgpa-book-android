@@ -137,7 +137,7 @@ class CollegeChoose : Fragment() {
             dashBoardButton(v)
         }.run()
         fun validateerror(): Boolean {
-            var flag: Boolean = true
+            var flag = true
             for (i in 0 until arrayList.size) {
                 val temp = arrayList[i].et
                 if (temp.text.toString() == "") {
@@ -151,7 +151,7 @@ class CollegeChoose : Fragment() {
         }
         v.findViewById<ImageView>(R.id.btnnext).setOnClickListener {
 
-            val flag = true//validateerror()
+            val flag = validateerror()
             if (flag)
                 activity!!.supportFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, EnterMarksFragment())

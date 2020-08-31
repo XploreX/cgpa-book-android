@@ -114,10 +114,10 @@ fun Fragment.addButton(
 
 fun addparams(url: String, body: JSONObject): String {
     var newurl = url
-    var first: Boolean = true
+    var first = true
     for (key in body.keys()) {
         val value: String = body.getString(key)
-        if (first != true) {
+        if (!first) {
             newurl += "&"
         }
         if (value.trim() != "")

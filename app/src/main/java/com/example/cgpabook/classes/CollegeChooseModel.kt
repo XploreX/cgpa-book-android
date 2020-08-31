@@ -9,7 +9,7 @@ data class CollegeChooseModel(
     var name: String, var url: String,
     var id: String
 ) {
-    lateinit var pv: View
+    private lateinit var pv: View
     lateinit var et: EditText
     lateinit var tv: TextView
     fun setParv(v: View) {

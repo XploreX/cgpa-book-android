@@ -42,7 +42,7 @@ class NewCreditsFragment : Fragment() {
 
     }
 
-    fun buttononclick(v: View) {
+    private fun buttononclick(v: View) {
         Toast.makeText(context, (v as Button).text, Toast.LENGTH_SHORT).show()
     }
 

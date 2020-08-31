@@ -14,7 +14,7 @@ import com.google.android.material.navigation.NavigationView
 class NavigationActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
-    var lastchecked: Int = R.id.nav_profile
+    private var lastchecked: Int = R.id.nav_profile
     private lateinit var navView: NavigationView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,13 +74,16 @@ class NavigationActivity : AppCompatActivity() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawers()
         } else {
-            if (supportFragmentManager.backStackEntryCount == 2) {
-                supportFragmentManager.popBackStack()
-                navView.setCheckedItem(R.id.nav_profile)
-            } else if (supportFragmentManager.backStackEntryCount == 1) {
-                finish()
-            } else
-                super.onBackPressed()
+            when (supportFragmentManager.backStackEntryCount) {
+                2 -> {
+                    supportFragmentManager.popBackStack()
+                    navView.setCheckedItem(R.id.nav_profile)
+                }
+                1 -> {
+                    finish()
+                }
+                else -> super.onBackPressed()
+            }
         }
     }
 
