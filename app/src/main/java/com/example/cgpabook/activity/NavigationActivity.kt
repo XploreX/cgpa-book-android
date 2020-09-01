@@ -1,14 +1,22 @@
 package com.example.cgpabook.activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.FragmentManager
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
+import com.bumptech.glide.Glide
 import com.example.cgpabook.R
 import com.example.cgpabook.ui.Profile.ProfileFragment
+import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.ui.updateCGPA.CollegeChoose
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 
 class NavigationActivity : AppCompatActivity() {
@@ -16,9 +24,17 @@ class NavigationActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private var lastchecked: Int = R.id.nav_profile
     private lateinit var navView: NavigationView
+    private lateinit var viewModel: SharedViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_navigation)
+        viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
+        if (intent != null) {
+            viewModel.setVal("name", intent.getStringExtra("name"))
+            viewModel.setVal("email", intent.getStringExtra("email"))
+            viewModel.setVal("photoUrl", intent.getStringExtra("photoUrl"))
+            println("photourl :${intent.getStringExtra("photoUrl")}")
+        }
         drawerLayout = findViewById(R.id.drawer_layout)
         supportFragmentManager.beginTransaction()
             .replace(
@@ -30,6 +46,18 @@ class NavigationActivity : AppCompatActivity() {
         navView.setCheckedItem(R.id.nav_profile)
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
+                R.id.nav_sign_out -> {
+                    val intent = Intent(this, MainActivity::class.java)
+                    val gso =
+                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                            .requestEmail()
+                            .build()
+                    val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+                    mGoogleSignInClient.signOut().addOnCompleteListener {
+                        startActivity(intent)
+                        finish()
+                    }
+                }
                 R.id.nav_feedback -> {
                     Toast.makeText(this@NavigationActivity, "Feedback", Toast.LENGTH_SHORT).show()
                     navView.setCheckedItem(lastchecked)
@@ -68,6 +96,20 @@ class NavigationActivity : AppCompatActivity() {
             drawerLayout.closeDrawers()
             return@setNavigationItemSelectedListener true
         }
+        viewModel.getElement<String>("name").observe(this, Observer {
+            navView.getHeaderView(0).findViewById<TextView>(R.id.txt_name).text = it
+        })
+        viewModel.getElement<String>("email").observe(this, Observer {
+            navView.getHeaderView(0).findViewById<TextView>(R.id.txt_email).text = it
+        })
+        viewModel.getElement<String>("photoUrl").observe(this, Observer {
+            if (it != null)
+                Glide.with(navView).load(it).circleCrop()
+                    .into(navView.getHeaderView(0).findViewById(R.id.imgprofile))
+            else
+                Glide.with(this).load(getDrawable(R.drawable.profilepic))
+                    .circleCrop().into(navView.getHeaderView(0).findViewById(R.id.imgprofile))
+        })
     }
 
     override fun onBackPressed() {
