@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,6 +22,7 @@ import com.example.cgpabook.activity.SearchActivity
 import com.example.cgpabook.classes.CollegeChooseModel
 import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.utils.*
+import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 
 
@@ -66,6 +68,11 @@ class CollegeChoose : Fragment() {
 
         val requiredbody = ArrayList<String>(listOf("college", "course", "branch", "semester"))
         val queue = MySingleton.getInstance(context as Context)
+        viewModel.getElement<String>("college").observe(this, Observer {
+            activity!!.findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
+                .findViewById<TextView>(R.id.txt_email).text =
+                it
+        })
 
         fun makelayouts() {
             for (j in 0 until arrayList.size) {

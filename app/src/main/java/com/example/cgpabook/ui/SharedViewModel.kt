@@ -21,4 +21,5 @@ class SharedViewModel : ViewModel() {
     fun <T> getVal(s: String): T? {
         return getElement<T>(s).value
     }
+
 }

@@ -5,11 +5,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.android.volley.Request
@@ -28,6 +26,9 @@ class EnterMarksFragment : Fragment() {
     private lateinit var grades: ArrayList<String>
     private lateinit var llh: LinearLayout
     private lateinit var gradesSchema: JSONObject
+    private val semcreds = ArrayList<Float>()
+    private val totalcreds = ArrayList<Int>()
+    private var cgpa = MutableLiveData<Float>()
     private var subjectsData: ArrayList<SubjectsData> = ArrayList()
     private var index: Int = 0
     override fun onCreateView(
@@ -104,8 +105,15 @@ class EnterMarksFragment : Fragment() {
             }
         }.run()
 
-//        addButton(llh,"2")
-//        addButton(llh,"3")
+        v.findViewById<ImageView>(R.id.btn_undo).setOnClickListener {
+            if (index > 0) {
+                index--
+                semcreds.removeAt(index)
+                totalcreds.removeAt(index)
+                updatecgpa()
+                updateSub()
+            }
+        }
         return v
     }
 
@@ -119,7 +127,9 @@ class EnterMarksFragment : Fragment() {
 //    }
     private fun buttononclick(v: View) {
         index++
-        calculatecgpa((v as Button).text.toString())
+        Runnable {
+            calculatecgpa((v as Button).text.toString())
+        }.run()
         if (index == subjectsData.size) {
             goToProfile()
         } else
@@ -128,22 +138,22 @@ class EnterMarksFragment : Fragment() {
 
     private fun calculatecgpa(grade: String) {
         val point: Float = gradesSchema[grade].toString().toFloat()
-        viewModel.setVal(
-            "semcreds",
-            (viewModel.getVal<Float>("semcreds")
-                ?: 0.0F) + (point * (viewModel.getVal<Int>("credits"))!!)
-        )
-        viewModel.setVal(
-            "totcreds",
-            (viewModel.getVal<Float>("totcreds") ?: 0.0F) + (viewModel.getVal<Int>("credits")!!)
-        )
-        println(viewModel.getVal<Float>("semcreds"))
-        println(viewModel.getVal<Float>("totcreds"))
-        println(point)
-        viewModel.setVal(
-            "cgpa",
-            viewModel.getVal<Float>("semcreds")?.div(viewModel.getVal<Float>("totcreds") as Float)
-        )
+        semcreds.add(point * (viewModel.getVal<Int>("credits"))!!)
+        totalcreds.add(viewModel.getVal<Int>("credits")!!)
+        updatecgpa()
+    }
+
+    private fun updatecgpa() {
+        var semcred = 0.0F
+        var denom = 0.0F
+        for (i in 0 until semcreds.size) {
+            semcred += semcreds[i]
+            denom += totalcreds[i]
+        }
+        if (denom == 0.0F)
+            cgpa.value = 0.0F
+        else
+            cgpa.value = semcred / denom
     }
 
     private fun initviewmodel() {
@@ -157,8 +167,11 @@ class EnterMarksFragment : Fragment() {
             view!!.findViewById<TextView>(R.id.txt_subjectsleft).text =
                 "Subjects Left: " + (subjectsData.size - index - 1)
         })
-        viewModel.getElement<Float>("cgpa").observe(this, Observer {
-            view!!.findViewById<TextView>(R.id.txt_cgpa).text = "CGPA: $it"
+        cgpa.observe(this, Observer {
+            if (it == 0.0F)
+                view!!.findViewById<TextView>(R.id.txt_cgpa).text = ""
+            else
+                view!!.findViewById<TextView>(R.id.txt_cgpa).text = "CGPA: $it"
         })
     }
 

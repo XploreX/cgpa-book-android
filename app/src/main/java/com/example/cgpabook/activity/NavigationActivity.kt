@@ -33,7 +33,6 @@ class NavigationActivity : AppCompatActivity() {
             viewModel.setVal("name", intent.getStringExtra("name"))
             viewModel.setVal("email", intent.getStringExtra("email"))
             viewModel.setVal("photoUrl", intent.getStringExtra("photoUrl"))
-            println("photourl :${intent.getStringExtra("photoUrl")}")
         }
         drawerLayout = findViewById(R.id.drawer_layout)
         supportFragmentManager.beginTransaction()
