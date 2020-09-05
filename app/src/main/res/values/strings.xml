@@ -18,7 +18,7 @@
     <string name="none">None</string>
     <string name="sign_in_with_google">Sign in with Google</string>
     <string name="sign_in_with_facebook">Sign in with Facebook</string>
-    <string name="dummy_cgpa">CGPA: 8.23</string>
+    <string name="dummy_cgpa">CGPA: None</string>
     <string name="search_icon">search icon</string>
     <string name="undo">undo</string>
     <string name="search">Search</string>

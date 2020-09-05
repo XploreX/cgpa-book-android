@@ -13,11 +13,9 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.android.volley.Request
 import com.android.volley.Response
 import com.example.cgpabook.R
-import com.example.cgpabook.activity.MySingleton
 import com.example.cgpabook.activity.SearchActivity
 import com.example.cgpabook.classes.CollegeChooseModel
 import com.example.cgpabook.ui.SharedViewModel
@@ -38,37 +36,43 @@ class CollegeChoose : Fragment() {
         val v = inflater.inflate(R.layout.fragment_college_choose, container, false)
         val ll = v.findViewById<LinearLayout>(R.id.llcollegeselect)
         val domainurl = "http://cgpa-book.herokuapp.com"
-        viewModel = activity?.run { ViewModelProviders.of(this)[SharedViewModel::class.java] }
-            ?: throw Exception("Invalid Activity")
+        viewModel = getViewModel()
         arrayList =
             ArrayList(
                 listOf(
                     CollegeChooseModel(
                         "Select College",
                         "$domainurl/academia/college-list?",
-                        "college"
+                        HelperStrings.college
                     ),
                     CollegeChooseModel(
                         "Select Course",
                         "$domainurl/academia/course-list?"
-                        , "course"
+                        , HelperStrings.course
                     ),
                     CollegeChooseModel(
                         "Select Branch",
                         "$domainurl/academia/branch-list?"
-                        , "branch"
+                        , HelperStrings.branch
                     ),
                     CollegeChooseModel(
                         "Select Semester",
                         "$domainurl/academia/semester-list?"
-                        , "semester"
+                        , HelperStrings.semester
                     )
                 )
             )
 
-        val requiredbody = ArrayList<String>(listOf("college", "course", "branch", "semester"))
+        val requiredbody = ArrayList<String>(
+            listOf(
+                HelperStrings.college,
+                HelperStrings.course,
+                HelperStrings.branch,
+                HelperStrings.semester
+            )
+        )
         val queue = MySingleton.getInstance(context as Context)
-        viewModel.getElement<String>("college").observe(this, Observer {
+        viewModel.getElement<String>(HelperStrings.college).observe(this, Observer {
             activity!!.findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
                 .findViewById<TextView>(R.id.txt_email).text =
                 it
@@ -126,7 +130,7 @@ class CollegeChoose : Fragment() {
                                 if (!errorhandler(it)) {
                                     Toast.makeText(
                                         context,
-                                        "Network/Server Issue. Please try again",
+                                        it.message.toString(),
                                         Toast.LENGTH_SHORT
                                     ).show()
                                 }

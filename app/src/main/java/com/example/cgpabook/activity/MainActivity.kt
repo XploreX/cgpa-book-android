@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import com.example.cgpabook.R
+import com.example.cgpabook.utils.HelperStrings
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
@@ -72,9 +73,9 @@ class MainActivity : AppCompatActivity() {
     private fun updateUI(account: GoogleSignInAccount?) {
         if (account != null) {
             val intent = Intent(this, NavigationActivity::class.java)
-            intent.putExtra("name", account.displayName)
-            intent.putExtra("email", account.email)
-            intent.putExtra("photoUrl", account.photoUrl)
+            intent.putExtra(HelperStrings.name, account.displayName)
+            intent.putExtra(HelperStrings.email, account.email)
+            intent.putExtra(HelperStrings.photourl, account.photoUrl)
             startActivity(intent)
             finish()
         }

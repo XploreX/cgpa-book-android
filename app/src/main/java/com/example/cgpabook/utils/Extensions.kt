@@ -11,8 +11,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProviders
 import com.android.volley.VolleyError
 import com.example.cgpabook.R
+import com.example.cgpabook.ui.SharedViewModel
 import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 
@@ -128,6 +130,10 @@ fun addparams(url: String, body: JSONObject): String {
 }
 
 fun Fragment.errorhandler(it: VolleyError): Boolean {
+    if (it == null) {
+        Toast.makeText(context, "Couldn't connect", Toast.LENGTH_SHORT).show()
+        return true
+    }
     if (it.networkResponse == null)
         return false
     val ob = JSONObject(String(it.networkResponse.data))
@@ -146,4 +152,8 @@ fun Fragment.goToProfile() {
     activity!!.supportFragmentManager.popBackStack(resources.getString(R.string.menu_profile), 0)
     activity!!.findViewById<NavigationView>(R.id.nav_view).setCheckedItem(R.id.nav_profile)
 }
+
+fun Fragment.getViewModel() =
+    (activity?.run { ViewModelProviders.of(this)[SharedViewModel::class.java] }
+        ?: throw Exception("Invalid Activity"))
 

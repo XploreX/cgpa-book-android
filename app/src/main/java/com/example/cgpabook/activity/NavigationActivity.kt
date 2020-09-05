@@ -12,9 +12,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.example.cgpabook.R
-import com.example.cgpabook.ui.Profile.ProfileFragment
 import com.example.cgpabook.ui.SharedViewModel
+import com.example.cgpabook.ui.profile.ProfileFragment
 import com.example.cgpabook.ui.updateCGPA.CollegeChoose
+import com.example.cgpabook.utils.HelperStrings
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
@@ -30,9 +31,9 @@ class NavigationActivity : AppCompatActivity() {
         setContentView(R.layout.activity_navigation)
         viewModel = ViewModelProviders.of(this)[SharedViewModel::class.java]
         if (intent != null) {
-            viewModel.setVal("name", intent.getStringExtra("name"))
-            viewModel.setVal("email", intent.getStringExtra("email"))
-            viewModel.setVal("photoUrl", intent.getStringExtra("photoUrl"))
+            viewModel.setVal(HelperStrings.name, intent.getStringExtra(HelperStrings.name))
+            viewModel.setVal(HelperStrings.email, intent.getStringExtra(HelperStrings.email))
+            viewModel.setVal(HelperStrings.photourl, intent.getStringExtra(HelperStrings.photourl))
         }
         drawerLayout = findViewById(R.id.drawer_layout)
         supportFragmentManager.beginTransaction()
@@ -95,13 +96,17 @@ class NavigationActivity : AppCompatActivity() {
             drawerLayout.closeDrawers()
             return@setNavigationItemSelectedListener true
         }
-        viewModel.getElement<String>("name").observe(this, Observer {
+        viewModel.getElement<String>(HelperStrings.name).observe(this, Observer {
             navView.getHeaderView(0).findViewById<TextView>(R.id.txt_name).text = it
         })
-        viewModel.getElement<String>("email").observe(this, Observer {
+        viewModel.getElement<String>(HelperStrings.email).observe(this, Observer {
             navView.getHeaderView(0).findViewById<TextView>(R.id.txt_email).text = it
         })
-        viewModel.getElement<String>("photoUrl").observe(this, Observer {
+        viewModel.getElement<Float>(HelperStrings.cgpa).observe(this, Observer {
+            navView.getHeaderView(0).findViewById<TextView>(R.id.txt_cgpa).text =
+                "CGPA: ${String.format("%.2f", it)}"
+        })
+        viewModel.getElement<String>(HelperStrings.photourl).observe(this, Observer {
             if (it != null)
                 Glide.with(navView).load(it).circleCrop()
                     .into(navView.getHeaderView(0).findViewById(R.id.imgprofile))

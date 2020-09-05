@@ -1,4 +1,4 @@
-package com.example.cgpabook.activity
+package com.example.cgpabook.utils
 
 import android.content.Context
 import com.android.volley.Request
@@ -27,7 +27,8 @@ class MySingleton private constructor(private val ctx: Context) {
         @Synchronized
         fun getInstance(context: Context): MySingleton? {
             if (instance == null) {
-                instance = MySingleton(context)
+                instance =
+                    MySingleton(context)
             }
             return instance
         }

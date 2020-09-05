@@ -9,11 +9,9 @@ import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import com.android.volley.Request
 import com.android.volley.Response
 import com.example.cgpabook.R
-import com.example.cgpabook.activity.MySingleton
 import com.example.cgpabook.classes.SubjectsData
 import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.utils.*
@@ -37,14 +35,18 @@ class EnterMarksFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v = inflater.inflate(R.layout.fragment_enter_marks, container, false)
-        viewModel = activity?.run { ViewModelProviders.of(this)[SharedViewModel::class.java] }
-            ?: throw Exception("Invalid Activity")
+        viewModel = getViewModel()
         dashBoardButton(v)
         initviewmodel()
         var url = "http://cgpa-book.herokuapp.com/academia/semester?"
         val body = JSONObject()
         val temp = ArrayList(
-            listOf("college", "course", "branch", "semester")
+            listOf(
+                HelperStrings.college,
+                HelperStrings.course,
+                HelperStrings.branch,
+                HelperStrings.semester
+            )
         )
         for (i in temp) {
             body.put(i, viewModel.getVal<String>(i))
@@ -131,6 +133,7 @@ class EnterMarksFragment : Fragment() {
             calculatecgpa((v as Button).text.toString())
         }.run()
         if (index == subjectsData.size) {
+            viewModel.setVal(HelperStrings.cgpa, cgpa.value)
             goToProfile()
         } else
             updateSub()
@@ -171,7 +174,8 @@ class EnterMarksFragment : Fragment() {
             if (it == 0.0F)
                 view!!.findViewById<TextView>(R.id.txt_cgpa).text = ""
             else
-                view!!.findViewById<TextView>(R.id.txt_cgpa).text = "CGPA: $it"
+                view!!.findViewById<TextView>(R.id.txt_cgpa).text =
+                    "CGPA: ${String.format("%.2f", it)}"
         })
     }
 
