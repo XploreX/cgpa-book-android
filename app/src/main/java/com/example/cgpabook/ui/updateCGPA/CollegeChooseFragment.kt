@@ -35,7 +35,7 @@ class CollegeChoose : Fragment() {
     ): View? {
         val v = inflater.inflate(R.layout.fragment_college_choose, container, false)
         val ll = v.findViewById<LinearLayout>(R.id.llcollegeselect)
-        val domainurl = "http://cgpa-book.herokuapp.com"
+        val domainurl = HelperStrings.url
         viewModel = getViewModel()
         arrayList =
             ArrayList(
@@ -71,6 +71,8 @@ class CollegeChoose : Fragment() {
                 HelperStrings.semester
             )
         )
+        if (viewModel.getVal<Int>(HelperStrings.unlocked) == null)
+            viewModel.setVal(HelperStrings.unlocked, 0)
         val queue = MySingleton.getInstance(context as Context)
         viewModel.getElement<String>(HelperStrings.college).observe(this, Observer {
             activity!!.findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
@@ -90,10 +92,9 @@ class CollegeChoose : Fragment() {
                 ll.addView(b)
                 val et = i.et
                 val value = viewModel.getVal<String>(arrayList[j].id)
-                if (j != 0 && value.toString().trim() == "") {
-                    et.isEnabled = false
-                }
+                et.isEnabled = j <= viewModel.getVal<Int>(HelperStrings.unlocked)!!
                 et.setOnClickListener {
+                    et.error = null
                     val body = JSONObject()
                     val intent = Intent(context, SearchActivity::class.java)
                     var url = i.url
@@ -107,10 +108,8 @@ class CollegeChoose : Fragment() {
                     body.put("ignorecase", "true")
                     url = addparams(url, body)
                     println(url)
-                    for (k in j + 1 until arrayList.size) {
-                        viewModel.setVal(arrayList[k].id, "")
-                        arrayList[k].et.isEnabled = false
-                    }
+
+                    viewModel.setVal(HelperStrings.unlocked, j + 1)
                     val progressBar = progressBarInit(v)
                     val jsonObjectRequest =
                         JsonArrayRequestCached(
@@ -128,11 +127,12 @@ class CollegeChoose : Fragment() {
                             },
                             Response.ErrorListener {
                                 if (!errorhandler(it)) {
-                                    Toast.makeText(
-                                        context,
-                                        it.message.toString(),
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    if (it.message != null)
+                                        Toast.makeText(
+                                            context,
+                                            it.message.toString(),
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                 }
                                 progressBarDestroy(v, progressBar)
                             }
@@ -179,12 +179,20 @@ class CollegeChoose : Fragment() {
             for (j in 0 until arrayList.size) {
                 if (j == requestCode) {
                     if (data != null) {
-                        viewModel.setVal(
-                            arrayList[j].id,
-                            data.getStringExtra("selected")!!.split("(")[0].trim()
-                        )
-                        if (j + 1 < arrayList.size)
-                            arrayList[j + 1].et.isEnabled = true
+                        if (arrayList[j].et.text.toString() != data.getStringExtra("selected")!!
+                                .split("(")[0].trim()
+                        ) {
+                            viewModel.setVal(
+                                arrayList[j].id,
+                                data.getStringExtra("selected")!!.split("(")[0].trim()
+                            )
+                            for (k in j + 1 until arrayList.size) {
+                                viewModel.setVal(arrayList[k].id, "")
+                                arrayList[k].et.isEnabled = false
+                            }
+                            if (j + 1 < arrayList.size)
+                                arrayList[j + 1].et.isEnabled = true
+                        }
                     } else {
                         Toast.makeText(context, "Some error occurred", Toast.LENGTH_SHORT).show()
                     }

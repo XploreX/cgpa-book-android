@@ -2,7 +2,8 @@ package com.example.cgpabook.utils
 
 class HelperStrings {
     companion object {
-        val url = ""
+        val unlocked = "unlocked"
+        val url = "http://cgpa-book.herokuapp.com"
         val cgpa = "cgpa"
         val college = "college"
         val name = "name"

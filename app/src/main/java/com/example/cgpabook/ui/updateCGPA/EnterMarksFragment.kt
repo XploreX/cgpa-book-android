@@ -38,7 +38,7 @@ class EnterMarksFragment : Fragment() {
         viewModel = getViewModel()
         dashBoardButton(v)
         initviewmodel()
-        var url = "http://cgpa-book.herokuapp.com/academia/semester?"
+        var url = HelperStrings.url + "/academia/semester?"
         val body = JSONObject()
         val temp = ArrayList(
             listOf(
