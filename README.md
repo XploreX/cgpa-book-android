@@ -23,12 +23,12 @@ For looking at the structured view, use the Project view
   - **SharedViewModel.kt** : 
     - A dynamic view model which will stays in NavigationActivity.kt context
     - It has a template invokation of new MutableLiveData variables
-      - `viewModel.getElement<T>("Tag")` : returns the MutableLiveData<T> Element if exist or creates a new one if it doesn't and returns the newly created on
+      - `viewModel.getElement<T>("Tag")` : returns the MutableLiveData<T> Element if exist or creates a new one if it doesn't and returns the newly created one
       - `viewModel.getVal<T>("Tag")` : returns the value of the element
       - `viewModel.setVal<T>("Tag",val)` : sets the value of the element
         (getVal and setVal both handles automatic creation of variable if doesn't exist)
   - Profile
-    - **ProfileFragment.kt** : This is the main profile fragment visible to use after logging in(work pending) -> returns the value of the element
+    - **ProfileFragment.kt** : This is the main profile fragment visible to use after logging in(work pending)
   - UpdateCGPA
     - **CollegeChooseFragment.kt** : Calls SearchActivity for each of the fields and stores the data in view model so that it remains for the duration of the activity
     - **EnterMarksFragment.kt** : This comes after above fragment and handles calling the subjects api and retrieving the subjects and the grades and updates CGPA
