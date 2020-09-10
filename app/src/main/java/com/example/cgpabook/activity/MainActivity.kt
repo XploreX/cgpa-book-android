@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import com.example.cgpabook.R
 import com.example.cgpabook.utils.HelperStrings
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
 //        val intent = Intent(this, NavigationActivity::class.java)
 //        startActivity(intent)
         // Configure sign-in to request the user's ID, email address, and basic
