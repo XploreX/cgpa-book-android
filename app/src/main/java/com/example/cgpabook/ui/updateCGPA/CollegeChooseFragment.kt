@@ -28,6 +28,7 @@ class CollegeChoose : Fragment() {
     //    private var idlist: ArrayList<EditText> = ArrayList()
     private lateinit var viewModel: SharedViewModel
     private lateinit var arrayList: ArrayList<CollegeChooseModel>
+    private val user: JSONObject = JSONObject()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,8 +75,8 @@ class CollegeChoose : Fragment() {
         if (viewModel.getVal<Int>(HelperStrings.unlocked) == null)
             viewModel.setVal(HelperStrings.unlocked, 0)
         val queue = MySingleton.getInstance(context as Context)
-        viewModel.getElement<String>(HelperStrings.college).observe(this, Observer {
-            activity!!.findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
+        viewModel.getElement<String>(HelperStrings.college).observe(viewLifecycleOwner, Observer {
+            requireActivity().findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
                 .findViewById<TextView>(R.id.txt_email).text =
                 it
         })
@@ -85,9 +86,10 @@ class CollegeChoose : Fragment() {
                 val i = arrayList[j]
                 val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
                 i.setParv(b)
-                viewModel.getElement<String>(arrayList[j].id).observe(this, Observer { t ->
-                    arrayList[j].et.setText(t)
-                })
+                viewModel.getElement<String>(arrayList[j].id)
+                    .observe(viewLifecycleOwner, Observer { t ->
+                        arrayList[j].et.setText(t)
+                    })
                 i.tv.text = i.name
                 ll.addView(b)
                 val et = i.et
@@ -163,10 +165,11 @@ class CollegeChoose : Fragment() {
         v.findViewById<ImageView>(R.id.btnnext).setOnClickListener {
 
             val flag = validateerror()
-            if (flag)
-                activity!!.supportFragmentManager.beginTransaction()
+            if (flag) {
+                requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, EnterMarksFragment())
                     .addToBackStack(getString(R.string.menu_update_cgpa)).commit()
+            }
         }
 
         return v

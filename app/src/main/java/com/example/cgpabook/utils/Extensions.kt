@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProviders
 import com.android.volley.VolleyError
 import com.example.cgpabook.R
@@ -154,6 +155,11 @@ fun Fragment.goToProfile() {
 }
 
 fun Fragment.getViewModel() =
-    (activity?.run { ViewModelProviders.of(this)[SharedViewModel::class.java] }
+    (activity?.run {
+        ViewModelProviders.of(
+            this,
+            SavedStateViewModelFactory(application, this)
+        )[SharedViewModel::class.java]
+    }
         ?: throw Exception("Invalid Activity"))
 

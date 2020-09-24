@@ -34,7 +34,7 @@ class ProfileFragment : Fragment() {
         for (value in arraylist) {
             when (value) {
                 HelperStrings.photourl -> {
-                    viewModel.getElement<String>(value).observe(this, Observer {
+                    viewModel.getElement<String>(value).observe(viewLifecycleOwner, Observer {
                         if (it != null)
                             Glide.with(this).load(it).circleCrop()
                                 .into(v.findViewById(R.id.imgprofile))
@@ -45,18 +45,18 @@ class ProfileFragment : Fragment() {
                     })
                 }
                 HelperStrings.name -> {
-                    viewModel.getElement<String>(value).observe(this, Observer {
+                    viewModel.getElement<String>(value).observe(viewLifecycleOwner, Observer {
                         v.findViewById<TextView>(R.id.profile_name).text = it
                     })
                 }
                 HelperStrings.college -> {
-                    viewModel.getElement<String>(value).observe(this, Observer {
+                    viewModel.getElement<String>(value).observe(viewLifecycleOwner, Observer {
                         v.findViewById<TextView>(R.id.profile_college).text = it
                     })
                 }
                 HelperStrings.cgpa -> {
                     v.findViewById<TextView>(R.id.profile_cgpa).text = "CGPA: None"
-                    viewModel.getElement<Float>(value).observe(this, Observer {
+                    viewModel.getElement<Double>(value).observe(viewLifecycleOwner, Observer {
                         v.findViewById<TextView>(R.id.profile_cgpa).text =
                             "CGPA: ${String.format("%.2f", it)}"
                     })
@@ -67,7 +67,7 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        viewModel.getElement<String>(HelperStrings.name).observe(this, Observer {
+        viewModel.getElement<String>(HelperStrings.name).observe(viewLifecycleOwner, Observer {
         })
         dashBoardButton(v)
 

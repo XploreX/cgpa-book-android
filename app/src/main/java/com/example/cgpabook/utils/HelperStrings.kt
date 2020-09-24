@@ -2,15 +2,15 @@ package com.example.cgpabook.utils
 
 class HelperStrings {
     companion object {
-        val unlocked = "unlocked"
-        val url = "http://cgpa-book.herokuapp.com"
-        val cgpa = "cgpa"
-        val college = "college"
-        val name = "name"
-        val email = "email"
-        val photourl = "photoUrl"
-        val semester = "semester"
-        val branch = "branch"
-        val course = "course"
+        const val unlocked = "unlocked"
+        const val url = "http://cgpa-book.herokuapp.com"
+        const val cgpa = "cgpa"
+        const val college = "college"
+        const val name = "name"
+        const val email = "email"
+        const val photourl = "photoUrl"
+        const val semester = "semester"
+        const val branch = "branch"
+        const val course = "course"
     }
 }
