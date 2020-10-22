@@ -31,7 +31,7 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
 
     fun <T> setVal(k: String, s: T) {
         val temp = getElement<T>(k)
-        state.set(k, s)
+        state.set(k, s.toString())
         backup.put(k, s)
         temp.value = s
     }

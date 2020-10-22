@@ -12,5 +12,7 @@ class HelperStrings {
         const val semester = "semester"
         const val branch = "branch"
         const val course = "course"
+        const val semdata = "semdata"
+        const val sgpa = "sgpa"
     }
 }

@@ -24,11 +24,14 @@ class EnterMarksFragment : Fragment() {
     private lateinit var grades: ArrayList<String>
     private lateinit var llh: LinearLayout
     private lateinit var gradesSchema: JSONObject
-    private val semcreds = ArrayList<Float>()
+    private val semcreds = ArrayList<Double>()
     private val totalcreds = ArrayList<Int>()
-    private var cgpa = MutableLiveData<Float>()
+    private var sgpa = MutableLiveData<Double>()
     private var subjectsData: ArrayList<SubjectsData> = ArrayList()
     private var index: Int = 0
+    private val subjectsView = MutableLiveData<String>()
+    private val creditsView = MutableLiveData<Int>()
+    private val subjectsLeftView = MutableLiveData<Int>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -133,55 +136,61 @@ class EnterMarksFragment : Fragment() {
             calculatecgpa((v as Button).text.toString())
         }.run()
         if (index == subjectsData.size) {
-            viewModel.setVal(HelperStrings.cgpa, cgpa.value)
+            val semData = JSONObject()
+            semData.put(HelperStrings.sgpa, sgpa.value)
+            viewModel.setVal(HelperStrings.cgpa, sgpa.value)
+            val semNo = viewModel.getVal<String>(HelperStrings.semester).toString()
+            val array = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
+            array.put(semNo, semData)
+            viewModel.setVal(HelperStrings.semdata, array)
             goToProfile()
         } else
             updateSub()
     }
 
     private fun calculatecgpa(grade: String) {
-        val point: Float = gradesSchema[grade].toString().toFloat()
-        semcreds.add(point * (viewModel.getVal<Int>("credits"))!!)
-        totalcreds.add(viewModel.getVal<Int>("credits")!!)
+        val point: Double = gradesSchema[grade].toString().toDouble()
+        semcreds.add(point * (creditsView.value)!!)
+        totalcreds.add(creditsView.value!!)
         updatecgpa()
     }
 
     private fun updatecgpa() {
-        var semcred = 0.0F
-        var denom = 0.0F
+        var semcred = 0.0
+        var denom = 0.0
         for (i in 0 until semcreds.size) {
             semcred += semcreds[i]
             denom += totalcreds[i]
         }
-        if (denom == 0.0F)
-            cgpa.value = 0.0F
+        if (denom == 0.0)
+            sgpa.value = 0.0
         else
-            cgpa.value = semcred / denom
+            sgpa.value = semcred / denom
     }
 
     private fun initviewmodel() {
-        viewModel.getElement<String>("subject").observe(this, Observer {
-            view!!.findViewById<TextView>(R.id.txt_subname).text = "Subject Name: $it"
+        subjectsView.observe(viewLifecycleOwner, Observer {
+            requireView().findViewById<TextView>(R.id.txt_subname).text = "Subject Name: $it"
         })
-        viewModel.getElement<Int>("credits").observe(this, Observer {
-            view!!.findViewById<TextView>(R.id.txt_credits).text = "Credits: $it"
+        creditsView.observe(viewLifecycleOwner, Observer {
+            requireView().findViewById<TextView>(R.id.txt_credits).text = "Credits: $it"
         })
-        viewModel.getElement<Int>("subdataindex").observe(this, Observer {
-            view!!.findViewById<TextView>(R.id.txt_subjectsleft).text =
+        subjectsLeftView.observe(viewLifecycleOwner, Observer {
+            requireView().findViewById<TextView>(R.id.txt_subjectsleft).text =
                 "Subjects Left: " + (subjectsData.size - index - 1)
         })
-        cgpa.observe(this, Observer {
-            if (it == 0.0F)
-                view!!.findViewById<TextView>(R.id.txt_cgpa).text = ""
+        sgpa.observe(viewLifecycleOwner, Observer {
+            if (it == 0.0)
+                requireView().findViewById<TextView>(R.id.txt_cgpa).text = ""
             else
-                view!!.findViewById<TextView>(R.id.txt_cgpa).text =
+                requireView().findViewById<TextView>(R.id.txt_cgpa).text =
                     "CGPA: ${String.format("%.2f", it)}"
         })
     }
 
     private fun updateSub() {
-        viewModel.setVal("subject", subjectsData[index].subName)
-        viewModel.setVal("credits", subjectsData[index].credits)
-        viewModel.setVal("subdataindex", index)
+        subjectsView.value = subjectsData[index].subName
+        creditsView.value = subjectsData[index].credits
+        subjectsLeftView.value = index
     }
 }

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -13,6 +14,7 @@ import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.utils.HelperStrings
 import com.example.cgpabook.utils.dashBoardButton
 import com.example.cgpabook.utils.getViewModel
+import org.json.JSONObject
 
 class ProfileFragment : Fragment() {
 
@@ -67,9 +69,27 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        viewModel.getElement<String>(HelperStrings.name).observe(viewLifecycleOwner, Observer {
-        })
         dashBoardButton(v)
+        val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
+        viewModel.getElement<JSONObject>(HelperStrings.semdata)
+            .observe(viewLifecycleOwner, Observer {
+                ll.removeAllViews()
+                println(it)
+                var cgpa = 0.0
+                for (i in it.keys()) {
+                    val v1 = LayoutInflater.from(context)
+                        .inflate(R.layout.profile_semdata, ll as ViewGroup, false)
+                    val semdata: JSONObject = it.get(i) as JSONObject
+                    v1.findViewById<TextView>(R.id.semno).text = "Semester No: $i"
+                    v1.findViewById<TextView>(R.id.sgpa).text =
+                        "SGPA: ${String.format("%.2f", semdata.get(HelperStrings.sgpa))}"
+                    cgpa += (semdata.get(HelperStrings.sgpa) as Double)
+                    ll.addView(v1)
+                }
+                cgpa /= it.length()
+                viewModel.setVal(HelperStrings.cgpa, cgpa)
+            })
+
 
         return v
     }

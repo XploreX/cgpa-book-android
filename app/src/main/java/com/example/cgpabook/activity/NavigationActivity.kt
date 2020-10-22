@@ -65,10 +65,12 @@ class NavigationActivity : AppCompatActivity() {
                 R.id.nav_feedback -> {
                     Toast.makeText(this@NavigationActivity, "Feedback", Toast.LENGTH_SHORT).show()
                     navView.setCheckedItem(lastchecked)
+                    println("lastchecked:$lastchecked,${it.itemId},${navView.checkedItem?.itemId}")
                 }
                 R.id.nav_share -> {
                     Toast.makeText(this@NavigationActivity, "Share", Toast.LENGTH_SHORT).show()
                     navView.setCheckedItem(lastchecked)
+                    println("lastchecked:$lastchecked,${it.itemId},${navView.checkedItem?.itemId}")
                 }
                 R.id.nav_profile -> {
                     supportFragmentManager.popBackStack(
@@ -98,6 +100,7 @@ class NavigationActivity : AppCompatActivity() {
                 }
             }
             drawerLayout.closeDrawers()
+            viewModel.writeToDisk()
             return@setNavigationItemSelectedListener true
         }
         viewModel.getElement<String>(HelperStrings.name).observe(this, Observer {

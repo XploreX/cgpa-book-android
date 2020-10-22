@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -29,6 +30,7 @@ class CollegeChoose : Fragment() {
     private lateinit var viewModel: SharedViewModel
     private lateinit var arrayList: ArrayList<CollegeChooseModel>
     private val user: JSONObject = JSONObject()
+    private var queue: MySingleton? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -74,7 +76,7 @@ class CollegeChoose : Fragment() {
         )
         if (viewModel.getVal<Int>(HelperStrings.unlocked) == null)
             viewModel.setVal(HelperStrings.unlocked, 0)
-        val queue = MySingleton.getInstance(context as Context)
+        queue = MySingleton.getInstance(context as Context)
         viewModel.getElement<String>(HelperStrings.college).observe(viewLifecycleOwner, Observer {
             requireActivity().findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
                 .findViewById<TextView>(R.id.txt_email).text =
@@ -94,7 +96,16 @@ class CollegeChoose : Fragment() {
                 ll.addView(b)
                 val et = i.et
                 val value = viewModel.getVal<String>(arrayList[j].id)
-                et.isEnabled = j <= viewModel.getVal<Int>(HelperStrings.unlocked)!!
+                viewModel.getElement<Int>(HelperStrings.unlocked)
+                    .observe(viewLifecycleOwner, Observer {
+                        for (j in 0 until arrayList.size) {
+                            println("unlocked$it, ${j <= it}")
+                            arrayList[j].et.isEnabled = (j <= it)
+                        }
+                    })
+                if (viewModel.getVal<Int>(HelperStrings.unlocked) == null)
+                    viewModel.setVal(HelperStrings.unlocked, 0)
+                //et.isEnabled = j <= viewModel.getVal<Int>(HelperStrings.unlocked)!!
                 et.setOnClickListener {
                     et.error = null
                     val body = JSONObject()
@@ -111,7 +122,7 @@ class CollegeChoose : Fragment() {
                     url = addparams(url, body)
                     println(url)
 
-                    viewModel.setVal(HelperStrings.unlocked, j + 1)
+//                    viewModel.setVal(HelperStrings.unlocked, j + 1)
                     val progressBar = progressBarInit(v)
                     val jsonObjectRequest =
                         JsonArrayRequestCached(
@@ -189,12 +200,13 @@ class CollegeChoose : Fragment() {
                                 arrayList[j].id,
                                 data.getStringExtra("selected")!!.split("(")[0].trim()
                             )
+                            viewModel.setVal(HelperStrings.unlocked, j + 1)
                             for (k in j + 1 until arrayList.size) {
                                 viewModel.setVal(arrayList[k].id, "")
                                 arrayList[k].et.isEnabled = false
                             }
-                            if (j + 1 < arrayList.size)
-                                arrayList[j + 1].et.isEnabled = true
+//                            if (j + 1 < arrayList.size)
+//                                arrayList[j + 1].et.isEnabled = true
                         }
                     } else {
                         Toast.makeText(context, "Some error occurred", Toast.LENGTH_SHORT).show()
@@ -203,5 +215,11 @@ class CollegeChoose : Fragment() {
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    override fun onStop() {
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        queue?.getRequestQueue()?.cancelAll { true }
+        super.onStop()
     }
 }

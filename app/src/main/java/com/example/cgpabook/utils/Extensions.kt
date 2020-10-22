@@ -1,5 +1,7 @@
 package com.example.cgpabook.utils
 
+import android.content.Context
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,8 @@ import com.example.cgpabook.R
 import com.example.cgpabook.ui.SharedViewModel
 import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
+import java.io.*
+
 
 fun ViewGroup.inflate(@LayoutRes layoutRes: Int, attachToRoot: Boolean = false): View {
     return LayoutInflater.from(context).inflate(layoutRes, this, attachToRoot)
@@ -131,12 +135,14 @@ fun addparams(url: String, body: JSONObject): String {
 }
 
 fun Fragment.errorhandler(it: VolleyError): Boolean {
-    if (it == null) {
-        Toast.makeText(context, "Couldn't connect", Toast.LENGTH_SHORT).show()
+    if (it.networkResponse == null) {
+        it.printStackTrace()
+        if (!isNetworkConnected()) {
+            Toast.makeText(context, "Couldn't connect, No Internet", Toast.LENGTH_SHORT).show()
+        } else
+            Toast.makeText(context, "Couldn't connect", Toast.LENGTH_SHORT).show()
         return true
     }
-    if (it.networkResponse == null)
-        return false
     val ob = JSONObject(String(it.networkResponse.data))
     Toast.makeText(context, ob.getString("message"), Toast.LENGTH_SHORT).show()
     return true
@@ -154,6 +160,12 @@ fun Fragment.goToProfile() {
     activity!!.findViewById<NavigationView>(R.id.nav_view).setCheckedItem(R.id.nav_profile)
 }
 
+fun Fragment.isNetworkConnected(): Boolean {
+    val cm = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    val x = cm?.activeNetworkInfo?.isConnected
+    return cm?.activeNetwork != null && x!!
+}
+
 fun Fragment.getViewModel() =
     (activity?.run {
         ViewModelProviders.of(
@@ -163,3 +175,43 @@ fun Fragment.getViewModel() =
     }
         ?: throw Exception("Invalid Activity"))
 
+fun Fragment.writeToDisk(filename: String, jsonObject: JSONObject): Boolean {
+    try {
+        val fos: FileOutputStream =
+            FileOutputStream(File(filename), false)
+        if (jsonObject != null) {
+            fos.write(jsonObject.toString().toByteArray())
+        }
+        fos.close()
+        return true
+    } catch (fileNotFound: FileNotFoundException) {
+        return false
+    } catch (ioException: IOException) {
+        return false
+    }
+    return false
+}
+
+fun Fragment.readFromDisk(filename: String): JSONObject? {
+    val file = File(filename)
+    if (file.exists()) {
+        try {
+            val fis: FileInputStream =
+                FileInputStream(file)//getApplication<Application>().openFileInput(filename)
+            val isr = InputStreamReader(fis)
+            val bufferedReader = BufferedReader(isr)
+            val sb = StringBuilder()
+            var line: String?
+            while (bufferedReader.readLine().also { line = it } != null) {
+                sb.append(line)
+            }
+            fis.close()
+            return JSONObject(sb.toString())
+        } catch (fileNotFound: FileNotFoundException) {
+            return null
+        } catch (ioException: IOException) {
+            return null
+        }
+    }
+    return null
+}
