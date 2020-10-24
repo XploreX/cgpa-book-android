@@ -1,9 +1,6 @@
 package com.example.cgpabook.utils
 
-import com.android.volley.Cache
-import com.android.volley.NetworkResponse
-import com.android.volley.ParseError
-import com.android.volley.Response
+import com.android.volley.*
 import com.android.volley.toolbox.HttpHeaderParser
 import com.android.volley.toolbox.JsonRequest
 import org.json.JSONObject
@@ -29,31 +26,33 @@ class JsonObjectRequestCached(
                 HttpHeaderParser.parseCacheHeaders(response)
             if (cacheEntry == null) {
                 cacheEntry = Cache.Entry()
+                cacheEntry.data = response!!.data
+                var headerValue: String? = response.headers["Date"]
+                if (headerValue != null) {
+                    cacheEntry.serverDate =
+                        HttpHeaderParser.parseDateAsEpoch(headerValue)
+                }
+                headerValue = response.headers["Last-Modified"]
+                if (headerValue != null) {
+                    cacheEntry.lastModified =
+                        HttpHeaderParser.parseDateAsEpoch(headerValue)
+                }
+                cacheEntry.responseHeaders = response.headers
             }
             val cacheHitButRefreshed =
                 3 * 60 * 1000.toLong() // in 3 minutes cache will be hit, but also refreshed on background
             val cacheExpired =
-                24 * 60 * 60 * 1000.toLong() // in 24 hours this cache entry expires completely
+                30 * 24 * 60 * 60 * 1000.toLong() // in 30*24 hours this cache entry expires completely
             val now = System.currentTimeMillis()
             val softExpire = now + cacheHitButRefreshed
             val ttl = now + cacheExpired
-            cacheEntry.data = response!!.data
             cacheEntry.softTtl = softExpire
             cacheEntry.ttl = ttl
-            var headerValue: String? = response.headers["Date"]
-            if (headerValue != null) {
-                cacheEntry.serverDate =
-                    HttpHeaderParser.parseDateAsEpoch(headerValue)
-            }
-            headerValue = response.headers["Last-Modified"]
-            if (headerValue != null) {
-                cacheEntry.lastModified =
-                    HttpHeaderParser.parseDateAsEpoch(headerValue)
-            }
-            cacheEntry.responseHeaders = response.headers
+
             val jsonString = JSONObject(
                 String(
-                    response.data, Charset.forName(HttpHeaderParser.parseCharset(response.headers))
+                    response!!.data,
+                    Charset.forName(HttpHeaderParser.parseCharset(response.headers))
                 )
             )
             return Response.success(
@@ -63,5 +62,15 @@ class JsonObjectRequestCached(
         } catch (e: UnsupportedEncodingException) {
             return Response.error(ParseError(e))
         }
+    }
+
+    override fun deliverError(error: VolleyError?) {
+        if (error is NoConnectionError) {
+            val entry = this.cacheEntry
+            if (entry != null) {
+                return
+            }
+        }
+        super.deliverError(error)
     }
 }

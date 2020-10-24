@@ -99,7 +99,6 @@ class CollegeChoose : Fragment() {
                 viewModel.getElement<Int>(HelperStrings.unlocked)
                     .observe(viewLifecycleOwner, Observer {
                         for (j in 0 until arrayList.size) {
-                            println("unlocked$it, ${j <= it}")
                             arrayList[j].et.isEnabled = (j <= it)
                         }
                     })
@@ -141,11 +140,10 @@ class CollegeChoose : Fragment() {
                             Response.ErrorListener {
                                 if (!errorhandler(it)) {
                                     if (it.message != null)
-                                        Toast.makeText(
-                                            context,
-                                            it.message.toString(),
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                       showToast(
+                                           it.message.toString(),
+                                           Toast.LENGTH_SHORT
+                                       )
                                 }
                                 progressBarDestroy(v, progressBar)
                             }
@@ -209,7 +207,7 @@ class CollegeChoose : Fragment() {
 //                                arrayList[j + 1].et.isEnabled = true
                         }
                     } else {
-                        Toast.makeText(context, "Some error occurred", Toast.LENGTH_SHORT).show()
+                        showToast("Some error occurred", Toast.LENGTH_SHORT)
                     }
                 }
             }

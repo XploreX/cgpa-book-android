@@ -33,6 +33,7 @@ class ProfileFragment : Fragment() {
                 HelperStrings.photourl
             )
         )
+        viewModel.setVal(HelperStrings.cgpa, 0.0)
         for (value in arraylist) {
             when (value) {
                 HelperStrings.photourl -> {
@@ -60,7 +61,7 @@ class ProfileFragment : Fragment() {
                     v.findViewById<TextView>(R.id.profile_cgpa).text = "CGPA: None"
                     viewModel.getElement<Double>(value).observe(viewLifecycleOwner, Observer {
                         v.findViewById<TextView>(R.id.profile_cgpa).text =
-                            "CGPA: ${String.format("%.2f", it)}"
+                            "CGPA: ${String.format("%.2f", it.toDouble())}"
                     })
                 }
                 else -> {
@@ -75,15 +76,18 @@ class ProfileFragment : Fragment() {
             .observe(viewLifecycleOwner, Observer {
                 ll.removeAllViews()
                 println(it)
-                var cgpa = 0.0
+                var cgpa: Double = 0.0
                 for (i in it.keys()) {
                     val v1 = LayoutInflater.from(context)
                         .inflate(R.layout.profile_semdata, ll as ViewGroup, false)
                     val semdata: JSONObject = it.get(i) as JSONObject
                     v1.findViewById<TextView>(R.id.semno).text = "Semester No: $i"
                     v1.findViewById<TextView>(R.id.sgpa).text =
-                        "SGPA: ${String.format("%.2f", semdata.get(HelperStrings.sgpa))}"
-                    cgpa += (semdata.get(HelperStrings.sgpa) as Double)
+                        "SGPA: ${String.format(
+                            "%.2f",
+                            semdata.get(HelperStrings.sgpa).toString().toDouble()
+                        )}"
+                    cgpa += (semdata.get(HelperStrings.sgpa).toString().toDouble())
                     ll.addView(v1)
                 }
                 cgpa /= it.length()

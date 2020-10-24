@@ -10,6 +10,7 @@ import com.example.cgpabook.R
 import com.example.cgpabook.utils.addButton
 import com.example.cgpabook.utils.createllh
 import com.example.cgpabook.utils.dashBoardButton
+import com.example.cgpabook.utils.showToast
 
 class NewCreditsFragment : Fragment() {
     override fun onCreateView(
@@ -22,7 +23,7 @@ class NewCreditsFragment : Fragment() {
         val llv = v.findViewById<LinearLayout>(R.id.llv_grade_button)
         v.findViewById<TextView>(R.id.txtcollege).text = "Select Subjects"
         v.findViewById<EditText>(R.id.college_choose).setOnClickListener {
-            Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show()
+            showToast("Clicked", Toast.LENGTH_SHORT)
         }
         Runnable {
             var llh: LinearLayout = createllh(llv)
@@ -43,7 +44,7 @@ class NewCreditsFragment : Fragment() {
     }
 
     private fun buttononclick(v: View) {
-        Toast.makeText(context, (v as Button).text, Toast.LENGTH_SHORT).show()
+        showToast((v as Button).text, Toast.LENGTH_SHORT)
     }
 
 }

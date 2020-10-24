@@ -25,12 +25,12 @@ class EnterMarksFragment : Fragment() {
     private lateinit var llh: LinearLayout
     private lateinit var gradesSchema: JSONObject
     private val semcreds = ArrayList<Double>()
-    private val totalcreds = ArrayList<Int>()
+    private val totalcreds = ArrayList<Double>()
     private var sgpa = MutableLiveData<Double>()
     private var subjectsData: ArrayList<SubjectsData> = ArrayList()
     private var index: Int = 0
     private val subjectsView = MutableLiveData<String>()
-    private val creditsView = MutableLiveData<Int>()
+    private val creditsView = MutableLiveData<Double>()
     private val subjectsLeftView = MutableLiveData<Int>()
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -69,7 +69,7 @@ class EnterMarksFragment : Fragment() {
                         SubjectsData(
                             temp.getString("subject"),
                             temp.getString("subjectCode"),
-                            temp.getInt("credits")
+                            temp.getDouble("credits")
                         )
                     )
                 }
@@ -78,7 +78,7 @@ class EnterMarksFragment : Fragment() {
             }
         }, Response.ErrorListener {
             if (!errorhandler(it))
-                Toast.makeText(context, "Could not acquire grades", Toast.LENGTH_SHORT).show()
+                showToast("Could not acquire grades", Toast.LENGTH_SHORT)
             progressBarDestroy(v, pb)
         })
         queue?.addToRequestQueue(jsonObject)
@@ -135,23 +135,13 @@ class EnterMarksFragment : Fragment() {
         Runnable {
             calculatecgpa((v as Button).text.toString())
         }.run()
-        if (index == subjectsData.size) {
-            val semData = JSONObject()
-            semData.put(HelperStrings.sgpa, sgpa.value)
-            viewModel.setVal(HelperStrings.cgpa, sgpa.value)
-            val semNo = viewModel.getVal<String>(HelperStrings.semester).toString()
-            val array = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
-            array.put(semNo, semData)
-            viewModel.setVal(HelperStrings.semdata, array)
-            goToProfile()
-        } else
-            updateSub()
+        updateSub()
     }
 
     private fun calculatecgpa(grade: String) {
         val point: Double = gradesSchema[grade].toString().toDouble()
         semcreds.add(point * (creditsView.value)!!)
-        totalcreds.add(creditsView.value!!)
+        totalcreds.add(creditsView.value!!.toDouble())
         updatecgpa()
     }
 
@@ -189,8 +179,19 @@ class EnterMarksFragment : Fragment() {
     }
 
     private fun updateSub() {
-        subjectsView.value = subjectsData[index].subName
-        creditsView.value = subjectsData[index].credits
-        subjectsLeftView.value = index
+        if (index >= subjectsData.size) {
+            val semData = JSONObject()
+            semData.put(HelperStrings.sgpa, sgpa.value)
+            viewModel.setVal(HelperStrings.cgpa, sgpa.value)
+            val semNo = viewModel.getVal<String>(HelperStrings.semester).toString()
+            val array = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
+            array.put(semNo, semData)
+            viewModel.setVal(HelperStrings.semdata, array)
+            goToProfile()
+        } else {
+            subjectsView.value = subjectsData[index].subName
+            creditsView.value = subjectsData[index].credits
+            subjectsLeftView.value = index
+        }
     }
 }

@@ -4,21 +4,28 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
+import com.example.cgpabook.utils.readFromDisk
 import org.json.JSONObject
-import java.io.*
 
 
-class SharedViewModel(application: Application, private val state: SavedStateHandle) :
+class SharedViewModel(application: Application, val state: SavedStateHandle) :
     AndroidViewModel(application) {
-    private var uiStuff = JSONObject()//HashMap<String, MutableLiveData<String>>()
-    private val filename = getApplication<Application>().filesDir.path + "/data"
-    private var backup = JSONObject()
+    var uiStuff = JSONObject()//HashMap<String, MutableLiveData<String>>()
+    val filename = getApplication<Application>().filesDir.path + "/data"
+    var backup = JSONObject()
 
     fun <T> getElement(s: String): MutableLiveData<T> {
         if (!uiStuff.has(s)) {
             when {
                 state.contains(s) -> uiStuff.put(s, state.getLiveData<T>(s))
-                backup.has(s) -> uiStuff.put(s, MutableLiveData<T>(backup.get(s) as T))
+                backup.has(s) -> {
+                    try {
+                        uiStuff.put(s, MutableLiveData(backup.get(s) as T))
+                    } catch (e: Throwable) {
+                        e.printStackTrace()
+                        uiStuff.put(s, MutableLiveData<T>())
+                    }
+                }
                 else -> uiStuff.put(s, MutableLiveData<T>())
             }
         }
@@ -26,7 +33,14 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
     }
 
     init {
-        readFromDisk()
+        try {
+            readFromDisk(filename).let {
+                backup = if (it != null) JSONObject(it) else JSONObject()
+            }
+        } catch (e: org.json.JSONException) {
+            e.printStackTrace()
+            backup = JSONObject()
+        }
     }
 
     fun <T> setVal(k: String, s: T) {
@@ -41,43 +55,7 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
     }
 
     fun writeToDisk() {
-        try {
-            val fos: FileOutputStream =
-                FileOutputStream(File(filename), false)
-            if (backup != null) {
-                fos.write(backup.toString().toByteArray())
-            }
-            fos.close()
-            true
-        } catch (fileNotFound: FileNotFoundException) {
-            false
-        } catch (ioException: IOException) {
-            false
-        }
-        backup.toString()
+        com.example.cgpabook.utils.writeToDisk(filename, backup.toString())
     }
 
-    private fun readFromDisk() {
-        val file = File(filename)
-        if (file.exists()) {
-            try {
-                val fis: FileInputStream =
-                    FileInputStream(file)//getApplication<Application>().openFileInput(filename)
-                val isr = InputStreamReader(fis)
-                val bufferedReader = BufferedReader(isr)
-                val sb = StringBuilder()
-                var line: String?
-                while (bufferedReader.readLine().also { line = it } != null) {
-                    sb.append(line)
-                }
-                fis.close()
-                backup = JSONObject(sb.toString())
-            } catch (fileNotFound: FileNotFoundException) {
-                null
-            } catch (ioException: IOException) {
-                null
-            }
-        }
-        //backup=Gson().fromJson(FileReader(filename),JSONObject::class.java)
-    }
 }

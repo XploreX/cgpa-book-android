@@ -60,10 +60,12 @@ fun Fragment.dashBoardButton(v: View) {
 }
 
 fun Fragment.progressBarInit(v: View): ProgressBar {
-    activity!!.window.setFlags(
-        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
-        WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
-    )
+    activity?.let {
+        it.window.setFlags(
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+        )
+    }
     val progressBar =
         ProgressBar(context)
     val params = RelativeLayout.LayoutParams(
@@ -86,7 +88,9 @@ fun Fragment.progressBarInit(v: View): ProgressBar {
 
 fun Fragment.progressBarDestroy(v: View, p: ProgressBar) {
     val progressOverlay = v.findViewById<FrameLayout>(R.id.progress_overlay)
-    activity!!.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    activity?.let {
+        it.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
     progressOverlay.visibility = View.GONE
     p.visibility = View.GONE
 }
@@ -138,26 +142,34 @@ fun Fragment.errorhandler(it: VolleyError): Boolean {
     if (it.networkResponse == null) {
         it.printStackTrace()
         if (!isNetworkConnected()) {
-            Toast.makeText(context, "Couldn't connect, No Internet", Toast.LENGTH_SHORT).show()
+            showToast("Couldn't connect, No Internet", Toast.LENGTH_SHORT)
         } else
-            Toast.makeText(context, "Couldn't connect", Toast.LENGTH_SHORT).show()
+            showToast("Couldn't connect", Toast.LENGTH_SHORT)
         return true
     }
     val ob = JSONObject(String(it.networkResponse.data))
-    Toast.makeText(context, ob.getString("message"), Toast.LENGTH_SHORT).show()
+    showToast(ob.getString("message"), Toast.LENGTH_SHORT)
     return true
 }
 
 fun Fragment.errorhandler(ob: JSONObject): Boolean {
     if (!ob.has("message"))
         return false
-    Toast.makeText(context, ob.getString("message"), Toast.LENGTH_SHORT).show()
+    showToast(ob.getString("message"), Toast.LENGTH_SHORT)
     return true
 }
 
+fun Fragment.showToast(message: CharSequence, duration: Int) {
+    if (context != null) {
+        Toast.makeText(context, message, duration).show()
+    }
+}
+
 fun Fragment.goToProfile() {
-    activity!!.supportFragmentManager.popBackStack(resources.getString(R.string.menu_profile), 0)
-    activity!!.findViewById<NavigationView>(R.id.nav_view).setCheckedItem(R.id.nav_profile)
+    activity?.let {
+        it.supportFragmentManager.popBackStack(resources.getString(R.string.menu_profile), 0)
+        it.findViewById<NavigationView>(R.id.nav_view).setCheckedItem(R.id.nav_profile)
+    }
 }
 
 fun Fragment.isNetworkConnected(): Boolean {
@@ -175,24 +187,7 @@ fun Fragment.getViewModel() =
     }
         ?: throw Exception("Invalid Activity"))
 
-fun Fragment.writeToDisk(filename: String, jsonObject: JSONObject): Boolean {
-    try {
-        val fos: FileOutputStream =
-            FileOutputStream(File(filename), false)
-        if (jsonObject != null) {
-            fos.write(jsonObject.toString().toByteArray())
-        }
-        fos.close()
-        return true
-    } catch (fileNotFound: FileNotFoundException) {
-        return false
-    } catch (ioException: IOException) {
-        return false
-    }
-    return false
-}
-
-fun Fragment.readFromDisk(filename: String): JSONObject? {
+fun readFromDisk(filename: String): String? {
     val file = File(filename)
     if (file.exists()) {
         try {
@@ -206,7 +201,7 @@ fun Fragment.readFromDisk(filename: String): JSONObject? {
                 sb.append(line)
             }
             fis.close()
-            return JSONObject(sb.toString())
+            return sb.toString()
         } catch (fileNotFound: FileNotFoundException) {
             return null
         } catch (ioException: IOException) {
@@ -214,4 +209,20 @@ fun Fragment.readFromDisk(filename: String): JSONObject? {
         }
     }
     return null
+}
+
+fun writeToDisk(filename: String, string: String?): Boolean {
+    return try {
+        val fos: FileOutputStream =
+            FileOutputStream(File(filename), false)
+        if (string != null) {
+            fos.write(string.toByteArray())
+        }
+        fos.close()
+        true
+    } catch (fileNotFound: FileNotFoundException) {
+        false
+    } catch (ioException: IOException) {
+        false
+    }
 }
