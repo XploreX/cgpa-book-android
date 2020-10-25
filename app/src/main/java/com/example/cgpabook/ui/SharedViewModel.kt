@@ -8,11 +8,11 @@ import com.example.cgpabook.utils.readFromDisk
 import org.json.JSONObject
 
 
-class SharedViewModel(application: Application, val state: SavedStateHandle) :
+class SharedViewModel(application: Application, private val state: SavedStateHandle) :
     AndroidViewModel(application) {
-    var uiStuff = JSONObject()//HashMap<String, MutableLiveData<String>>()
-    val filename = getApplication<Application>().filesDir.path + "/data"
-    var backup = JSONObject()
+    private var uiStuff = JSONObject()
+    private val filename = getApplication<Application>().filesDir.path + "/data"
+    private var backup = JSONObject()
 
     fun <T> getElement(s: String): MutableLiveData<T> {
         if (!uiStuff.has(s)) {

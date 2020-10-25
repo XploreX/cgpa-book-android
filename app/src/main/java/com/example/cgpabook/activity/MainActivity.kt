@@ -20,23 +20,21 @@ class MainActivity : AppCompatActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 0
     override fun onCreate(savedInstanceState: Bundle?) {
+        // init on create
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // disable night mode support
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-//        val intent = Intent(this, NavigationActivity::class.java)
-//        startActivity(intent)
+
         // Configure sign-in to request the user's ID, email address, and basic
-// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
-        // Configure sign-in to request the user's ID, email address, and basic
-// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+        // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
+
         val gso =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build()
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-        findViewById<Button>(R.id.googlesignin).setOnClickListener {
-            signIn()
-        }
+
+        findViewById<Button>(R.id.googlesignin).setOnClickListener { signIn() }
     }
 
     private fun signIn() {
@@ -51,17 +49,14 @@ class MainActivity : AppCompatActivity() {
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
             // a listener.
-            val task =
-                GoogleSignIn.getSignedInAccountFromIntent(data)
+            val task = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
         }
     }
 
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
-            val account =
-                completedTask.getResult(ApiException::class.java)
-
+            val account = completedTask.getResult(ApiException::class.java)
             // Signed in successfully, show authenticated UI.
             updateUI(account)
         } catch (e: ApiException) {
@@ -77,19 +72,21 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, NavigationActivity::class.java)
             intent.putExtra(HelperStrings.name, account.displayName)
             intent.putExtra(HelperStrings.email, account.email)
-            intent.putExtra(HelperStrings.photourl, account.photoUrl)
+            account.photoUrl?.let { photoUrl ->
+                intent.putExtra(HelperStrings.photoUrl, photoUrl.toString())
+            }
             startActivity(intent)
             finish()
         }
     }
 
     override fun onStart() {
+
         // Check for existing Google Sign In account, if the user is already signed in
-// the GoogleSignInAccount will be non-null.
-        // Check for existing Google Sign In account, if the user is already signed in
-// the GoogleSignInAccount will be non-null.
+        // the GoogleSignInAccount will be non-null.
         val account = GoogleSignIn.getLastSignedInAccount(this)
         updateUI(account)
         super.onStart()
+
     }
 }

@@ -19,23 +19,31 @@ class SearchActivity : AppCompatActivity() {
     lateinit var recyclerAdapter: RecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        // OnCreate Init
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
+
+        // Receive the List from Intent
         if (intent != null) {
             arrayList = intent.getStringArrayListExtra("List") as ArrayList<String>
         }
-        println(arrayList)
-        linearLayoutManager = LinearLayoutManager(this)
-        recyclerView = findViewById(R.id.recyclerview)
-        recyclerView.layoutManager = linearLayoutManager
+        // Debug: println(arrayList)
+
+        // Init Variables
         changedArrayList = arrayList
+        recyclerView = findViewById(R.id.recyclerview)
+
+        // Init the recycler View
+        linearLayoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = linearLayoutManager
         recyclerAdapter = RecyclerAdapter(changedArrayList, this)
         recyclerView.adapter = recyclerAdapter
+
+        // Search Bar Listener
         findViewById<EditText>(R.id.search_bar).addTextChangedListener(
             object : TextWatcher {
-                override fun afterTextChanged(s: Editable?) {
-                }
-
+                override fun afterTextChanged(s: Editable?) {}
                 override fun beforeTextChanged(
                     s: CharSequence?,
                     start: Int,
@@ -53,9 +61,7 @@ class SearchActivity : AppCompatActivity() {
                     recyclerAdapter.array = changedArrayList
                     recyclerAdapter.notifyDataSetChanged()
                 }
-
             }
-
         )
     }
 }

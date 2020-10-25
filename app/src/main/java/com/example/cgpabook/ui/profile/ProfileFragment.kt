@@ -20,23 +20,34 @@ class ProfileFragment : Fragment() {
 
     private lateinit var viewModel: SharedViewModel
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        // Fragment Init
         val v = inflater.inflate(R.layout.fragment_profile, container, false)
         viewModel = getViewModel()
-        val arraylist = ArrayList<String>(
+
+        // Setup the Display Variables
+        val viewModelObserverStrings = ArrayList<String>(
             listOf(
                 HelperStrings.name,
                 HelperStrings.cgpa,
                 HelperStrings.college,
-                HelperStrings.photourl
+                HelperStrings.photoUrl
             )
         )
+
+        // Init Variables
+        val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
+
+        // This is to fix Issue #1
         viewModel.setVal(HelperStrings.cgpa, 0.0)
-        for (value in arraylist) {
+
+        for (value in viewModelObserverStrings) {
             when (value) {
-                HelperStrings.photourl -> {
+                HelperStrings.photoUrl -> {
                     viewModel.getElement<String>(value).observe(viewLifecycleOwner, Observer {
                         if (it != null)
                             Glide.with(this).load(it).circleCrop()
@@ -58,10 +69,12 @@ class ProfileFragment : Fragment() {
                     })
                 }
                 HelperStrings.cgpa -> {
-                    v.findViewById<TextView>(R.id.profile_cgpa).text = "CGPA: None"
                     viewModel.getElement<Double>(value).observe(viewLifecycleOwner, Observer {
-                        v.findViewById<TextView>(R.id.profile_cgpa).text =
-                            "CGPA: ${String.format("%.2f", it.toDouble())}"
+                        if (it == 0.0)
+                            v.findViewById<TextView>(R.id.profile_cgpa).text = "CGPA: None"
+                        else
+                            v.findViewById<TextView>(R.id.profile_cgpa).text =
+                                "CGPA: ${String.format("%.2f", it.toDouble())}"
                     })
                 }
                 else -> {
@@ -70,30 +83,48 @@ class ProfileFragment : Fragment() {
             }
         }
 
+        // Add the top right DashBoard Button
         dashBoardButton(v)
-        val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
+
         viewModel.getElement<JSONObject>(HelperStrings.semdata)
-            .observe(viewLifecycleOwner, Observer {
+            .observe(viewLifecycleOwner, Observer { allSemData ->
+                // Clear the Linear Layout
                 ll.removeAllViews()
-                println(it)
+
+                // Debug: println(allSemData)
                 var cgpa: Double = 0.0
-                for (i in it.keys()) {
+
+                // Get all the Semester Nos
+                for (i in allSemData.keys()) {
+
+                    //Inflate a View
                     val v1 = LayoutInflater.from(context)
                         .inflate(R.layout.profile_semdata, ll as ViewGroup, false)
-                    val semdata: JSONObject = it.get(i) as JSONObject
+
+                    // Get the semData from the allSemData
+                    val semData: JSONObject = allSemData.get(i) as JSONObject
+
+                    // Setup the Data from semData to view
                     v1.findViewById<TextView>(R.id.semno).text = "Semester No: $i"
                     v1.findViewById<TextView>(R.id.sgpa).text =
                         "SGPA: ${String.format(
                             "%.2f",
-                            semdata.get(HelperStrings.sgpa).toString().toDouble()
+                            semData.get(HelperStrings.sgpa).toString().toDouble()
                         )}"
-                    cgpa += (semdata.get(HelperStrings.sgpa).toString().toDouble())
+
+                    // Add the SGPAs for final CGPA
+                    cgpa += (semData.get(HelperStrings.sgpa).toString().toDouble())
+
+                    // Add the view to Linear Layout
                     ll.addView(v1)
                 }
-                cgpa /= it.length()
+
+                // Divide the Added SGPAs by the total no of semesters
+                cgpa /= allSemData.length()
+
+                // Update the new CGPA
                 viewModel.setVal(HelperStrings.cgpa, cgpa)
             })
-
 
         return v
     }

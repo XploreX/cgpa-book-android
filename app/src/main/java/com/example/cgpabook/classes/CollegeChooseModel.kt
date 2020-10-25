@@ -7,14 +7,14 @@ import com.example.cgpabook.R
 
 data class CollegeChooseModel(
     var name: String, var url: String,
-    var id: String
+    var label: String
 ) {
     private lateinit var pv: View
-    lateinit var et: EditText
-    lateinit var tv: TextView
-    fun setParv(v: View) {
+    lateinit var editText: EditText
+    lateinit var textView: TextView
+    fun initView(v: View) {
         pv = v
-        tv = v.findViewById(R.id.txtcollege)
-        et = v.findViewById(R.id.college_choose)
+        textView = v.findViewById(R.id.txtcollege)
+        editText = v.findViewById(R.id.college_choose)
     }
 }

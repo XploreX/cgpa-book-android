@@ -50,6 +50,7 @@ fun AppCompatActivity.showSystemUI() {
             or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
 }
 
+// Injects the hamburger icon and makes it clickable in fragment with root layout v
 fun Fragment.dashBoardButton(v: View) {
     val layoutInflater = LayoutInflater.from(context)
     val c = layoutInflater.inflate(R.layout.dashboard_button, v as ViewGroup, false)
@@ -59,15 +60,19 @@ fun Fragment.dashBoardButton(v: View) {
     v.addView(c)
 }
 
+// Initializes a progress Bar and returns a ProgressBar object to be used for progressBarDestroy
 fun Fragment.progressBarInit(v: View): ProgressBar {
+
+    // Disable taps when progress bar is being shown
     activity?.let {
         it.window.setFlags(
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
         )
     }
-    val progressBar =
-        ProgressBar(context)
+
+    // init progress bar
+    val progressBar = ProgressBar(context)
     val params = RelativeLayout.LayoutParams(
         RelativeLayout.LayoutParams.WRAP_CONTENT,
         RelativeLayout.LayoutParams.WRAP_CONTENT
@@ -75,19 +80,23 @@ fun Fragment.progressBarInit(v: View): ProgressBar {
     params.addRule(RelativeLayout.CENTER_IN_PARENT)
     val relativeLayout = RelativeLayout(context)
     relativeLayout.addView(progressBar, params)
-    val frameparams = ViewGroup.LayoutParams(
+    val layoutParams = ViewGroup.LayoutParams(
         ViewGroup.LayoutParams.MATCH_PARENT,
         ViewGroup.LayoutParams.MATCH_PARENT
     )
-    (v as ViewGroup).addView(relativeLayout, frameparams)
+    (v as ViewGroup).addView(relativeLayout, layoutParams)
     progressBar.visibility = View.VISIBLE
+
+    // overlay.xml layout should be included in the file where you need to show progressbar
     val progressOverlay = v.findViewById<FrameLayout>(R.id.progress_overlay)
     progressOverlay.visibility = View.VISIBLE
     return progressBar
 }
 
+// Destroys the progress bar and restores functionality
 fun Fragment.progressBarDestroy(v: View, p: ProgressBar) {
     val progressOverlay = v.findViewById<FrameLayout>(R.id.progress_overlay)
+    // Restores taps
     activity?.let {
         it.window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
     }
@@ -95,6 +104,7 @@ fun Fragment.progressBarDestroy(v: View, p: ProgressBar) {
     p.visibility = View.GONE
 }
 
+// creates a horizontal linear layout and adds it to vertical linear layout given in the parameter
 fun Fragment.createllh(llv: ViewGroup): LinearLayout {
     val llh = LinearLayout(context)
     val params = ViewGroup.LayoutParams(
@@ -106,23 +116,20 @@ fun Fragment.createllh(llv: ViewGroup): LinearLayout {
     return llh
 }
 
+// adds the grade_button to linear layout
+// TODO: can be made more generic by providing layout to be used in params also
 fun Fragment.addButton(
-    llh: ViewGroup,
-    text: String,
-    button: Int,
-    color: Int,
-    bar: (m: View) -> Unit
+    llh: ViewGroup, text: String, button: Int, color: Int, bar: (m: View) -> Unit
 ) {
     val v = LayoutInflater.from(context).inflate(R.layout.grade_buttons, llh, false) as Button
     v.text = text
     v.setTextColor(resources.getColor(color, null))
-    v.setOnClickListener {
-        bar(v)
-    }
+    v.setOnClickListener { bar(v) }
     llh.addView(v, v.layoutParams)
     v.background = resources.getDrawable(button, null)
 }
 
+// adds params to get request of a url("?" should be present in the url in the end)
 fun addparams(url: String, body: JSONObject): String {
     var newurl = url
     var first = true
@@ -131,40 +138,43 @@ fun addparams(url: String, body: JSONObject): String {
         if (!first) {
             newurl += "&"
         }
-        if (value.trim() != "")
-            newurl += Uri.encode(key) + '=' + Uri.encode(value)
+        if (value.trim() != "") newurl += Uri.encode(key) + '=' + Uri.encode(value)
         first = false
     }
     return newurl
 }
 
-fun Fragment.errorhandler(it: VolleyError): Boolean {
+// a generic error handler for the VolleyErrors
+fun Fragment.errorHandler(it: VolleyError): Boolean {
+
+    // If No network response received
     if (it.networkResponse == null) {
         it.printStackTrace()
+
+        // check network connection
         if (!isNetworkConnected()) {
             showToast("Couldn't connect, No Internet", Toast.LENGTH_SHORT)
-        } else
-            showToast("Couldn't connect", Toast.LENGTH_SHORT)
-        return true
+        } else showToast("Couldn't connect", Toast.LENGTH_SHORT)
+    } else {
+        // if some other status code received, show the message string
+        val ob = JSONObject(String(it.networkResponse.data))
+
+        if (!ob.has("message")) {
+            showToast("Unknown Error occurred", Toast.LENGTH_SHORT); return false
+        } else showToast(ob.getString("message"), Toast.LENGTH_SHORT)
     }
-    val ob = JSONObject(String(it.networkResponse.data))
-    showToast(ob.getString("message"), Toast.LENGTH_SHORT)
     return true
+
 }
 
-fun Fragment.errorhandler(ob: JSONObject): Boolean {
-    if (!ob.has("message"))
-        return false
-    showToast(ob.getString("message"), Toast.LENGTH_SHORT)
-    return true
-}
-
+// a context safe show Toast call for fragments
 fun Fragment.showToast(message: CharSequence, duration: Int) {
     if (context != null) {
         Toast.makeText(context, message, duration).show()
     }
 }
 
+// a extension to go to profile page
 fun Fragment.goToProfile() {
     activity?.let {
         it.supportFragmentManager.popBackStack(resources.getString(R.string.menu_profile), 0)
@@ -172,27 +182,29 @@ fun Fragment.goToProfile() {
     }
 }
 
+// returns true if network is available
 fun Fragment.isNetworkConnected(): Boolean {
     val cm = context?.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
     val x = cm?.activeNetworkInfo?.isConnected
     return cm?.activeNetwork != null && x!!
 }
 
+// returns SharedViewModel object for fragments
 fun Fragment.getViewModel() =
     (activity?.run {
         ViewModelProviders.of(
             this,
             SavedStateViewModelFactory(application, this)
         )[SharedViewModel::class.java]
-    }
-        ?: throw Exception("Invalid Activity"))
+    } ?: throw Exception("Invalid Activity"))
 
+// read an object from disk in string format with the given filename
+// being used for reading jsonobject from disk
 fun readFromDisk(filename: String): String? {
     val file = File(filename)
     if (file.exists()) {
-        try {
-            val fis: FileInputStream =
-                FileInputStream(file)//getApplication<Application>().openFileInput(filename)
+        return try {
+            val fis: FileInputStream = FileInputStream(file)
             val isr = InputStreamReader(fis)
             val bufferedReader = BufferedReader(isr)
             val sb = StringBuilder()
@@ -201,16 +213,18 @@ fun readFromDisk(filename: String): String? {
                 sb.append(line)
             }
             fis.close()
-            return sb.toString()
+            sb.toString()
         } catch (fileNotFound: FileNotFoundException) {
-            return null
+            null
         } catch (ioException: IOException) {
-            return null
+            null
         }
     }
     return null
 }
 
+// write a string to disk in the given filename
+// being used for writing jsonobject to disk
 fun writeToDisk(filename: String, string: String?): Boolean {
     return try {
         val fos: FileOutputStream =

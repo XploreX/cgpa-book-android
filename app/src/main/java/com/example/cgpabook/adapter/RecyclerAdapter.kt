@@ -15,9 +15,7 @@ class RecyclerAdapter(var array: ArrayList<String>, var context: Context) :
     RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflatedView = parent.inflate(R.layout.search_item, false)
-        return ViewHolder(
-            inflatedView
-        )
+        return ViewHolder(inflatedView)
     }
 
     override fun getItemCount(): Int {
@@ -26,7 +24,6 @@ class RecyclerAdapter(var array: ArrayList<String>, var context: Context) :
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.itemname.text = array[position]
-        //4
         holder.itemView.setOnClickListener {
             Log.d("RecyclerView", "CLICK!")
             val textView: TextView = holder.itemname

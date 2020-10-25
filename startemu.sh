@@ -1,2 +1,2 @@
 #!/bin/bash
-prime-run ~/Android/Sdk/emulator/emulator -avd Pixel_3a_XL_API_23 -netdelay none -netspeed full
+prime-run ~/Android/Sdk/emulator/emulator -avd $(~/Android/Sdk/emulator/emulator -list-avds | sed -n $1p) -netdelay none -netspeed full

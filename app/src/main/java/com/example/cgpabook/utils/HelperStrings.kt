@@ -8,7 +8,7 @@ class HelperStrings {
         const val college = "college"
         const val name = "name"
         const val email = "email"
-        const val photourl = "photoUrl"
+        const val photoUrl = "photoUrl"
         const val semester = "semester"
         const val branch = "branch"
         const val course = "course"

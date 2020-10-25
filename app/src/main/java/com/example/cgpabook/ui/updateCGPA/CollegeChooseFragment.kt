@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -21,52 +20,56 @@ import com.example.cgpabook.activity.SearchActivity
 import com.example.cgpabook.classes.CollegeChooseModel
 import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.utils.*
-import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 
 
 class CollegeChoose : Fragment() {
-    //    private var idlist: ArrayList<EditText> = ArrayList()
     private lateinit var viewModel: SharedViewModel
-    private lateinit var arrayList: ArrayList<CollegeChooseModel>
-    private val user: JSONObject = JSONObject()
-    private var queue: MySingleton? = null
+    private lateinit var allFields: ArrayList<CollegeChooseModel>
+    private var volleyQueue: MySingleton? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        // Fragment OnCreate
         val v = inflater.inflate(R.layout.fragment_college_choose, container, false)
-        val ll = v.findViewById<LinearLayout>(R.id.llcollegeselect)
-        val domainurl = HelperStrings.url
         viewModel = getViewModel()
-        arrayList =
-            ArrayList(
-                listOf(
-                    CollegeChooseModel(
-                        "Select College",
-                        "$domainurl/academia/college-list?",
-                        HelperStrings.college
-                    ),
-                    CollegeChooseModel(
-                        "Select Course",
-                        "$domainurl/academia/course-list?"
-                        , HelperStrings.course
-                    ),
-                    CollegeChooseModel(
-                        "Select Branch",
-                        "$domainurl/academia/branch-list?"
-                        , HelperStrings.branch
-                    ),
-                    CollegeChooseModel(
-                        "Select Semester",
-                        "$domainurl/academia/semester-list?"
-                        , HelperStrings.semester
-                    )
+        dashBoardButton(v)
+
+        //Init Variables
+        initViewModelObservers()
+        val ll = v.findViewById<LinearLayout>(R.id.llcollegeselect)
+        val domainUrl = HelperStrings.url
+        volleyQueue = MySingleton.getInstance(context as Context)
+        allFields = ArrayList(
+            listOf(
+                CollegeChooseModel(
+                    "Select College",
+                    "$domainUrl/academia/college-list?",
+                    HelperStrings.college
+                ),
+                CollegeChooseModel(
+                    "Select Course",
+                    "$domainUrl/academia/course-list?",
+                    HelperStrings.course
+                ),
+                CollegeChooseModel(
+                    "Select Branch",
+                    "$domainUrl/academia/branch-list?",
+                    HelperStrings.branch
+                ),
+                CollegeChooseModel(
+                    "Select Semester",
+                    "$domainUrl/academia/semester-list?",
+                    HelperStrings.semester
                 )
             )
+        )
 
-        val requiredbody = ArrayList<String>(
+        val setupDisplayVariables = ArrayList<String>(
             listOf(
                 HelperStrings.college,
                 HelperStrings.course,
@@ -74,106 +77,17 @@ class CollegeChoose : Fragment() {
                 HelperStrings.semester
             )
         )
-        if (viewModel.getVal<Int>(HelperStrings.unlocked) == null)
-            viewModel.setVal(HelperStrings.unlocked, 0)
-        queue = MySingleton.getInstance(context as Context)
-        viewModel.getElement<String>(HelperStrings.college).observe(viewLifecycleOwner, Observer {
-            requireActivity().findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
-                .findViewById<TextView>(R.id.txt_email).text =
-                it
-        })
 
-        fun makelayouts() {
-            for (j in 0 until arrayList.size) {
-                val i = arrayList[j]
-                val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
-                i.setParv(b)
-                viewModel.getElement<String>(arrayList[j].id)
-                    .observe(viewLifecycleOwner, Observer { t ->
-                        arrayList[j].et.setText(t)
-                    })
-                i.tv.text = i.name
-                ll.addView(b)
-                val et = i.et
-                val value = viewModel.getVal<String>(arrayList[j].id)
-                viewModel.getElement<Int>(HelperStrings.unlocked)
-                    .observe(viewLifecycleOwner, Observer {
-                        for (j in 0 until arrayList.size) {
-                            arrayList[j].et.isEnabled = (j <= it)
-                        }
-                    })
-                if (viewModel.getVal<Int>(HelperStrings.unlocked) == null)
-                    viewModel.setVal(HelperStrings.unlocked, 0)
-                //et.isEnabled = j <= viewModel.getVal<Int>(HelperStrings.unlocked)!!
-                et.setOnClickListener {
-                    et.error = null
-                    val body = JSONObject()
-                    val intent = Intent(context, SearchActivity::class.java)
-                    var url = i.url
-                    for (temp in 0 until j)
-                        if (arrayList[temp].et.text.split('(')[0].trim() != "") {
-                            body.put(
-                                requiredbody[temp],
-                                arrayList[temp].et.text.split('(')[0].trim()
-                            )
-                        }
-                    body.put("ignorecase", "true")
-                    url = addparams(url, body)
-                    println(url)
+        // Initialize the unlocked Fields variable
+        if (viewModel.getVal<Int>(HelperStrings.unlocked) == null) viewModel.setVal(
+            HelperStrings.unlocked,
+            0
+        )
 
-//                    viewModel.setVal(HelperStrings.unlocked, j + 1)
-                    val progressBar = progressBarInit(v)
-                    val jsonObjectRequest =
-                        JsonArrayRequestCached(
-                            Request.Method.GET, url, null,
-                            Response.Listener {
-                                val arrayList = ArrayList<String>()
-                                for (i in 0 until it.length())
-                                    arrayList.add(it.get(i).toString())
-                                println(arrayList)
-                                println(j)
-                                intent.putStringArrayListExtra("List", arrayList)
-//                            progressDialog.hide()
-                                progressBarDestroy(v, progressBar)
-                                startActivityForResult(intent, j)
-                            },
-                            Response.ErrorListener {
-                                if (!errorhandler(it)) {
-                                    if (it.message != null)
-                                       showToast(
-                                           it.message.toString(),
-                                           Toast.LENGTH_SHORT
-                                       )
-                                }
-                                progressBarDestroy(v, progressBar)
-                            }
-                        )
-                    queue?.addToRequestQueue(jsonObjectRequest)
-                }
-            }
-        }
-        Runnable {
-            makelayouts()
-        }.run()
-        Runnable {
-            dashBoardButton(v)
-        }.run()
-        fun validateerror(): Boolean {
-            var flag = true
-            for (i in 0 until arrayList.size) {
-                val temp = arrayList[i].et
-                if (temp.text.toString() == "") {
-                    temp.error = "Required"
-                    flag = false
-                } else {
-                    temp.error = null
-                }
-            }
-            return flag
-        }
+
+        // Next Button Click
         v.findViewById<ImageView>(R.id.btnnext).setOnClickListener {
-
-            val flag = validateerror()
+            val flag = validateFields()
             if (flag) {
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.nav_host_fragment, EnterMarksFragment())
@@ -181,43 +95,156 @@ class CollegeChoose : Fragment() {
             }
         }
 
+        // setup Fields
+        for (index in 0 until allFields.size) {
+
+            // init Field
+            val field = allFields[index]
+            val b = inflater.inflate(R.layout.college_choose_frame, ll, false)
+            field.initView(b)
+
+            // This label is used to update the respective fields
+            viewModel.getElement<String>(field.label).observe(viewLifecycleOwner,
+                Observer { t -> field.editText.setText(t) }
+            )
+
+            field.textView.text = field.name
+
+            // add View to Linear Layout
+            ll.addView(b)
+
+            field.editText.setOnClickListener {
+                field.editText.error = null
+
+                // setup the Request Body
+                val requestParams = JSONObject()
+                var url = field.url
+                for (temp in 0 until index) {
+
+                    // removing the abbreviations in Brackets as the api requires college without them
+                    val fieldValueFiltered = allFields[temp].editText.text.split('(')[0].trim()
+
+                    // adding to requestParams
+                    if (fieldValueFiltered != "") {
+                        requestParams.put(setupDisplayVariables[temp], fieldValueFiltered)
+                    }
+                }
+                requestParams.put("ignorecase", "true")
+
+                // update the url
+                url = addparams(url, requestParams)
+
+                // debug: println(url)
+
+                // show the progressbar
+                val progressBar = progressBarInit(v)
+                val fieldInternetRequest =
+                    JsonArrayRequestCached(Request.Method.GET, url, null,
+                        Response.Listener {
+
+                            // convert JSONArray to ArrayList
+                            val arrayList = ArrayList<String>()
+                            for (i in 0 until it.length()) arrayList.add(it.get(i).toString())
+
+                            // debug: println(arrayList)
+                            // debug: println(index)
+
+                            // destroy the progressbar
+                            progressBarDestroy(v, progressBar)
+
+                            // send the intent
+                            val intent = Intent(context, SearchActivity::class.java)
+                            intent.putStringArrayListExtra("List", arrayList)
+                            startActivityForResult(intent, index)
+
+                        },
+                        Response.ErrorListener {
+                            errorHandler(it); progressBarDestroy(
+                            v,
+                            progressBar
+                        )
+                        }
+                    )
+                volleyQueue?.addToRequestQueue(fieldInternetRequest)
+            }
+        }
         return v
     }
 
+    private fun initViewModelObservers() {
+
+        // update the unlocked fields when changed
+        viewModel.getElement<Int>(HelperStrings.unlocked)
+            .observe(viewLifecycleOwner, Observer { max ->
+
+                for (j in 0 until allFields.size) {
+                    allFields[j].editText.isEnabled = (j <= max)
+                }
+                for (reset in max until allFields.size) {
+                    viewModel.setVal(allFields[reset].label, "")
+                }
+
+            })
+
+    }
+
+    private fun validateFields(): Boolean {
+        var flag = true
+        for (index in 0 until allFields.size) {
+
+            val fieldEditText = allFields[index].editText
+
+            // if field unfilled
+            if (fieldEditText.text.toString() == "") {
+                fieldEditText.error = "Required"; flag = false
+            }
+
+            // clear the error flag
+            else {
+                fieldEditText.error = null
+            }
+
+        }
+        return flag
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        println(resultCode)
-        println(requestCode)
+        //debug: println(resultCode)
+        //debug: println(requestCode)
+
+        // if success
         if (resultCode == Activity.RESULT_OK) {
-            for (j in 0 until arrayList.size) {
-                if (j == requestCode) {
-                    if (data != null) {
-                        if (arrayList[j].et.text.toString() != data.getStringExtra("selected")!!
-                                .split("(")[0].trim()
-                        ) {
-                            viewModel.setVal(
-                                arrayList[j].id,
-                                data.getStringExtra("selected")!!.split("(")[0].trim()
-                            )
-                            viewModel.setVal(HelperStrings.unlocked, j + 1)
-                            for (k in j + 1 until arrayList.size) {
-                                viewModel.setVal(arrayList[k].id, "")
-                                arrayList[k].et.isEnabled = false
-                            }
-//                            if (j + 1 < arrayList.size)
-//                                arrayList[j + 1].et.isEnabled = true
-                        }
-                    } else {
-                        showToast("Some error occurred", Toast.LENGTH_SHORT)
+
+            // requestCode tells which field was clicked
+            if (data != null) {
+                val concernedField = allFields[requestCode]
+                data.getStringExtra("selected")?.let { recvString ->
+
+                    val filteredRecvString = recvString.split("(")[0].trim()
+                    if (concernedField.editText.text.toString() != filteredRecvString) {
+
+                        // update viewmodel
+                        viewModel.setVal(concernedField.label, filteredRecvString)
+
+                        //update the unlocked variable
+                        viewModel.setVal(HelperStrings.unlocked, requestCode + 1)
                     }
                 }
+            } else {
+                showToast("Some unknown error occurred", Toast.LENGTH_SHORT)
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onStop() {
+
+        // if progress bar was visible, clear the not touch flags
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
-        queue?.getRequestQueue()?.cancelAll { true }
+
+        // clear the volley queue
+        volleyQueue?.getRequestQueue()?.cancelAll { true }
+
         super.onStop()
     }
 }

@@ -5,7 +5,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
@@ -19,31 +22,55 @@ import org.json.JSONObject
 
 class EnterMarksFragment : Fragment() {
 
-    private lateinit var llv: LinearLayout
     private lateinit var viewModel: SharedViewModel
-    private lateinit var grades: ArrayList<String>
-    private lateinit var llh: LinearLayout
     private lateinit var gradesSchema: JSONObject
-    private val semcreds = ArrayList<Double>()
-    private val totalcreds = ArrayList<Double>()
-    private var sgpa = MutableLiveData<Double>()
+
+    // arrays are required for functionality of undo button
+    private val userCreditsArray = ArrayList<Double>()
+    private val totalCreditsArray = ArrayList<Double>()
+
+    // subjects info
     private var subjectsData: ArrayList<SubjectsData> = ArrayList()
+
+    //some other required global variables
+    private var sgpa = MutableLiveData<Double>()
     private var index: Int = 0
-    private val subjectsView = MutableLiveData<String>()
-    private val creditsView = MutableLiveData<Double>()
-    private val subjectsLeftView = MutableLiveData<Int>()
+
+    // all the live data objects which need not be persistent, hence, not in view model
+    private val subjectsLiveData = MutableLiveData<String>()
+    private val creditsLiveData = MutableLiveData<Double>()
+    private val subjectsLeftLiveData = MutableLiveData<Int>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
+        // fragment on create
         val v = inflater.inflate(R.layout.fragment_enter_marks, container, false)
         viewModel = getViewModel()
         dashBoardButton(v)
-        initviewmodel()
+        initViewModelObservers()
+
+        // init variables
+        val volleyQueue = MySingleton.getInstance(context as Context)
+
+        // undo button
+        v.findViewById<ImageView>(R.id.btn_undo).setOnClickListener {
+            if (index > 0) {
+                index--
+                userCreditsArray.removeAt(index)
+                totalCreditsArray.removeAt(index)
+                updateSgpa()
+                updateSub()
+            }
+        }
+
+        // setup the semester api query
         var url = HelperStrings.url + "/academia/semester?"
-        val body = JSONObject()
-        val temp = ArrayList(
+        val requestParams = JSONObject()
+        val viewModelRequired = ArrayList(
             listOf(
                 HelperStrings.college,
                 HelperStrings.course,
@@ -51,124 +78,134 @@ class EnterMarksFragment : Fragment() {
                 HelperStrings.semester
             )
         )
-        for (i in temp) {
-            body.put(i, viewModel.getVal<String>(i))
+        for (i in viewModelRequired) {
+            requestParams.put(i, viewModel.getVal<String>(i))
         }
-        body.put("ignorecase", "true")
-        url = addparams(url, body)
-        println(url)
-//        for (key in grades_schema.keys()) grades.add(key)
+        requestParams.put("ignorecase", "true")
+
+        // update the url with requestParams
+        url = addparams(url, requestParams)
+
+        // debug: println(url)
+
+        // initiate the request
         val pb = progressBarInit(v)
-        val queue = MySingleton.getInstance(context as Context)
         val jsonObject = JsonObjectRequestCached(Request.Method.GET, url, null, Response.Listener {
-            if (!errorhandler(it)) {
-                val subdata = it.getJSONArray("subjects")
-                for (i in 0 until subdata.length()) {
-                    val temp = subdata.getJSONObject(i)
-                    subjectsData.add(
-                        SubjectsData(
-                            temp.getString("subject"),
-                            temp.getString("subjectCode"),
-                            temp.getDouble("credits")
-                        )
+
+            // get all the subjects data
+            val subjectsDataAll = it.getJSONArray("subjects")
+
+            // convert from json to object
+            for (i in 0 until subjectsDataAll.length()) {
+                subjectsData.add(
+                    SubjectsData(
+                        subjectsDataAll.getJSONObject(i)
                     )
-                }
-                updateSub()
-                progressBarDestroy(v, pb)
+                )
             }
+            updateSub()
+            progressBarDestroy(v, pb)
+
         }, Response.ErrorListener {
-            if (!errorhandler(it))
-                showToast("Could not acquire grades", Toast.LENGTH_SHORT)
+            errorHandler(it)
             progressBarDestroy(v, pb)
         })
-        queue?.addToRequestQueue(jsonObject)
-//        setFragmentResultListener("requestKey") { key, bundle ->
-//            // We use a String here, but any type that can be put in a Bundle is supported
-//            val result = bundle.getString("bundleKey")
-//            // Do something with the result...
-//        }
+        volleyQueue?.addToRequestQueue(jsonObject)
+        initGradeButtons(v)
+
+        return v
+    }
+
+    private fun initGradeButtons(v: View) {
         //TODO("use api for grades_scheme")
+
+        // layout dimensions
+        val horizontalButtons = 4
+
+        // make a similar grades object which will be returned from api
         gradesSchema = JSONObject()
-        grades = ArrayList(listOf("O", "A+", "A", "B+", "B", "C", "F"))
+        val grades: ArrayList<String> = ArrayList(listOf("O", "A+", "A", "B+", "B", "C", "F"))
         for (i in 0 until grades.size) {
             if (grades[i] == "F")
                 gradesSchema.put("F", 0)
             else
                 gradesSchema.put(grades[i], 10 - i)
         }
-        llv = v.findViewById(R.id.llv_grade_button)
-        Runnable {
-            for (i in 0 until grades.size) {
-                if (i % 4 == 0) {
-                    llh = createllh(llv)
-                }
-                addButton(llh, grades[i], R.drawable.grade_buttons, R.color.black) { m ->
-                    buttononclick(
-                        m
+
+        // make the buttons on UI
+        val llv: LinearLayout = v.findViewById(R.id.llv_grade_button)
+        var llh: LinearLayout? = null
+        for (index in 0 until grades.size) {
+
+            // create a horizontal linear layout when (index % horizontalbuttons) == 0
+            if (index % horizontalButtons == 0) {
+                llh = createllh(llv)
+            }
+
+            // add button to horizontal layout
+            llh?.let { llh ->
+
+                addButton(llh, grades[index], R.drawable.grade_buttons, R.color.black) { view ->
+                    gradesOnClick(
+                        view
                     )
                 }
-            }
-        }.run()
 
-        v.findViewById<ImageView>(R.id.btn_undo).setOnClickListener {
-            if (index > 0) {
-                index--
-                semcreds.removeAt(index)
-                totalcreds.removeAt(index)
-                updatecgpa()
-                updateSub()
             }
         }
-        return v
     }
 
-    //    fun addButton(llh: ViewGroup, text: String) {
-//        val v = LayoutInflater.from(context).inflate(R.layout.grade_buttons, llh, false) as Button
-//        v.text = text
-//        v.setOnClickListener {
-//            buttononclick()
-//        }
-//        llh.addView(v, v.layoutParams)
-//    }
-    private fun buttononclick(v: View) {
+    private fun gradesOnClick(v: View) {
+        // increment the index
         index++
-        Runnable {
-            calculatecgpa((v as Button).text.toString())
-        }.run()
+
+        // update cgpa simultaneously
+        Runnable { calculateSgpa((v as Button).text.toString()) }.run()
+
+        // update subjects data in UI
         updateSub()
     }
 
-    private fun calculatecgpa(grade: String) {
-        val point: Double = gradesSchema[grade].toString().toDouble()
-        semcreds.add(point * (creditsView.value)!!)
-        totalcreds.add(creditsView.value!!.toDouble())
-        updatecgpa()
+    private fun calculateSgpa(grade: String) {
+        val gradePoint: Double = gradesSchema[grade].toString().toDouble()
+
+        creditsLiveData.value?.let { credits ->
+            userCreditsArray.add(gradePoint * (credits))
+            totalCreditsArray.add(credits)
+        }
+        updateSgpa()
     }
 
-    private fun updatecgpa() {
-        var semcred = 0.0
-        var denom = 0.0
-        for (i in 0 until semcreds.size) {
-            semcred += semcreds[i]
-            denom += totalcreds[i]
+    private fun updateSgpa() {
+        var semCreditsSum = 0.0
+        var totalCreditsSum = 0.0
+
+        for (i in 0 until userCreditsArray.size) {
+            semCreditsSum += userCreditsArray[i]
+            totalCreditsSum += totalCreditsArray[i]
         }
-        if (denom == 0.0)
+
+        if (totalCreditsSum == 0.0)
             sgpa.value = 0.0
         else
-            sgpa.value = semcred / denom
+            sgpa.value = semCreditsSum / totalCreditsSum
     }
 
-    private fun initviewmodel() {
-        subjectsView.observe(viewLifecycleOwner, Observer {
+    private fun initViewModelObservers() {
+
+        subjectsLiveData.observe(viewLifecycleOwner, Observer {
             requireView().findViewById<TextView>(R.id.txt_subname).text = "Subject Name: $it"
         })
-        creditsView.observe(viewLifecycleOwner, Observer {
+
+        creditsLiveData.observe(viewLifecycleOwner, Observer {
             requireView().findViewById<TextView>(R.id.txt_credits).text = "Credits: $it"
         })
-        subjectsLeftView.observe(viewLifecycleOwner, Observer {
+
+        subjectsLeftLiveData.observe(viewLifecycleOwner, Observer {
             requireView().findViewById<TextView>(R.id.txt_subjectsleft).text =
                 "Subjects Left: " + (subjectsData.size - index - 1)
         })
+
         sgpa.observe(viewLifecycleOwner, Observer {
             if (it == 0.0)
                 requireView().findViewById<TextView>(R.id.txt_cgpa).text = ""
@@ -176,22 +213,35 @@ class EnterMarksFragment : Fragment() {
                 requireView().findViewById<TextView>(R.id.txt_cgpa).text =
                     "CGPA: ${String.format("%.2f", it)}"
         })
+
     }
 
     private fun updateSub() {
         if (index >= subjectsData.size) {
-            val semData = JSONObject()
-            semData.put(HelperStrings.sgpa, sgpa.value)
-            viewModel.setVal(HelperStrings.cgpa, sgpa.value)
-            val semNo = viewModel.getVal<String>(HelperStrings.semester).toString()
-            val array = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
-            array.put(semNo, semData)
-            viewModel.setVal(HelperStrings.semdata, array)
-            goToProfile()
+            noMoreSubs()
         } else {
-            subjectsView.value = subjectsData[index].subName
-            creditsView.value = subjectsData[index].credits
-            subjectsLeftView.value = index
+            // update the value with updated index
+            subjectsLiveData.value = subjectsData[index].subName
+            creditsLiveData.value = subjectsData[index].credits
+            subjectsLeftLiveData.value = index
         }
+    }
+
+    private fun noMoreSubs() {
+
+        // create a sem data object
+        val semData = JSONObject()
+
+        // put the relevant sem data required
+        semData.put(HelperStrings.sgpa, sgpa.value)
+
+        // get the required data from view model
+        val semNo = viewModel.getVal<String>(HelperStrings.semester).toString()
+
+        // update sem data all
+        val semDataAll = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
+        semDataAll.put(semNo, semData)
+        viewModel.setVal(HelperStrings.semdata, semDataAll)
+        goToProfile()
     }
 }
