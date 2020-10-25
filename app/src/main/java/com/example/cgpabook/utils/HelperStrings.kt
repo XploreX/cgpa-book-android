@@ -3,7 +3,7 @@ package com.example.cgpabook.utils
 class HelperStrings {
     companion object {
         const val unlocked = "unlocked"
-        const val url = "http://cgpa-book.herokuapp.com"
+        const val url = "https://api-rhapsody.herokuapp.com"
         const val cgpa = "cgpa"
         const val college = "college"
         const val name = "name"
