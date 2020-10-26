@@ -175,10 +175,10 @@ class NavigationActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        // Write to Disk when Exiting the app
+    override fun onPause() {
+        // Write to Disk when Pausing the app
         viewModel.writeToDisk()
-        super.onDestroy()
+        super.onPause()
     }
 
 

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -95,36 +96,48 @@ class ProfileFragment : Fragment() {
                 var cgpa: Double = 0.0
 
                 // Get all the Semester Nos
-                for (i in allSemData.keys()) {
+                allSemData?.let {
+                    allSemData
+                    for (currentKey in allSemData.keys()) {
 
-                    //Inflate a View
-                    val v1 = LayoutInflater.from(context)
-                        .inflate(R.layout.profile_semdata, ll as ViewGroup, false)
+                        //Inflate a View
+                        val v1 = LayoutInflater.from(context)
+                            .inflate(R.layout.profile_semdata, ll as ViewGroup, false)
 
-                    // Get the semData from the allSemData
-                    val semData: JSONObject = allSemData.get(i) as JSONObject
+                        // Get the semData from the allSemData
+                        val semData: JSONObject = JSONObject(allSemData.getString(currentKey))
 
-                    // Setup the Data from semData to view
-                    v1.findViewById<TextView>(R.id.semno).text = "Semester No: $i"
-                    v1.findViewById<TextView>(R.id.sgpa).text =
-                        "SGPA: ${String.format(
-                            "%.2f",
-                            semData.get(HelperStrings.sgpa).toString().toDouble()
-                        )}"
+                        // Setup the Data from semData to view
+                        v1.findViewById<TextView>(R.id.semno).text = "Semester No: $currentKey"
+                        v1.findViewById<TextView>(R.id.sgpa).text =
+                            "SGPA: ${String.format(
+                                "%.2f",
+                                semData.get(HelperStrings.sgpa).toString().toDouble()
+                            )}"
+                        v1.findViewById<ImageView>(R.id.btn_delete).setOnClickListener {
+                            allSemData.remove(currentKey)
+                            if (allSemData.length() != 0)
+                                viewModel.setVal(HelperStrings.semdata, allSemData)
+                            else
+                                viewModel.setVal(HelperStrings.semdata, null)
+                        }
 
-                    // Add the SGPAs for final CGPA
-                    cgpa += (semData.get(HelperStrings.sgpa).toString().toDouble())
+                        // Add the SGPAs for final CGPA
+                        cgpa += (semData.get(HelperStrings.sgpa).toString().toDouble())
 
-                    // Add the view to Linear Layout
-                    ll.addView(v1)
+                        // Add the view to Linear Layout
+                        ll.addView(v1)
+                    }
+
+                    // Divide the Added SGPAs by the total no of semesters
+                    cgpa /= allSemData.length()
+
                 }
-
-                // Divide the Added SGPAs by the total no of semesters
-                cgpa /= allSemData.length()
-
                 // Update the new CGPA
                 viewModel.setVal(HelperStrings.cgpa, cgpa)
             })
+
+
 
         return v
     }

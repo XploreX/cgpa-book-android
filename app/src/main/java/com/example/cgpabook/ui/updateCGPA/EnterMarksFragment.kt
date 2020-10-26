@@ -240,7 +240,7 @@ class EnterMarksFragment : Fragment() {
 
         // update sem data all
         val semDataAll = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
-        semDataAll.put(semNo, semData)
+        semDataAll.put(semNo, semData.toString())
         viewModel.setVal(HelperStrings.semdata, semDataAll)
         goToProfile()
     }

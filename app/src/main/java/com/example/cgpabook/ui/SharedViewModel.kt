@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.cgpabook.utils.readFromDisk
+import com.google.gson.Gson
 import org.json.JSONObject
 
 
@@ -45,7 +46,11 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
 
     fun <T> setVal(k: String, s: T) {
         val temp = getElement<T>(k)
-        state.set(k, s.toString())
+        try {
+            state.set(k, s)
+        } catch (e: Throwable) {
+            e.printStackTrace()
+        }
         backup.put(k, s)
         temp.value = s
     }
