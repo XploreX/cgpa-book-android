@@ -7,13 +7,14 @@ import androidx.lifecycle.SavedStateHandle
 import com.example.cgpabook.utils.readFromDisk
 import org.json.JSONObject
 
-
+// AndroidViewModel is extended for application context in SharedViewModel
 class SharedViewModel(application: Application, private val state: SavedStateHandle) :
     AndroidViewModel(application) {
     private var uiStuff = JSONObject()
     private val filename = getApplication<Application>().filesDir.path + "/data"
     private var backup = JSONObject()
 
+    // getElement is used to get the mutableLiveData object(used when you want to observe stuff)
     fun <T> getElement(s: String): MutableLiveData<T> {
         if (!uiStuff.has(s)) {
             when {
@@ -43,6 +44,7 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
         }
     }
 
+    // setVal is used to update the value of MutableLiveData object
     fun <T> setVal(k: String, s: T) {
         val temp = getElement<T>(k)
         try {
@@ -54,10 +56,13 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
         temp.value = s
     }
 
+    // getVal is used to get the value of MutableLiveData
     fun <T> getVal(s: String): T? {
         return getElement<T>(s).value
     }
 
+    // for persistence, call this function
+    // only things set with setVal will be persisted
     fun writeToDisk() {
         com.example.cgpabook.utils.writeToDisk(filename, backup.toString())
     }

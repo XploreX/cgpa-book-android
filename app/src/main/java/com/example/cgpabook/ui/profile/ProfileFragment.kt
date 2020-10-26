@@ -1,5 +1,6 @@
 package com.example.cgpabook.ui.profile
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.example.cgpabook.utils.HelperStrings
 import com.example.cgpabook.utils.dashBoardButton
 import com.example.cgpabook.utils.getViewModel
 import org.json.JSONObject
+
 
 class ProfileFragment : Fragment() {
 
@@ -116,11 +118,18 @@ class ProfileFragment : Fragment() {
                                 semData.get(HelperStrings.sgpa).toString().toDouble()
                             )}"
                         v1.findViewById<ImageView>(R.id.btn_delete).setOnClickListener {
-                            allSemData.remove(currentKey)
-                            if (allSemData.length() != 0)
-                                viewModel.setVal(HelperStrings.semdata, allSemData)
-                            else
-                                viewModel.setVal(HelperStrings.semdata, null)
+                            AlertDialog.Builder(context)
+                                .setTitle("Confirm")
+                                .setMessage("Do you really want to delete semester $currentKey result?")
+                                .setIcon(android.R.drawable.ic_dialog_alert)
+                                .setPositiveButton(android.R.string.yes) { _, _ ->
+                                    allSemData.remove(currentKey)
+                                    if (allSemData.length() != 0)
+                                        viewModel.setVal(HelperStrings.semdata, allSemData)
+                                    else
+                                        viewModel.setVal(HelperStrings.semdata, null)
+                                }
+                                .setNegativeButton(android.R.string.no, null).show()
                         }
 
                         // Add the SGPAs for final CGPA
