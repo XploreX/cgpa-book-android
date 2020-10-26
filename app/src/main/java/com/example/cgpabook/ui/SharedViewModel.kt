@@ -5,7 +5,6 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.cgpabook.utils.readFromDisk
-import com.google.gson.Gson
 import org.json.JSONObject
 
 

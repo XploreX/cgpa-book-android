@@ -97,8 +97,9 @@ class ProfileFragment : Fragment() {
 
                 // Get all the Semester Nos
                 allSemData?.let {
-                    allSemData
-                    for (currentKey in allSemData.keys()) {
+                    val keys = ArrayList(allSemData.keys().asSequence().toList())
+                    keys.sort()
+                    for (currentKey in keys) {
 
                         //Inflate a View
                         val v1 = LayoutInflater.from(context)
