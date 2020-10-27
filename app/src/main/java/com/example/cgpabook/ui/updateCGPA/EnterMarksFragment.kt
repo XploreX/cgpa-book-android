@@ -194,7 +194,7 @@ class EnterMarksFragment : Fragment() {
     private fun initViewModelObservers() {
 
         subjectsLiveData.observe(viewLifecycleOwner, Observer {
-            requireView().findViewById<TextView>(R.id.txt_subname).text = "Subject Name: $it"
+            requireView().findViewById<TextView>(R.id.txt_subname).text = "Subject Name: $it "
         })
 
         creditsLiveData.observe(viewLifecycleOwner, Observer {
@@ -221,7 +221,8 @@ class EnterMarksFragment : Fragment() {
             noMoreSubs()
         } else {
             // update the value with updated index
-            subjectsLiveData.value = subjectsData[index].subName
+            subjectsLiveData.value =
+                subjectsData[index].subName + " (${subjectsData[index].subCode})"
             creditsLiveData.value = subjectsData[index].credits
             subjectsLeftLiveData.value = index
         }

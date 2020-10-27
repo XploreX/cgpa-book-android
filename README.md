@@ -15,7 +15,7 @@ For looking at the structured view, use the Project view
   - **NavigationActivity.kt** : This is the user main activity after sign in. It is linked with the fragments in `ui` package
   - **SearchActivity.kt** : Start this activity for a result with arraylist in intent with key *"list"* and it will return the selected element with key *"selected"*
 - Adapter
-  - **RecyclerAdapter.kt** : Used for SearchActivity recycler view
+  - **RecyclerAdapterSearch.kt** : Used for SearchActivity recycler view
 - Classes
   - **CollegeChooseModel.kt** : Used for CollegeChooseFragment.kt
   - **SubjectsData.kt** : Used for EnterMarksFragment.kt

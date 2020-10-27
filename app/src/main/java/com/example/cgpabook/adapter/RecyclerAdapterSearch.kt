@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.cgpabook.R
 import com.example.cgpabook.utils.inflate
 
-class RecyclerAdapter(var array: ArrayList<String>, var context: Context) :
-    RecyclerView.Adapter<RecyclerAdapter.ViewHolder>() {
+class RecyclerAdapterSearch(var array: ArrayList<String>, var context: Context) :
+    RecyclerView.Adapter<RecyclerAdapterSearch.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val inflatedView = parent.inflate(R.layout.search_item, false)
         return ViewHolder(inflatedView)
