@@ -1,5 +1,6 @@
 package com.example.cgpabook.utils
 
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Uri
@@ -189,13 +190,19 @@ fun Fragment.isNetworkConnected(): Boolean {
     return cm?.activeNetwork != null && x!!
 }
 
+fun isNetworkConnected(context: Context): Boolean {
+    val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager?
+    val x = cm?.activeNetworkInfo?.isConnected
+    return cm?.activeNetwork != null && x!!
+}
+
 // returns SharedViewModel object for fragments
 fun Fragment.getViewModel() =
     (activity?.run {
         ViewModelProviders.of(
             this,
             SavedStateViewModelFactory(application, this)
-        )[SharedViewModel::class.java]
+        ).get(HelperStrings.NavigationActivity, SharedViewModel::class.java)
     } ?: throw Exception("Invalid Activity"))
 
 // read an object from disk in string format with the given filename
@@ -240,3 +247,12 @@ fun writeToDisk(filename: String, string: String?): Boolean {
         false
     }
 }
+
+fun Fragment.unregisterBroadcast(viewModel: SharedViewModel, broadcastReceiver: BroadcastReceiver) {
+
+}
+
+fun sendToServer(context: Context) {
+
+}
+

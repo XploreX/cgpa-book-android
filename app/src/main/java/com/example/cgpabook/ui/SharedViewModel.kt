@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.SavedStateHandle
 import com.example.cgpabook.utils.readFromDisk
 import org.json.JSONObject
+import java.io.File
 
 // AndroidViewModel is extended for application context in SharedViewModel
 class SharedViewModel(application: Application, private val state: SavedStateHandle) :
@@ -65,6 +66,14 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
     // only things set with setVal will be persisted
     fun writeToDisk() {
         com.example.cgpabook.utils.writeToDisk(filename, backup.toString())
+    }
+
+    // delete the backups ( To be called when signing out
+    fun deleteViewModel() {
+        backup = JSONObject()
+        val file = File(filename)
+        if (file.exists())
+            file.delete()
     }
 
 }

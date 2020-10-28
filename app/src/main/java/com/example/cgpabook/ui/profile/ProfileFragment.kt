@@ -10,18 +10,19 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.android.volley.Request
+import com.android.volley.Response
 import com.bumptech.glide.Glide
 import com.example.cgpabook.R
 import com.example.cgpabook.ui.SharedViewModel
-import com.example.cgpabook.utils.HelperStrings
-import com.example.cgpabook.utils.dashBoardButton
-import com.example.cgpabook.utils.getViewModel
+import com.example.cgpabook.utils.*
 import org.json.JSONObject
 
 
 class ProfileFragment : Fragment() {
 
     private lateinit var viewModel: SharedViewModel
+    private var volleyQueue: MySingleton? = null
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -41,6 +42,40 @@ class ProfileFragment : Fragment() {
                 HelperStrings.photoUrl
             )
         )
+
+        val profileUrl = HelperStrings.url + "/user/gpa-data"
+        val request = object :
+            JsonObjectRequestCached(Request.Method.GET, profileUrl, null, Response.Listener {
+
+                println("recvObj: $it")
+                val dataToReceive = ArrayList<String>(
+                    listOf(
+                        HelperStrings.college,
+                        HelperStrings.branch,
+                        HelperStrings.course,
+                        HelperStrings.semdata,
+                        HelperStrings.unlocked
+                    )
+                )
+                for (i in dataToReceive) {
+                    if (it.has(i)) {
+                        viewModel.setVal(i, it.get(i))
+                    }
+                }
+                viewModel.writeToDisk()
+
+            }, Response.ErrorListener {
+                errorHandler(it)
+            }) {
+            override fun getHeaders(): MutableMap<String, String> {
+                val params: MutableMap<String, String> = HashMap()
+                params["Authorization"] =
+                    "Bearer ${viewModel.getVal<String>(HelperStrings.tokenId)}"
+                return params
+            }
+        }
+        volleyQueue = context?.let { MySingleton.getInstance(it) }
+        volleyQueue?.addToRequestQueue(request)
 
         // Init Variables
         val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
@@ -72,8 +107,8 @@ class ProfileFragment : Fragment() {
                     })
                 }
                 HelperStrings.cgpa -> {
-                    viewModel.getElement<Double>(value).observe(viewLifecycleOwner, Observer {
-                        if (it == 0.0)
+                    viewModel.getElement<Double?>(value).observe(viewLifecycleOwner, Observer {
+                        if (it == 0.0 || it == null)
                             v.findViewById<TextView>(R.id.profile_cgpa).text = "CGPA: None"
                         else
                             v.findViewById<TextView>(R.id.profile_cgpa).text =
@@ -128,6 +163,8 @@ class ProfileFragment : Fragment() {
                                         viewModel.setVal(HelperStrings.semdata, allSemData)
                                     else
                                         viewModel.setVal(HelperStrings.semdata, null)
+                                    viewModel.setVal(HelperStrings.synced, false)
+
                                 }
                                 .setNegativeButton(android.R.string.no, null).show()
                         }
@@ -145,9 +182,8 @@ class ProfileFragment : Fragment() {
                 }
                 // Update the new CGPA
                 viewModel.setVal(HelperStrings.cgpa, cgpa)
+                viewModel.writeToDisk()
             })
-
-
 
         return v
     }

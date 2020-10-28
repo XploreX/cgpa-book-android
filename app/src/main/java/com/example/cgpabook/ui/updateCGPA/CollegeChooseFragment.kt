@@ -1,7 +1,6 @@
 package com.example.cgpabook.ui.updateCGPA
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,7 +42,7 @@ class CollegeChoose : Fragment() {
         initViewModelObservers()
         val ll = v.findViewById<LinearLayout>(R.id.llcollegeselect)
         val domainUrl = HelperStrings.url
-        volleyQueue = MySingleton.getInstance(context as Context)
+        volleyQueue = context?.let { MySingleton.getInstance(it) }
         allFields = ArrayList(
             listOf(
                 CollegeChooseModel(
@@ -228,6 +227,7 @@ class CollegeChoose : Fragment() {
 
                         //update the unlocked variable
                         viewModel.setVal(HelperStrings.unlocked, requestCode + 1)
+                        viewModel.writeToDisk()
                     }
                 }
             } else {

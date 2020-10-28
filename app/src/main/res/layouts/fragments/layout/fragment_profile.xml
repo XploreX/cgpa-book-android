@@ -73,11 +73,12 @@
         android:layout_marginTop="24dp"
         android:layout_marginEnd="12dp"
         android:layout_marginBottom="24dp"
-        app:cardBackgroundColor="@color/colorPrimaryDark"
+        app:cardBackgroundColor="#3F51B5"
         app:cardCornerRadius="24dp">
 
         <ScrollView
             android:layout_width="match_parent"
+            android:scrollbarAlwaysDrawVerticalTrack="true"
             android:layout_height="match_parent"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp">
@@ -86,8 +87,8 @@
                 android:id="@+id/sem_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp"
                 android:orientation="vertical" />
         </ScrollView>
     </androidx.cardview.widget.CardView>

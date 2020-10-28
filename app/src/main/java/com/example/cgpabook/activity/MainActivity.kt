@@ -31,7 +31,8 @@ class MainActivity : AppCompatActivity() {
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
 
         val gso =
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build()
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.server_client_id)).requestEmail().build()
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         findViewById<Button>(R.id.googlesignin).setOnClickListener { signIn() }
@@ -69,12 +70,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(account: GoogleSignInAccount?) {
         if (account != null) {
+
             val intent = Intent(this, NavigationActivity::class.java)
             intent.putExtra(HelperStrings.name, account.displayName)
             intent.putExtra(HelperStrings.email, account.email)
             account.photoUrl?.let { photoUrl ->
                 intent.putExtra(HelperStrings.photoUrl, photoUrl.toString())
             }
+            intent.putExtra(HelperStrings.tokenId, account.idToken)
+
+            // Debug:println("token: ${account.idToken}")
+
             startActivity(intent)
             finish()
         }
@@ -84,8 +90,10 @@ class MainActivity : AppCompatActivity() {
 
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
-        val account = GoogleSignIn.getLastSignedInAccount(this)
-        updateUI(account)
+        mGoogleSignInClient.silentSignIn()
+            .addOnCompleteListener(
+                this
+            ) { task -> handleSignInResult(task) }
         super.onStart()
 
     }

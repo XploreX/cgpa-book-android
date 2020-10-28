@@ -16,6 +16,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.example.cgpabook.R
 import com.example.cgpabook.classes.SubjectsData
+import com.example.cgpabook.receiver.ConnectivityBroadcastReceiver
 import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.utils.*
 import org.json.JSONObject
@@ -41,6 +42,9 @@ class EnterMarksFragment : Fragment() {
     private val creditsLiveData = MutableLiveData<Double>()
     private val subjectsLeftLiveData = MutableLiveData<Int>()
 
+    // broadcast
+    private val broadcastReceiver = ConnectivityBroadcastReceiver()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -54,7 +58,7 @@ class EnterMarksFragment : Fragment() {
         initViewModelObservers()
 
         // init variables
-        val volleyQueue = MySingleton.getInstance(context as Context)
+        val volleyQueue = context?.let { MySingleton.getInstance(it) }
 
         // undo button
         v.findViewById<ImageView>(R.id.btn_undo).setOnClickListener {
@@ -243,6 +247,15 @@ class EnterMarksFragment : Fragment() {
         val semDataAll = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
         semDataAll.put(semNo, semData.toString())
         viewModel.setVal(HelperStrings.semdata, semDataAll)
+        viewModel.writeToDisk()
+        context?.applicationContext?.getSharedPreferences(
+            HelperStrings.sharedPrefs,
+            Context.MODE_PRIVATE
+        )?.let {
+            it.edit().putBoolean(HelperStrings.synced, false).apply()
+        }
+
+        viewModel.setVal(HelperStrings.synced, false)
         goToProfile()
     }
 }

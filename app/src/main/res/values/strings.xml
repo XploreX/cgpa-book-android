@@ -3,7 +3,6 @@
     <string name="title_activity_navigation">NavigationActivity</string>
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
-
     <string name="menu_profile">Profile</string>
     <string name="menu_update_cgpa">Update CGPA</string>
     <string name="menu_select_college">Select College</string>
@@ -26,5 +25,5 @@
     <string name="college_name">University School of Information and Communication Technology</string>
     <string name="select_credits">Select Credits</string>
     <string name="sign_out">Sign Out</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="server_client_id">1055641245291-sa1t14cm47detrac9svkh27dtgkjf272.apps.googleusercontent.com</string>
 </resources>

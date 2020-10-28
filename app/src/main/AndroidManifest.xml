@@ -18,14 +18,9 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <receiver
-            android:name=".receiver.BroadcastReceiver"
+            android:name=".receiver.ConnectivityBroadcastReceiver"
             android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-
-        </receiver>
+            android:exported="false"></receiver>
 
         <activity
             android:name=".activity.SearchActivity"

@@ -1,6 +1,8 @@
 package com.example.cgpabook.activity
 
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
@@ -13,10 +15,12 @@ import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.example.cgpabook.R
+import com.example.cgpabook.receiver.ConnectivityBroadcastReceiver
 import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.ui.profile.ProfileFragment
 import com.example.cgpabook.ui.updateCGPA.CollegeChoose
 import com.example.cgpabook.utils.HelperStrings
+import com.example.cgpabook.utils.MySingleton
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
@@ -27,6 +31,9 @@ class NavigationActivity : AppCompatActivity() {
     private var lastchecked: Int = R.id.nav_profile
     private lateinit var navView: NavigationView
     private lateinit var viewModel: SharedViewModel
+    private val broadcastReceiver = ConnectivityBroadcastReceiver()
+    private var broadcastEnabled = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -38,14 +45,24 @@ class NavigationActivity : AppCompatActivity() {
         viewModel = ViewModelProviders.of(
             this,
             SavedStateViewModelFactory(application, this)
-        )[SharedViewModel::class.java]
-
+        ).get(HelperStrings.NavigationActivity, SharedViewModel::class.java)
         // Add all the received data from Main Activity Intent(name,email,avatar)
         if (intent != null) {
             viewModel.setVal(HelperStrings.name, intent.getStringExtra(HelperStrings.name))
             viewModel.setVal(HelperStrings.email, intent.getStringExtra(HelperStrings.email))
             viewModel.setVal(HelperStrings.photoUrl, intent.getStringExtra(HelperStrings.photoUrl))
+            viewModel.setVal(HelperStrings.tokenId, intent.getStringExtra(HelperStrings.tokenId))
+            viewModel.writeToDisk()
         }
+
+        // Setup Broadcast Listener
+        viewModel.getElement<Boolean>(HelperStrings.synced).observe(this, Observer { synced ->
+            if (synced == false) {
+                disableBroadcast()
+                enableBroadcast()
+            } else
+                disableBroadcast()
+        })
 
         // Initialize the variable
         drawerLayout = findViewById(R.id.drawer_layout)
@@ -66,6 +83,7 @@ class NavigationActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_sign_out -> {
+                    reset()
                     val intent = Intent(this, MainActivity::class.java)
                     val gso =
                         GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -123,11 +141,9 @@ class NavigationActivity : AppCompatActivity() {
             drawerLayout.closeDrawers()
 
             // Save the Data in View Model after every Fragment Change
-            viewModel.writeToDisk()
             return@setNavigationItemSelectedListener true
         }
         // End Fragment Transaction Setup
-
 
         // View Model Observers
         viewModel.getElement<String>(HelperStrings.name).observe(this, Observer {
@@ -155,11 +171,41 @@ class NavigationActivity : AppCompatActivity() {
         })
     }
 
+    // delete all the user stored data and flush caches
+    private fun reset() {
+        viewModel.deleteViewModel()
+        viewModelStore.clear()
+        savedStateRegistry.unregisterSavedStateProvider(HelperStrings.NavigationActivity)
+        MySingleton.getInstance(this)?.getRequestQueue()?.cache?.clear()
+    }
+
+    // disable broadcast when exiting the app
+    private fun disableBroadcast() {
+        if (broadcastEnabled) {
+            try {
+                applicationContext.unregisterReceiver(broadcastReceiver)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+            }
+            broadcastEnabled = false
+        }
+    }
+
+    // if any update is done, enable broadcast to send the updated data as soon as internet is available
+    private fun enableBroadcast() {
+        if (!broadcastEnabled) {
+            val filter = IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION).apply {
+                addAction(Intent.ACTION_AIRPLANE_MODE_CHANGED)
+            }
+            applicationContext.registerReceiver(broadcastReceiver, filter)
+            broadcastEnabled = true
+        }
+    }
+
     override fun onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
             drawerLayout.closeDrawers()
         } else {
-            viewModel.writeToDisk()
             when (supportFragmentManager.backStackEntryCount) {
                 2 -> {
                     // Go to Profile from every other Fragment on back press
@@ -174,12 +220,5 @@ class NavigationActivity : AppCompatActivity() {
             }
         }
     }
-
-    override fun onPause() {
-        // Write to Disk when Pausing the app
-        viewModel.writeToDisk()
-        super.onPause()
-    }
-
 
 }

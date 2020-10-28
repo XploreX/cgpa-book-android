@@ -7,7 +7,7 @@ import org.json.JSONObject
 import java.io.UnsupportedEncodingException
 import java.nio.charset.Charset
 
-class JsonObjectRequestCached(
+open class JsonObjectRequestCached(
     method: Int,
     url: String?,
     jsonRequest: JSONObject?,

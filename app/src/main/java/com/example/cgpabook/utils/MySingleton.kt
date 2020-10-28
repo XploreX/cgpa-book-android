@@ -10,7 +10,7 @@ class MySingleton private constructor(private val ctx: Context) {
 
     fun getRequestQueue(): RequestQueue? {
         // getApplicationContext() is key, it keeps you from leaking the
-        // Activity or BroadcastReceiver if someone passes one in.
+        // Activity or ConnectivityBroadcastReceiver if someone passes one in.
         if (requestQueue == null) {
             requestQueue = Volley.newRequestQueue(ctx.applicationContext)
         }
