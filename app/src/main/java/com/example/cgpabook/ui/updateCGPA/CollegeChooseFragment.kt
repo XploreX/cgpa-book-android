@@ -221,6 +221,8 @@ class CollegeChoose : Fragment() {
 
                     val filteredRecvString = recvString.split("(")[0].trim()
                     if (concernedField.editText.text.toString() != filteredRecvString) {
+                        // update the new chosen lists
+                        context?.let { setSyncState(it, false, viewModel) }
 
                         // update viewmodel
                         viewModel.setVal(concernedField.label, filteredRecvString)

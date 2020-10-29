@@ -1,5 +1,6 @@
 package com.example.cgpabook.activity
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
@@ -21,6 +22,8 @@ import com.example.cgpabook.ui.profile.ProfileFragment
 import com.example.cgpabook.ui.updateCGPA.CollegeChoose
 import com.example.cgpabook.utils.HelperStrings
 import com.example.cgpabook.utils.MySingleton
+import com.example.cgpabook.utils.getSyncState
+import com.example.cgpabook.utils.setSyncState
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
@@ -83,17 +86,18 @@ class NavigationActivity : AppCompatActivity() {
         navView.setNavigationItemSelectedListener {
             when (it.itemId) {
                 R.id.nav_sign_out -> {
-                    reset()
-                    val intent = Intent(this, MainActivity::class.java)
-                    val gso =
-                        GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestEmail()
-                            .build()
-                    val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
-                    mGoogleSignInClient.signOut().addOnCompleteListener {
-                        startActivity(intent)
-                        finish()
-                    }
+                    var sync = getSyncState(this, viewModel)
+                    if (!sync) {
+                        AlertDialog.Builder(this)
+                            .setTitle("Confirm")
+                            .setMessage("Your Data isn't backup up yet, if you logout it will be lost, do you really want to log out?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                                signOut()
+                            }
+                            .setNegativeButton(android.R.string.no, null).show()
+                    } else signOut()
+
                 }
                 R.id.nav_feedback -> {
                     Toast.makeText(this@NavigationActivity, "Feedback", Toast.LENGTH_SHORT).show()
@@ -171,12 +175,28 @@ class NavigationActivity : AppCompatActivity() {
         })
     }
 
+    private fun signOut() {
+        reset()
+        val intent = Intent(this, MainActivity::class.java)
+        val gso =
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build()
+        val mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
+        mGoogleSignInClient.signOut().addOnCompleteListener {
+            startActivity(intent)
+            finish()
+        }
+    }
+
     // delete all the user stored data and flush caches
     private fun reset() {
+        setSyncState(this, true, viewModel)
         viewModel.deleteViewModel()
         viewModelStore.clear()
         savedStateRegistry.unregisterSavedStateProvider(HelperStrings.NavigationActivity)
-        MySingleton.getInstance(this)?.getRequestQueue()?.cache?.clear()
+        MySingleton.getInstance(this)
+            ?.getRequestQueue()?.cache?.remove("${HelperStrings.url}/user/gpa-data")
     }
 
     // disable broadcast when exiting the app

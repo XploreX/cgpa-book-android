@@ -1,6 +1,5 @@
 package com.example.cgpabook.ui.updateCGPA
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -234,6 +233,9 @@ class EnterMarksFragment : Fragment() {
 
     private fun noMoreSubs() {
 
+        // set sync state as false so profile page doesn't download before updating
+        context?.let { setSyncState(it, false, viewModel) }
+
         // create a sem data object
         val semData = JSONObject()
 
@@ -248,14 +250,6 @@ class EnterMarksFragment : Fragment() {
         semDataAll.put(semNo, semData.toString())
         viewModel.setVal(HelperStrings.semdata, semDataAll)
         viewModel.writeToDisk()
-        context?.applicationContext?.getSharedPreferences(
-            HelperStrings.sharedPrefs,
-            Context.MODE_PRIVATE
-        )?.let {
-            it.edit().putBoolean(HelperStrings.synced, false).apply()
-        }
-
-        viewModel.setVal(HelperStrings.synced, false)
         goToProfile()
     }
 }

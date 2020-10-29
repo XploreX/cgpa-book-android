@@ -3,7 +3,13 @@ package com.example.cgpabook.activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Button
+import android.widget.FrameLayout
+import android.widget.ProgressBar
+import android.widget.RelativeLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import com.example.cgpabook.R
@@ -19,6 +25,7 @@ import com.google.android.gms.tasks.Task
 class MainActivity : AppCompatActivity() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private val RC_SIGN_IN = 0
+    private lateinit var progressBar: ProgressBar
     override fun onCreate(savedInstanceState: Bundle?) {
         // init on create
         super.onCreate(savedInstanceState)
@@ -70,7 +77,6 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateUI(account: GoogleSignInAccount?) {
         if (account != null) {
-
             val intent = Intent(this, NavigationActivity::class.java)
             intent.putExtra(HelperStrings.name, account.displayName)
             intent.putExtra(HelperStrings.email, account.email)
@@ -90,11 +96,54 @@ class MainActivity : AppCompatActivity() {
 
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
+        progressBar = progressBarInit()
         mGoogleSignInClient.silentSignIn()
             .addOnCompleteListener(
                 this
-            ) { task -> handleSignInResult(task) }
+            ) { task ->
+                progressBarDestroy(progressBar)
+                handleSignInResult(task)
+            }
         super.onStart()
 
+    }
+
+    fun progressBarInit(): ProgressBar {
+        // Disable taps when progress bar is being shown
+        let {
+            it.window.setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+            )
+        }
+
+        // init progress bar
+        progressBar = ProgressBar(this)
+        val params = RelativeLayout.LayoutParams(
+            RelativeLayout.LayoutParams.WRAP_CONTENT,
+            RelativeLayout.LayoutParams.WRAP_CONTENT
+        )
+        params.addRule(RelativeLayout.CENTER_IN_PARENT)
+        val relativeLayout = RelativeLayout(this)
+        relativeLayout.addView(progressBar, params)
+        val layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+        findViewById<FrameLayout>(R.id.progress_overlay).addView(relativeLayout, layoutParams)
+        progressBar.visibility = View.VISIBLE
+
+        // overlay.xml layout should be included in the file where you need to show progressbar
+        val progressOverlay = findViewById<FrameLayout>(R.id.progress_overlay)
+        progressOverlay.visibility = View.VISIBLE
+        return progressBar
+    }
+
+    fun progressBarDestroy(p: ProgressBar) {
+        val progressOverlay = findViewById<FrameLayout>(R.id.progress_overlay)
+        // Restores taps
+        this.window?.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        progressOverlay.visibility = View.GONE
+        p.visibility = View.GONE
     }
 }

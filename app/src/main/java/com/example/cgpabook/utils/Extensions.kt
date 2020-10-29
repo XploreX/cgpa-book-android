@@ -1,6 +1,5 @@
 package com.example.cgpabook.utils
 
-import android.content.BroadcastReceiver
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Uri
@@ -248,11 +247,21 @@ fun writeToDisk(filename: String, string: String?): Boolean {
     }
 }
 
-fun Fragment.unregisterBroadcast(viewModel: SharedViewModel, broadcastReceiver: BroadcastReceiver) {
-
+fun getSyncState(context: Context, viewModel: SharedViewModel?): Boolean {
+    val sharedProviders = context.applicationContext.getSharedPreferences(
+        HelperStrings.sharedPrefs,
+        Context.MODE_PRIVATE
+    )
+    viewModel?.setVal(HelperStrings.synced, sharedProviders.getBoolean(HelperStrings.synced, true))
+    return sharedProviders.getBoolean(HelperStrings.synced, true)
 }
 
-fun sendToServer(context: Context) {
-
+fun setSyncState(context: Context, boolean: Boolean, viewModel: SharedViewModel?) {
+    val sharedProviders = context.applicationContext.getSharedPreferences(
+        HelperStrings.sharedPrefs,
+        Context.MODE_PRIVATE
+    )
+    sharedProviders.edit().putBoolean(HelperStrings.synced, boolean).apply()
+    viewModel?.setVal(HelperStrings.synced, boolean)
 }
 

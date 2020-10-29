@@ -15,19 +15,18 @@ class ConnectivityBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
 
-        // Since SharedViewModel can't be accessed, We are importing it manually for our required data
-        var viewModelData: JSONObject = JSONObject()
-        val filename = context.applicationContext.filesDir.path + "/data"
-        readFromDisk(filename)?.let { it ->
-            viewModelData = JSONObject(it)
-        }
-
         // Get the sync state
-        val synced =
-            if (viewModelData.has(HelperStrings.synced)) viewModelData.getBoolean(HelperStrings.synced) else false
+        val synced = getSyncState(context, null)
 
         // check if network connectivity is there and it is not synced before
         if (isNetworkConnected(context) && !synced) {
+
+            // Since SharedViewModel can't be accessed, We are importing it manually for our required data
+            var viewModelData: JSONObject = JSONObject()
+            val filename = context.applicationContext.filesDir.path + "/data"
+            readFromDisk(filename)?.let { it ->
+                viewModelData = JSONObject(it)
+            }
 
             // These are the strings that we need to send to the server
             val dataToSend = ArrayList<String>(
@@ -64,16 +63,12 @@ class ConnectivityBroadcastReceiver : BroadcastReceiver() {
 
                     // if receive success, update it in viewmodel
                     if (it.has("success") && it.getString("success") == "true")
-                        viewModelData.put(HelperStrings.synced, true)
+                        setSyncState(context, true, null)
                     else
-                        viewModelData.put(HelperStrings.synced, false)
-                    writeToDisk(filename, viewModelData.toString())
+                        setSyncState(context, false, null)
 
                 }, Response.ErrorListener {
-
-                    viewModelData.put(HelperStrings.synced, false)
-                    writeToDisk(filename, viewModelData.toString())
-
+                    setSyncState(context, false, null)
                 }) {
                     override fun getHeaders(): MutableMap<String, String> {
                         val params: MutableMap<String, String> = HashMap()

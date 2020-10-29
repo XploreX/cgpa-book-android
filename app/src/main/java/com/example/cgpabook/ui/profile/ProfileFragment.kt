@@ -10,8 +10,10 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
 import com.android.volley.Response
+import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
 import com.example.cgpabook.R
 import com.example.cgpabook.ui.SharedViewModel
@@ -33,6 +35,9 @@ class ProfileFragment : Fragment() {
         val v = inflater.inflate(R.layout.fragment_profile, container, false)
         viewModel = getViewModel()
 
+        // Add the top right DashBoard Button
+        dashBoardButton(v.findViewById(R.id.relativeLayoutParent))
+
         // Setup the Display Variables
         val viewModelObserverStrings = ArrayList<String>(
             listOf(
@@ -43,9 +48,16 @@ class ProfileFragment : Fragment() {
             )
         )
 
+        // Init Variables
+        val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
+        val pullToRefreshLayout = v.findViewById<SwipeRefreshLayout>(R.id.pulltorefresh)
+
+        // set Refreshing true when loading data
+        pullToRefreshLayout.isRefreshing = true
+
         val profileUrl = HelperStrings.url + "/user/gpa-data"
         val request = object :
-            JsonObjectRequestCached(Request.Method.GET, profileUrl, null, Response.Listener {
+            JsonObjectRequest(Request.Method.GET, profileUrl, null, Response.Listener {
 
                 println("recvObj: $it")
                 val dataToReceive = ArrayList<String>(
@@ -62,9 +74,11 @@ class ProfileFragment : Fragment() {
                         viewModel.setVal(i, it.get(i))
                     }
                 }
+                pullToRefreshLayout.isRefreshing = false
                 viewModel.writeToDisk()
 
             }, Response.ErrorListener {
+                pullToRefreshLayout.isRefreshing = false
                 errorHandler(it)
             }) {
             override fun getHeaders(): MutableMap<String, String> {
@@ -74,11 +88,28 @@ class ProfileFragment : Fragment() {
                 return params
             }
         }
-        volleyQueue = context?.let { MySingleton.getInstance(it) }
-        volleyQueue?.addToRequestQueue(request)
 
-        // Init Variables
-        val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
+        volleyQueue = context?.let { MySingleton.getInstance(it) }
+        if (getSyncState(requireContext(), viewModel))
+            volleyQueue?.addToRequestQueue(request)
+
+        // Pull to refresh
+        pullToRefreshLayout.setOnRefreshListener {
+            if (getSyncState(requireContext(), viewModel))
+                volleyQueue?.addToRequestQueue(request)
+            else {
+                context?.let {
+                    AlertDialog.Builder(it)
+                        .setTitle("Confirm")
+                        .setMessage("You have some changes which aren't backup up, it will be lost, do you really want to refresh?")
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                            volleyQueue?.addToRequestQueue(request)
+                        }
+                        .setNegativeButton(android.R.string.no, null).show()
+                }
+            }
+        }
 
         // This is to fix Issue #1
         viewModel.setVal(HelperStrings.cgpa, 0.0)
@@ -121,8 +152,6 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        // Add the top right DashBoard Button
-        dashBoardButton(v)
 
         viewModel.getElement<JSONObject>(HelperStrings.semdata)
             .observe(viewLifecycleOwner, Observer { allSemData ->
@@ -158,13 +187,13 @@ class ProfileFragment : Fragment() {
                                 .setMessage("Do you really want to delete semester $currentKey result?")
                                 .setIcon(android.R.drawable.ic_dialog_alert)
                                 .setPositiveButton(android.R.string.yes) { _, _ ->
+                                    // set sync state false so that profile fragment doesn't download data before uploading the new data
+                                    context?.let { it1 -> setSyncState(it1, false, viewModel) }
                                     allSemData.remove(currentKey)
                                     if (allSemData.length() != 0)
                                         viewModel.setVal(HelperStrings.semdata, allSemData)
                                     else
                                         viewModel.setVal(HelperStrings.semdata, null)
-                                    viewModel.setVal(HelperStrings.synced, false)
-
                                 }
                                 .setNegativeButton(android.R.string.no, null).show()
                         }
