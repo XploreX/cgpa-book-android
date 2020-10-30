@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.android.volley.Cache
 import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
@@ -52,12 +53,10 @@ class ProfileFragment : Fragment() {
         val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
         val pullToRefreshLayout = v.findViewById<SwipeRefreshLayout>(R.id.pulltorefresh)
 
-        // set Refreshing true when loading data
-        pullToRefreshLayout.isRefreshing = true
 
         val profileUrl = HelperStrings.url + "/user/gpa-data"
-        val request = object :
-            JsonObjectRequest(Request.Method.GET, profileUrl, null, Response.Listener {
+        val userGpaDataRequest = object :
+            JsonObjectRequest(Method.GET, profileUrl, null, Response.Listener {
 
                 println("recvObj: $it")
                 val dataToReceive = ArrayList<String>(
@@ -78,6 +77,7 @@ class ProfileFragment : Fragment() {
                 viewModel.writeToDisk()
 
             }, Response.ErrorListener {
+                println("recvObjError")
                 pullToRefreshLayout.isRefreshing = false
                 errorHandler(it)
             }) {
@@ -87,26 +87,39 @@ class ProfileFragment : Fragment() {
                     "Bearer ${viewModel.getVal<String>(HelperStrings.tokenId)}"
                 return params
             }
+
+            override fun setCacheEntry(entry: Cache.Entry?): Request<*>? {
+                return null
+            }
         }
 
         volleyQueue = context?.let { MySingleton.getInstance(it) }
-        if (getSyncState(requireContext(), viewModel))
-            volleyQueue?.addToRequestQueue(request)
+        if (getSyncState(requireContext(), viewModel)) {
+
+            // set Refreshing true when loading data
+            pullToRefreshLayout.isRefreshing = true
+            volleyQueue?.addToRequestQueue(userGpaDataRequest)
+        }
 
         // Pull to refresh
         pullToRefreshLayout.setOnRefreshListener {
-            if (getSyncState(requireContext(), viewModel))
-                volleyQueue?.addToRequestQueue(request)
-            else {
+            if (getSyncState(requireContext(), viewModel)) {
+                volleyQueue?.let { volleyQueue ->
+                    volleyQueue.addToRequestQueue(userGpaDataRequest)
+                }
+            } else {
                 context?.let {
                     AlertDialog.Builder(it)
                         .setTitle("Confirm")
                         .setMessage("You have some changes which aren't backup up, it will be lost, do you really want to refresh?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
                         .setPositiveButton(android.R.string.yes) { _, _ ->
-                            volleyQueue?.addToRequestQueue(request)
+                            volleyQueue?.addToRequestQueue(userGpaDataRequest)
                         }
-                        .setNegativeButton(android.R.string.no, null).show()
+                        .setNegativeButton(android.R.string.no) { _, _ ->
+                            pullToRefreshLayout.isRefreshing = false
+                        }
+                        .show()
                 }
             }
         }
