@@ -11,6 +11,7 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
 import com.android.volley.Response
 import com.example.cgpabook.R
@@ -53,11 +54,12 @@ class EnterMarksFragment : Fragment() {
         // fragment on create
         val v = inflater.inflate(R.layout.fragment_enter_marks, container, false)
         viewModel = getViewModel()
-        dashBoardButton(v)
+        dashBoardButton(v.findViewById(R.id.relativeLayoutParent))
         initViewModelObservers()
 
         // init variables
         val volleyQueue = context?.let { MySingleton.getInstance(it) }
+        val pullToRefreshLayout = v.findViewById<SwipeRefreshLayout>(R.id.pulltorefresh)
 
         // undo button
         v.findViewById<ImageView>(R.id.btn_undo).setOnClickListener {
@@ -108,12 +110,18 @@ class EnterMarksFragment : Fragment() {
             }
             updateSub()
             progressBarDestroy(v, pb)
+            pullToRefreshLayout.isRefreshing = false
 
         }, Response.ErrorListener {
             errorHandler(it)
             progressBarDestroy(v, pb)
+            pullToRefreshLayout.isRefreshing = false
         })
         volleyQueue?.addToRequestQueue(jsonObject)
+        // swipe
+        pullToRefreshLayout.setOnRefreshListener {
+            volleyQueue?.addToRequestQueue(jsonObject)
+        }
         initGradeButtons(v)
 
         return v

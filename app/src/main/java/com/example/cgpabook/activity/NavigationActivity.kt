@@ -31,7 +31,7 @@ import com.google.android.material.navigation.NavigationView
 class NavigationActivity : AppCompatActivity() {
 
     private lateinit var drawerLayout: DrawerLayout
-    private var lastchecked: Int = R.id.nav_profile
+    private var lastchecked = R.id.nav_profile
     private lateinit var navView: NavigationView
     private lateinit var viewModel: SharedViewModel
     private val broadcastReceiver = ConnectivityBroadcastReceiver()
@@ -84,9 +84,10 @@ class NavigationActivity : AppCompatActivity() {
 
         // Item Listener
         navView.setNavigationItemSelectedListener {
+            navView.setCheckedItem(it.itemId)
             when (it.itemId) {
                 R.id.nav_sign_out -> {
-                    var sync = getSyncState(this, viewModel)
+                    val sync = getSyncState(this, viewModel)
                     if (!sync) {
                         AlertDialog.Builder(this)
                             .setTitle("Confirm")
@@ -95,7 +96,13 @@ class NavigationActivity : AppCompatActivity() {
                             .setPositiveButton(android.R.string.yes) { _, _ ->
                                 signOut()
                             }
-                            .setNegativeButton(android.R.string.no, null).show()
+                            .setNegativeButton(android.R.string.no) { _, _ ->
+                                navView.setCheckedItem(
+                                    lastchecked
+                                )
+                            }
+                            .show()
+
                     } else signOut()
 
                 }
@@ -104,16 +111,12 @@ class NavigationActivity : AppCompatActivity() {
 
                     // Don't Change the Last Checked Item
                     navView.setCheckedItem(lastchecked)
-
-                    // Debug: println("lastchecked:$lastchecked,${it.itemId},${navView.checkedItem?.itemId}")
                 }
                 R.id.nav_share -> {
                     Toast.makeText(this@NavigationActivity, "Share", Toast.LENGTH_SHORT).show()
 
                     // Don't Change the Last Checked Item
                     navView.setCheckedItem(lastchecked)
-
-                    // Debug: println("lastchecked:$lastchecked,${it.itemId},${navView.checkedItem?.itemId}")
                 }
                 R.id.nav_profile -> {
                     supportFragmentManager.popBackStack(
@@ -143,9 +146,10 @@ class NavigationActivity : AppCompatActivity() {
                 }
             }
             drawerLayout.closeDrawers()
+            // Debug: println("itemid:${it.itemId},lastchecked:$lastchecked, navViewchecked:${navView.checkedItem}")
 
-            // Save the Data in View Model after every Fragment Change
-            return@setNavigationItemSelectedListener true
+            // by returning false, we can handle the selected item ourselves (Fixes #7)
+            return@setNavigationItemSelectedListener false
         }
         // End Fragment Transaction Setup
 
