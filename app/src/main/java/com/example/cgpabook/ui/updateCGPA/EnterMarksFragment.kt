@@ -135,7 +135,7 @@ class EnterMarksFragment : Fragment() {
 
         // make a similar grades object which will be returned from api
         gradesSchema = JSONObject()
-        val grades: ArrayList<String> = ArrayList(listOf("O", "A+", "A", "B+", "B", "C", "F"))
+        val grades: ArrayList<String> = ArrayList(listOf("O", "A+", "A", "B+", "B", "C", "P", "F"))
         for (i in 0 until grades.size) {
             if (grades[i] == "F")
                 gradesSchema.put("F", 0)
