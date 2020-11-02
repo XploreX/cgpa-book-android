@@ -4,9 +4,9 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
@@ -15,6 +15,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
+import com.example.cgpabook.BuildConfig
 import com.example.cgpabook.R
 import com.example.cgpabook.receiver.ConnectivityBroadcastReceiver
 import com.example.cgpabook.ui.SharedViewModel
@@ -107,13 +108,25 @@ class NavigationActivity : AppCompatActivity() {
 
                 }
                 R.id.nav_feedback -> {
-                    Toast.makeText(this@NavigationActivity, "Feedback", Toast.LENGTH_SHORT).show()
+                    val uri =
+                        Uri.parse("mailto:${getString(R.string.support_email)}?subject=Feedback&body=Please enter your feedback here")
+                    val sendIntent = Intent(Intent.ACTION_SENDTO, uri)
+                    if (sendIntent.resolveActivity(packageManager) != null) {
+                        startActivity(Intent.createChooser(sendIntent, "Send Feedback"))
+                    }
 
                     // Don't Change the Last Checked Item
                     navView.setCheckedItem(lastchecked)
                 }
                 R.id.nav_share -> {
-                    Toast.makeText(this@NavigationActivity, "Share", Toast.LENGTH_SHORT).show()
+                    val sendIntent = Intent()
+                    sendIntent.action = Intent.ACTION_SEND
+                    sendIntent.putExtra(
+                        Intent.EXTRA_TEXT,
+                        "Hey, My CGPA is ${viewModel.getVal<Double>(HelperStrings.cgpa)}. Wanna calculate yours? Download CGPABook from https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID} and effortlessly calculate your CGPA"
+                    )
+                    sendIntent.type = "text/plain"
+                    startActivity(sendIntent)
 
                     // Don't Change the Last Checked Item
                     navView.setCheckedItem(lastchecked)
