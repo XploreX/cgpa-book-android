@@ -123,7 +123,10 @@ class NavigationActivity : AppCompatActivity() {
                     sendIntent.action = Intent.ACTION_SEND
                     sendIntent.putExtra(
                         Intent.EXTRA_TEXT,
-                        "Hey, My CGPA is ${viewModel.getVal<Double>(HelperStrings.cgpa)}. Wanna calculate yours? Download CGPABook from https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID} and effortlessly calculate your CGPA"
+                        "Hey, My CGPA is ${String.format(
+                            "%.2f",
+                            viewModel.getVal<Double>(HelperStrings.cgpa)
+                        )} . Wanna calculate yours? Download CGPABook from https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID} and effortlessly calculate your CGPA"
                     )
                     sendIntent.type = "text/plain"
                     startActivity(sendIntent)

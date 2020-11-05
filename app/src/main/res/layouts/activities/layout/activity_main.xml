@@ -56,41 +56,33 @@
             android:text="@string/app_name" />
 
     </RelativeLayout>
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="wrap_content"
         android:orientation="vertical"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:layout_marginBottom="25dp"
         android:layout_weight="1"
         android:layout_height="0dp">
 
         <Button
             android:id="@+id/googlesignin"
-            android:layout_marginBottom="24dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="100dp"
             android:layout_width="317dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:textAllCaps="false"
-            android:gravity="start|center_vertical"
             android:paddingStart="50dp"
             android:paddingEnd="50dp"
             android:text="@string/sign_in_with_google"
             android:letterSpacing="0.2"
             android:background="@drawable/ic_googlesignin" />
 
-        <Button
-            android:gravity="start|center_vertical"
-            android:paddingStart="50dp"
-            android:paddingEnd="50dp"
-            android:textAllCaps="false"
-            android:layout_width="317dp"
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_alignParentBottom="true"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textColor="#FFFFFF"
-            android:letterSpacing="0.2"
-            android:text="@string/sign_in_with_facebook"
-            android:background="@drawable/ic_fbsignin" />
-    </LinearLayout>
+            android:adjustViewBounds="true"
+            android:src="@drawable/ic_math_nerds" />
+
+    </RelativeLayout>
 
 </LinearLayout>

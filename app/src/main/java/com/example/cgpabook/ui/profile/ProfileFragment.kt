@@ -1,6 +1,7 @@
 package com.example.cgpabook.ui.profile
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.android.volley.Request
 import com.android.volley.Response
 import com.android.volley.toolbox.JsonObjectRequest
 import com.bumptech.glide.Glide
+import com.example.cgpabook.BuildConfig
 import com.example.cgpabook.R
 import com.example.cgpabook.ui.SharedViewModel
 import com.example.cgpabook.utils.*
@@ -194,6 +196,19 @@ class ProfileFragment : Fragment() {
                                 "%.2f",
                                 semData.get(HelperStrings.sgpa).toString().toDouble()
                             )}"
+                        v1.findViewById<ImageView>(R.id.share_sgpa).setOnClickListener {
+                            val sendIntent = Intent()
+                            sendIntent.action = Intent.ACTION_SEND
+                            sendIntent.putExtra(
+                                Intent.EXTRA_TEXT,
+                                "Hey, My GPA for Semester $currentKey is ${String.format(
+                                    "%.2f",
+                                    semData.get(HelperStrings.sgpa).toString().toDouble()
+                                )} . Wanna calculate yours? Download CGPABook from https://play.google.com/store/apps/details?id=${BuildConfig.APPLICATION_ID} and effortlessly calculate your CGPA"
+                            )
+                            sendIntent.type = "text/plain"
+                            startActivity(sendIntent)
+                        }
                         v1.findViewById<ImageView>(R.id.btn_delete).setOnClickListener {
                             AlertDialog.Builder(context)
                                 .setTitle("Confirm")

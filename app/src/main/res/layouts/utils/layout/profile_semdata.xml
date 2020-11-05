@@ -18,26 +18,39 @@
         android:orientation="vertical"
         app:cardCornerRadius="20dp">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="24dp"
-            android:orientation="vertical">
+            android:layout_margin="24dp">
 
-            <TextView
-                android:id="@+id/semno"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SemNumber"
-                android:textColor="@color/black" />
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/sgpa"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SGPA:"
-                android:textColor="@color/black" />
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/semno"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SemNumber"
+                    android:textColor="@color/black" />
+
+                <TextView
+                    android:id="@+id/sgpa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="SGPA:"
+                    android:textColor="@color/black" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/share_sgpa"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:src="@drawable/ic_send_button" />
+        </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
 
@@ -49,7 +62,6 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginTop="-12dp"
-        android:layout_marginEnd="12dp"
         android:clickable="true"
         android:contentDescription="@string/undo"
         android:focusable="true"
