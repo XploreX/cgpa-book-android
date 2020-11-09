@@ -120,6 +120,10 @@ class EnterMarksFragment : Fragment() {
         volleyQueue?.addToRequestQueue(jsonObject)
         // swipe
         pullToRefreshLayout.setOnRefreshListener {
+            userCreditsArray.clear()
+            totalCreditsArray.clear()
+            subjectsData.clear()
+            index = 0
             volleyQueue?.addToRequestQueue(jsonObject)
         }
         initGradeButtons(v)

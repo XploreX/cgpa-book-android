@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import com.android.volley.DefaultRetryPolicy
 import com.android.volley.Request
 import com.android.volley.Response
 import com.example.cgpabook.R
@@ -164,6 +165,11 @@ class CollegeChoose : Fragment() {
                         )
                         }
                     )
+                fieldInternetRequest.retryPolicy = DefaultRetryPolicy(
+                    6000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT
+                )
                 volleyQueue?.addToRequestQueue(fieldInternetRequest)
             }
         }

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_gravity="top"
+    android:weightSum="1.7"
     android:orientation="vertical"
     tools:context=".activity.MainActivity">
     <include layout="@layout/overlay" />
@@ -56,33 +57,28 @@
             android:text="@string/app_name" />
 
     </RelativeLayout>
-    <RelativeLayout
+
+    <Button
+        android:id="@+id/googlesignin"
+        android:layout_width="317dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/ic_googlesignin"
+        android:letterSpacing="0.2"
+        android:paddingStart="50dp"
+        android:paddingEnd="50dp"
+        android:text="@string/sign_in_with_google"
+        android:textAllCaps="false" />
+
+    <ImageView
         android:layout_width="wrap_content"
-        android:orientation="vertical"
-        android:layout_weight="1"
-        android:layout_height="0dp">
-
-        <Button
-            android:id="@+id/googlesignin"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="100dp"
-            android:layout_width="317dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:textAllCaps="false"
-            android:paddingStart="50dp"
-            android:paddingEnd="50dp"
-            android:text="@string/sign_in_with_google"
-            android:letterSpacing="0.2"
-            android:background="@drawable/ic_googlesignin" />
-
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:src="@drawable/ic_math_nerds" />
-
-    </RelativeLayout>
+        android:layout_height="0dp"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="end|bottom"
+        android:layout_weight="0.5"
+        android:adjustViewBounds="true"
+        android:src="@drawable/ic_circles" />
 
 </LinearLayout>
