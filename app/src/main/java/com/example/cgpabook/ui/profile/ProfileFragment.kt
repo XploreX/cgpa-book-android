@@ -56,6 +56,11 @@ class ProfileFragment : Fragment() {
         val pullToRefreshLayout = v.findViewById<SwipeRefreshLayout>(R.id.pulltorefresh)
 
 
+
+        v.findViewById<TextView>(R.id.updateProfile).setOnClickListener {
+            goToUpdateProfile()
+        }
+
         val profileUrl = HelperStrings.url + "/user/gpa-data"
         val userGpaDataRequest = object :
             JsonObjectRequest(Method.GET, profileUrl, null, Response.Listener {
@@ -75,11 +80,14 @@ class ProfileFragment : Fragment() {
                         viewModel.setVal(i, it.get(i))
                     }
                 }
+                // Initialize the unlocked Fields variable
+                initUnlocked()
                 pullToRefreshLayout.isRefreshing = false
                 viewModel.writeToDisk()
 
             }, Response.ErrorListener {
                 println("recvObjError")
+                initUnlocked()
                 pullToRefreshLayout.isRefreshing = false
                 errorHandler(it)
             }) {
@@ -100,8 +108,33 @@ class ProfileFragment : Fragment() {
 
             // set Refreshing true when loading data
             pullToRefreshLayout.isRefreshing = true
+            viewModel.setVal(HelperStrings.updateProfile, false)
             volleyQueue?.addToRequestQueue(userGpaDataRequest)
+        } else {
+            // Initialize the unlocked Fields variable
+            initUnlocked()
         }
+
+        viewModel.getElement<Boolean>(HelperStrings.updateProfile)
+            .observe(viewLifecycleOwner, Observer {
+                if (it == true) {
+                    v.findViewById<TextView>(R.id.updateProfile).text = "Update Profile"
+                    context?.let {
+                        AlertDialog.Builder(it)
+                            .setTitle("Confirm")
+                            .setMessage("Your Profile page isn't updated, update profile?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                                goToUpdateProfile()
+                            }
+                            .setNegativeButton(android.R.string.no) { _, _ ->
+                            }
+                            .show()
+                    }
+                } else {
+                    v.findViewById<TextView>(R.id.updateProfile).text = "Edit Profile"
+                }
+            })
 
         // Pull to refresh
         pullToRefreshLayout.setOnRefreshListener {
@@ -166,7 +199,6 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
-
 
         viewModel.getElement<JSONObject>(HelperStrings.semdata)
             .observe(viewLifecycleOwner, Observer { allSemData ->
@@ -243,6 +275,21 @@ class ProfileFragment : Fragment() {
             })
 
         return v
+    }
+
+    private fun initUnlocked() {
+        if (viewModel.getVal<Int>(HelperStrings.unlocked) == null) viewModel.setVal(
+            HelperStrings.unlocked,
+            0
+        )
+    }
+
+
+    override fun onDestroy() {
+        volleyQueue?.let {
+            it.getRequestQueue()?.cancelAll { true }
+        }
+        super.onDestroy()
     }
 
 }

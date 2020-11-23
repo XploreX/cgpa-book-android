@@ -6,6 +6,7 @@
     <string name="menu_profile">Profile</string>
     <string name="menu_update_cgpa">Update CGPA</string>
     <string name="menu_select_college">Select College</string>
+    <string name="menu_update_profile">Update Profile</string>
     <string name="txtcollegechoose">Select College</string>
     <string name="select">Select</string>
     <string name="nav_share">Share</string>

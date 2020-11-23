@@ -68,6 +68,13 @@ class ConnectivityBroadcastReceiver : BroadcastReceiver() {
                         setSyncState(context, false, null)
 
                 }, Response.ErrorListener {
+                    if (it.networkResponse != null) {
+                        println(it.networkResponse.data)
+                        val ob = JSONObject(String(it.networkResponse.data))
+                        if (ob.has("error")) {
+                            println("error ${ob.getJSONObject("error").getString("message")}")
+                        }
+                    }
                     setSyncState(context, false, null)
                 }) {
                     override fun getHeaders(): MutableMap<String, String> {

@@ -57,6 +57,14 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/updateProfile"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:textColor="#2196F3"
+                        android:textStyle="bold" />
+
+                    <TextView
                         android:id="@+id/profile_cgpa"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

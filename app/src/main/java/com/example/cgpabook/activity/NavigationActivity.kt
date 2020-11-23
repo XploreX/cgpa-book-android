@@ -193,6 +193,14 @@ class NavigationActivity : AppCompatActivity() {
             findViewById<NavigationView>(R.id.nav_view).getHeaderView(0)
                 .findViewById<TextView>(R.id.txt_email).text = it
         })
+        // unlocked observer
+        viewModel.getElement<Int>(HelperStrings.unlocked).observe(this, Observer {
+            println("unlocked :$it")
+            if (it < 3)
+                viewModel.setVal(HelperStrings.updateProfile, true)
+            else
+                viewModel.setVal(HelperStrings.updateProfile, false)
+        })
     }
 
     private fun signOut() {

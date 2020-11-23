@@ -1,6 +1,7 @@
 package com.example.cgpabook.ui.updateCGPA
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -47,21 +48,6 @@ class CollegeChoose : Fragment() {
         allFields = ArrayList(
             listOf(
                 CollegeChooseModel(
-                    "Select College",
-                    "$domainUrl/academia/college-list?",
-                    HelperStrings.college
-                ),
-                CollegeChooseModel(
-                    "Select Course",
-                    "$domainUrl/academia/course-list?",
-                    HelperStrings.course
-                ),
-                CollegeChooseModel(
-                    "Select Branch",
-                    "$domainUrl/academia/branch-list?",
-                    HelperStrings.branch
-                ),
-                CollegeChooseModel(
                     "Select Semester",
                     "$domainUrl/academia/semester-list?",
                     HelperStrings.semester
@@ -71,20 +57,42 @@ class CollegeChoose : Fragment() {
 
         val setupDisplayVariables = ArrayList<String>(
             listOf(
-                HelperStrings.college,
-                HelperStrings.course,
-                HelperStrings.branch,
                 HelperStrings.semester
             )
         )
-
-        // Initialize the unlocked Fields variable
-        if (viewModel.getVal<Int>(HelperStrings.unlocked) == null) viewModel.setVal(
-            HelperStrings.unlocked,
-            0
-        )
-
-
+        val requestParams = JSONObject()
+        viewModel.getElement<Boolean>(HelperStrings.updateProfile)
+            .observe(viewLifecycleOwner, Observer {
+                if (it == true) {
+                    context?.let {
+                        AlertDialog.Builder(it)
+                            .setTitle("Confirm")
+                            .setMessage("Your Profile page isn't updated, update profile?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                                goToUpdateProfile()
+                            }
+                            .setNegativeButton(android.R.string.no) { _, _ ->
+                            }
+                            .show()
+                    }
+                    for (i in allFields) {
+                        i.editText.isEnabled = false
+                        i.editText.error = "Please update profile first"
+                    }
+                } else {
+                    val temp = ArrayList(
+                        listOf(
+                            HelperStrings.college,
+                            HelperStrings.course,
+                            HelperStrings.branch
+                        )
+                    )
+                    for (i in temp) {
+                        requestParams.put(i, viewModel.getVal<String>(i))
+                    }
+                }
+            })
         // Next Button Click
         v.findViewById<ImageView>(R.id.btnnext).setOnClickListener {
             val flag = validateFields()
@@ -116,8 +124,7 @@ class CollegeChoose : Fragment() {
             field.editText.setOnClickListener {
                 field.editText.error = null
 
-                // setup the Request Body
-                val requestParams = JSONObject()
+                // update the Request Body
                 var url = field.url
                 for (temp in 0 until index) {
 
@@ -227,14 +234,9 @@ class CollegeChoose : Fragment() {
 
                     val filteredRecvString = recvString.split("(")[0].trim()
                     if (concernedField.editText.text.toString() != filteredRecvString) {
-                        // update the new chosen lists
-                        context?.let { setSyncState(it, false, viewModel) }
-
                         // update viewmodel
                         viewModel.setVal(concernedField.label, filteredRecvString)
 
-                        //update the unlocked variable
-                        viewModel.setVal(HelperStrings.unlocked, requestCode + 1)
                         viewModel.writeToDisk()
                     }
                 }

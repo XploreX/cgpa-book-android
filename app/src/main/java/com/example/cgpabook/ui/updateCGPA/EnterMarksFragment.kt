@@ -226,7 +226,7 @@ class EnterMarksFragment : Fragment() {
                 requireView().findViewById<TextView>(R.id.txt_cgpa).text = ""
             else
                 requireView().findViewById<TextView>(R.id.txt_cgpa).text =
-                    "CGPA: ${String.format("%.2f", it)}"
+                    "SGPA: ${String.format("%.2f", it)}"
         })
 
     }

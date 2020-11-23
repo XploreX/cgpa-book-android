@@ -18,6 +18,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.android.volley.VolleyError
 import com.example.cgpabook.R
 import com.example.cgpabook.ui.SharedViewModel
+import com.example.cgpabook.ui.profile.ProfileEditFragment
 import com.google.android.material.navigation.NavigationView
 import org.json.JSONObject
 import java.io.*
@@ -159,9 +160,9 @@ fun Fragment.errorHandler(it: VolleyError): Boolean {
         // if some other status code received, show the message string
         val ob = JSONObject(String(it.networkResponse.data))
 
-        if (!ob.has("message")) {
+        if (!ob.has("error")) {
             showToast("Unknown Error occurred", Toast.LENGTH_SHORT); return false
-        } else showToast(ob.getString("message"), Toast.LENGTH_SHORT)
+        } else showToast(ob.getJSONObject("error").getString("message"), Toast.LENGTH_SHORT)
     }
     return true
 
@@ -263,5 +264,11 @@ fun setSyncState(context: Context, boolean: Boolean, viewModel: SharedViewModel?
     )
     sharedProviders.edit().putBoolean(HelperStrings.synced, boolean).apply()
     viewModel?.setVal(HelperStrings.synced, boolean)
+}
+
+fun Fragment.goToUpdateProfile() {
+    requireActivity().supportFragmentManager.beginTransaction()
+        .replace(R.id.nav_host_fragment, ProfileEditFragment())
+        .addToBackStack(getString(R.string.menu_update_profile)).commit()
 }
 
