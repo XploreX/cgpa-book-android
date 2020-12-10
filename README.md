@@ -1,4 +1,5 @@
 # cgpa-book-android
+[![build](https://img.shields.io/github/workflow/status/XploreX/cgpa-book-android/Build%20CI)](https://github.com/XploreX/cgpa-book-android/actions)
 [![issues](https://img.shields.io/github/issues/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/issues)
 [![forks](https://img.shields.io/github/forks/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/network/members)
 [![stars](https://img.shields.io/github/stars/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/stargazers)
@@ -22,8 +23,7 @@ This app allows you to calculate your CGPA efficiently without any hassle. See y
 <img src="https://user-images.githubusercontent.com/40723245/101809272-5cbf0b00-3b3d-11eb-8461-63a7dc3b8cf9.png" width="250"></img>
 <img src="https://user-images.githubusercontent.com/40723245/101809205-444ef080-3b3d-11eb-9bf9-5ff0d2b40331.png" width="250"></img>
 
-Hoping to cover new colleges soon.
+Hoping to cover more colleges soon.
 
 ## Download
 Find the latest apk [here](https://github.com/XploreX/cgpa-book-android/releases)
-
