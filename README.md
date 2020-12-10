@@ -1,4 +1,8 @@
 # cgpa-book-android
+[![issues](https://img.shields.io/github/issues/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/issues)
+[![forks](https://img.shields.io/github/forks/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/network/members)
+[![stars](https://img.shields.io/github/stars/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/stargazers)
+[![Downloads](https://img.shields.io/github/downloads/XploreX/cgpa-book-android/latest/total)](https://github.com/XploreX/cgpa-book-android/releases)
 
 ```
 Disclaimer:
