@@ -4,7 +4,7 @@
 [![forks](https://img.shields.io/github/forks/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/network/members)
 [![stars](https://img.shields.io/github/stars/XploreX/cgpa-book-android)](https://github.com/XploreX/cgpa-book-android/stargazers)
 [![Downloads](https://img.shields.io/github/downloads/XploreX/cgpa-book-android/latest/total)](https://github.com/XploreX/cgpa-book-android/releases)
-
+[![Downloads v1.0.0](https://img.shields.io/github/downloads/XploreX/cgpa-book-android/v1.0.0/total)](https://github.com/XploreX/cgpa-book-android/releases)
 ```
 Disclaimer:
 This project is not affiliated with GGSIPU or any other government entity.It is maintained by student volunteers only.
