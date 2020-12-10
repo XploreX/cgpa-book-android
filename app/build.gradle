@@ -4,6 +4,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
+    signingConfigs {
+        releaseSign {
+            storeFile file('/home/user/AndroidStudioProjects/CGPABook/release_key.jks')
+            storePassword 'cgpabook is awesome'
+            keyPassword 'cgpabook is awesome'
+            keyAlias 'releasekey0'
+        }
+    }
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
