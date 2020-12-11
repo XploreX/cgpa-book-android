@@ -231,7 +231,7 @@ class ProfileEditFragment : Fragment() {
                         // update the new chosen lists
                         val semDataAll =
                             viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
-                        if (semDataAll.length() != 0) {
+                        if (requestCode < 2 && semDataAll.length() != 0) {
                             AlertDialog.Builder(context)
                                 .setTitle("Confirm")
                                 .setMessage("If you change this, your existing data will be deleted. Continue?")
