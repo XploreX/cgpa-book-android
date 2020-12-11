@@ -27,3 +27,6 @@ Hoping to cover more colleges soon.
 
 ## Download
 Find the latest apk [here](https://github.com/XploreX/cgpa-book-android/releases)
+
+## Changelog
+You can see the app changelog [here](CHANGELOG.md)
