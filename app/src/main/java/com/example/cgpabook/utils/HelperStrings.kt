@@ -3,6 +3,7 @@ package com.example.cgpabook.utils
 class HelperStrings {
     companion object {
 
+        const val infobar: String = "infobar"
         const val updateProfile: String = "updateProfile"
 
         // Used while de-registering savedStateHandle

@@ -55,8 +55,6 @@ class ProfileFragment : Fragment() {
         val ll = v.findViewById<LinearLayout>(R.id.sem_ll)
         val pullToRefreshLayout = v.findViewById<SwipeRefreshLayout>(R.id.pulltorefresh)
 
-
-
         v.findViewById<TextView>(R.id.updateProfile).setOnClickListener {
             goToUpdateProfile()
         }
@@ -130,9 +128,17 @@ class ProfileFragment : Fragment() {
                             .setNegativeButton(android.R.string.no) { _, _ ->
                             }
                             .show()
+                        viewModel.setVal(
+                            HelperStrings.infobar,
+                            "Your Profile page isn't updated, Please update your profile"
+                        )
                     }
                 } else {
                     v.findViewById<TextView>(R.id.updateProfile).text = "Edit Profile"
+                    viewModel.setVal(
+                        HelperStrings.infobar,
+                        "No Semester Data Exists, Please update Your CGPA"
+                    )
                 }
             })
 
@@ -199,6 +205,22 @@ class ProfileFragment : Fragment() {
                 }
             }
         }
+        if (viewModel.getVal<JSONObject>(HelperStrings.semdata) == null) {
+            viewModel.setVal(HelperStrings.semdata, null)
+        }
+
+        // Show any info when changed
+        viewModel.getElement<String>(HelperStrings.infobar).observe(viewLifecycleOwner, Observer {
+            // make sure that if data exists, no overwrite is being done by the info bar
+            if (viewModel.getVal<JSONObject>(HelperStrings.semdata) == null) {
+                ll.removeAllViews()
+                val v1 = LayoutInflater.from(context)
+                    .inflate(R.layout.no_semdata, ll as ViewGroup, false)
+                val textView = v1.findViewById<TextView>(R.id.infobar)
+                textView.text = it
+                ll.addView(v1)
+            }
+        })
 
         viewModel.getElement<JSONObject>(HelperStrings.semdata)
             .observe(viewLifecycleOwner, Observer { allSemData ->
@@ -208,6 +230,13 @@ class ProfileFragment : Fragment() {
                 // Debug: println(allSemData)
                 var cgpa: Double = 0.0
 
+                if (allSemData == null) {
+                    val v1 = LayoutInflater.from(context)
+                        .inflate(R.layout.no_semdata, ll as ViewGroup, false)
+                    val textView = v1.findViewById<TextView>(R.id.infobar)
+                    textView.text = viewModel.getVal(HelperStrings.infobar)
+                    ll.addView(v1)
+                }
                 // Get all the Semester Nos
                 allSemData?.let {
                     val keys = ArrayList(allSemData.keys().asSequence().toList())
