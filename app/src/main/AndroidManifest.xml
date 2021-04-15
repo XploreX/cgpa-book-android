@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.cgpabook"
+    package="com.xplorex.cgpabook"
     android:installLocation="preferExternal">
 
     <uses-permission android:name="android.permission.INTERNET" />
@@ -18,21 +18,21 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <receiver
-            android:name=".receiver.ConnectivityBroadcastReceiver"
+            android:name="com.xplorex.cgpabook.receiver.ConnectivityBroadcastReceiver"
             android:enabled="true"
             android:exported="false"></receiver>
 
         <activity
-            android:name=".activity.SearchActivity"
+            android:name="com.xplorex.cgpabook.activity.SearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
-            android:name=".activity.NavigationActivity"
+            android:name="com.xplorex.cgpabook.activity.NavigationActivity"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_navigation"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar" />
         <activity
-            android:name=".activity.MainActivity"
+            android:name="com.xplorex.cgpabook.activity.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
             <intent-filter>
