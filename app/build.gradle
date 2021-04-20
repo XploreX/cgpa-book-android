@@ -6,10 +6,10 @@ apply plugin: 'kotlin-kapt'
 android {
     signingConfigs {
         releaseSign {
-            storeFile file('/home/user/AndroidStudioProjects/CGPABook/release_key.jks')
-            storePassword 'cgpabook is awesome'
-            keyPassword 'cgpabook is awesome'
-            keyAlias 'releasekey0'
+            storeFile file(RELEASE_STORE_FILE)
+            storePassword RELEASE_STORE_PASSWORD
+            keyPassword RELEASE_KEY_PASSWORD
+            keyAlias RELEASE_KEY_ALIAS
         }
     }
     compileSdkVersion 29
@@ -29,6 +29,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseSign
         }
     }
     compileOptions {
