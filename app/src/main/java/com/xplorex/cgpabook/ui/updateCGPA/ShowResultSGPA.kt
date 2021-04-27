@@ -12,6 +12,7 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
@@ -40,6 +41,9 @@ class ShowResultSGPA : Fragment() {
             if (drawable is AnimatedVectorDrawableCompat)
                 drawable.start()
         }, 500)
+        v.findViewById<Button>(R.id.rate_button).setOnClickListener {
+            context?.let { it1 -> openAppRating(it1) }
+        }
 
 
         return v
