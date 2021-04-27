@@ -38,6 +38,7 @@ jobs:
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }} 
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: |
+          echo "android.enableJetifier=true\nandroid.useAndroidX=true\nandroid.enableBuildCache=true\nkotlin.code.style=official\nkotlin.incremental=true\norg.gradle.configureondemand=true\norg.gradle.daemon=true\norg.gradle.jvmargs=-Xmx1536M-Dkotlin.daemon.jvm.options\=\"-Xmx512M\"\norg.gradle.parallel=true\norg.gradle.caching=true" > gradle.properties
           echo "RELEASE_STORE_FILE=$RELEASE_STORE_FILE" >> gradle.properties
           echo "RELEASE_STORE_PASSWORD=$RELEASE_STORE_PASSWORD" >> gradle.properties
           echo "RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS" >> gradle.properties
