@@ -24,7 +24,7 @@ import com.xplorex.cgpabook.utils.*
 import org.json.JSONObject
 
 
-class CollegeChoose : Fragment() {
+class SemesterChooseFragment : Fragment() {
     private lateinit var viewModel: SharedViewModel
     private lateinit var allFields: ArrayList<CollegeChooseModel>
     private var volleyQueue: MySingleton? = null

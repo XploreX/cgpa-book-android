@@ -258,10 +258,22 @@ class EnterMarksFragment : Fragment() {
         val semNo = viewModel.getVal<String>(HelperStrings.semester).toString()
 
         // update sem data all
-        val semDataAll = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
-        semDataAll.put(semNo, semData.toString())
-        viewModel.setVal(HelperStrings.semdata, semDataAll)
+        val allSemData = viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
+        allSemData.put(semNo, semData.toString())
+
+        // update cgpa as well
+        var cgpa: Double = 0.0
+        for (currentKey in allSemData.keys()) {
+            val semData: JSONObject = JSONObject(allSemData.getString(currentKey))
+            cgpa += (semData.get(HelperStrings.sgpa).toString().toDouble())
+        }
+        cgpa /= allSemData.length()
+
+        viewModel.setVal(HelperStrings.cgpa, cgpa)
+        viewModel.setVal(HelperStrings.semdata, allSemData)
         viewModel.writeToDisk()
-        goToProfile()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .replace(R.id.nav_host_fragment, ShowResultSGPA(sgpa.value))
+            .addToBackStack(getString(R.string.menu_update_cgpa)).commit()
     }
 }

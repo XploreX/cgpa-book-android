@@ -4,9 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.updateCGPA.CollegeChoose">
+    tools:context=".ui.updateCGPA.SemesterChooseFragment">
 
     <include layout="@layout/overlay" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_margin="25dp"

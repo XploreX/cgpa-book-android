@@ -17,6 +17,7 @@
         android:layout_marginEnd="48dp"
         android:layout_marginBottom="48dp"
         android:translationY="-25dp"
+        app:cardElevation="7dp"
         app:cardCornerRadius="@dimen/big_card_cr">
 
         <LinearLayout
@@ -48,6 +49,7 @@
             </RelativeLayout>
 
             <TextView
+                android:id="@+id/sgpatext"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -68,7 +70,7 @@
         android:layout_marginEnd="75dp"
         android:src="@drawable/ic_next"
         android:translationY="-25dp"
-        android:translationZ="5dp" />
+        android:translationZ="10dp" />
 
     <ImageView
         android:id="@+id/prev"
@@ -80,7 +82,7 @@
         android:layout_marginTop="-75dp"
         android:src="@drawable/ic_back"
         android:translationY="-25dp"
-        android:translationZ="5dp" />
+        android:translationZ="10dp" />
 
     <Button
         android:id="@+id/rate_button"
