@@ -33,9 +33,15 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Build with Gradle
         env: 
-          PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
+          RELEASE_STORE_FILE: ${{ secrets.RELEASE_STORE_FILE }}
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }} 
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: |
-          echo $PROPERTIES > ./gradle.properties
+          echo "RELEASE_STORE_FILE=$RELEASE_STORE_FILE" >> gradle.properties
+          echo "RELEASE_STORE_PASSWORD=$RELEASE_STORE_PASSWORD" >> gradle.properties
+          echo "RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS" >> gradle.properties
+          echo "RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD" >> gradle.properties
           cat ./gradle.properties | wc -l
           echo `pwd`
-          ./gradlew build
+          ./gradlew assembleDebug
