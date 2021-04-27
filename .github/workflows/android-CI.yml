@@ -32,4 +32,8 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
       - name: Build with Gradle
-        run: ./gradlew build
+        env: 
+          PROPERTIES: ${{ secrets.PROPERTIES }}
+        run: |
+          echo $PROPERTIES > ./gradle.properties
+          ./gradlew build
