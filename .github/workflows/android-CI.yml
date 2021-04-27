@@ -36,4 +36,6 @@ jobs:
           PROPERTIES: ${{ secrets.GRADLE_PROPERTIES }}
         run: |
           echo $PROPERTIES > ./gradle.properties
+          cat ./gradle.properties | wc -l
+          echo `pwd`
           ./gradlew build
