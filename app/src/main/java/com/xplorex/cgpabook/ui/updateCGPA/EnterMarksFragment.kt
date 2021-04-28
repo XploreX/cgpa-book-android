@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -272,6 +273,10 @@ class EnterMarksFragment : Fragment() {
         viewModel.setVal(HelperStrings.cgpa, cgpa)
         viewModel.setVal(HelperStrings.semdata, allSemData)
         viewModel.writeToDisk()
+        requireActivity().supportFragmentManager.popBackStack(
+            getString(R.string.menu_select_college),
+            FragmentManager.POP_BACK_STACK_INCLUSIVE
+        )
         requireActivity().supportFragmentManager.beginTransaction()
             .replace(R.id.nav_host_fragment, ShowResultSGPA(sgpa.value))
             .addToBackStack(getString(R.string.menu_update_cgpa)).commit()

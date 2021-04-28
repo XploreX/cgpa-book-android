@@ -10,6 +10,8 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
@@ -30,7 +32,7 @@ class ShowResultSGPA(private val sgpa: Double?) : Fragment() {
         viewModel = getViewModel()
         dashBoardButton(v.findViewById(R.id.relativeLayoutParent))
         textView = v.findViewById(R.id.sgpatext)
-        initViewModelObservers()
+        initViewModelObservers(v)
 
         Handler().postDelayed({
             val drawable: Drawable = v.findViewById<ImageView>(R.id.tick).drawable
@@ -40,35 +42,35 @@ class ShowResultSGPA(private val sgpa: Double?) : Fragment() {
                 drawable.start()
         }, 500)
 
-        v.findViewById<Button>(R.id.rate_button).setOnClickListener {
+        val rateButton = v.findViewById<Button>(R.id.rate_button)
+        rateButton.setOnClickListener {
             context?.let { it1 -> openAppRating(it1) }
-        }
-
-        v.findViewById<ImageView>(R.id.prev).setOnClickListener {
-            requireActivity().supportFragmentManager.popBackStackImmediate()
+            viewModel.setVal(HelperStrings.rated, true)
         }
 
         v.findViewById<ImageView>(R.id.next).setOnClickListener {
             goToProfile()
         }
 
+        if (viewModel.getVal<Boolean>(HelperStrings.rated) == null)
+            viewModel.setVal(HelperStrings.rated, false)
 
         return v
     }
 
-    private fun initViewModelObservers() {
+    private fun initViewModelObservers(v: View) {
         viewModel.getElement<Double>(HelperStrings.cgpa).observe(viewLifecycleOwner,
             Observer {
-                var str =""
-                if (sgpa!! >=8 )
-                    str+="Congratulations! "
-                else if( sgpa >=7 && sgpa < 8)
-                    str+="Great! "
-                else if( it >=6 && it < 7)
-                    str+="You can do better. "
-                else if( it < 6 )
-                    str+="Please try harder. "
-                str+= "Your SGPA is ${
+                var str = ""
+                if (sgpa!! >= 8)
+                    str += "Congratulations! "
+                else if (sgpa >= 7 && sgpa < 8)
+                    str += "Great! "
+                else if (it >= 6 && it < 7)
+                    str += "You can do better. "
+                else if (it < 6)
+                    str += "Please try harder. "
+                str += "Your SGPA is ${
                     String.format(
                         "%.2f",
                         sgpa
@@ -77,6 +79,22 @@ class ShowResultSGPA(private val sgpa: Double?) : Fragment() {
                 textView.text = str
             }
         )
+        viewModel.getElement<Boolean>(HelperStrings.rated).observe(viewLifecycleOwner, Observer {
+            if (it) {
+                val rateButton = v.findViewById<Button>(R.id.rate_button)
+                rateButton.background =
+                    context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.grade_buttons) }
+                rateButton.text = "Thank you for rating our app!"
+                context?.let { it1 ->
+                    rateButton.setTextColor(ContextCompat.getColor(it1, R.color.black))
+                }
+            } else {
+                showToast(
+                    "If you like our app, please consider rating it. Thank you!",
+                    Toast.LENGTH_LONG
+                )
+            }
+        })
     }
 
 

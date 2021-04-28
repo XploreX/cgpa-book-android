@@ -25,6 +25,7 @@ class HelperStrings {
         const val semdata = "semesters"
         const val sgpa = "sgpa"
         const val tokenId = "tokenId"
+        const val rated = "rated"
 
         // shared Prefs Requirements
         const val sharedPrefs = "sharedprefs"

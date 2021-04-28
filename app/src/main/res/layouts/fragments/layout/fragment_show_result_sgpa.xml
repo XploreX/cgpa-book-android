@@ -72,18 +72,6 @@
         android:translationY="-25dp"
         android:translationZ="10dp" />
 
-    <ImageView
-        android:id="@+id/prev"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cardview"
-        android:layout_alignParentLeft="true"
-        android:layout_marginStart="75dp"
-        android:layout_marginTop="-75dp"
-        android:src="@drawable/ic_back"
-        android:translationY="-25dp"
-        android:translationZ="10dp" />
-
     <Button
         android:id="@+id/rate_button"
         android:layout_width="match_parent"
