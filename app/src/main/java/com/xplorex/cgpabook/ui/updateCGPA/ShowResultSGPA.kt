@@ -66,9 +66,9 @@ class ShowResultSGPA(private val sgpa: Double?) : Fragment() {
                     str += "Congratulations! "
                 else if (sgpa >= 7 && sgpa < 8)
                     str += "Great! "
-                else if (it >= 6 && it < 7)
+                else if (sgpa >= 6 && sgpa < 7)
                     str += "You can do better. "
-                else if (it < 6)
+                else if (sgpa < 6)
                     str += "Please try harder. "
                 str += "Your SGPA is ${
                     String.format(
