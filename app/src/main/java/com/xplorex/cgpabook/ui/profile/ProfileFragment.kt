@@ -70,7 +70,8 @@ class ProfileFragment : Fragment() {
                         HelperStrings.branch,
                         HelperStrings.course,
                         HelperStrings.semdata,
-                        HelperStrings.unlocked
+                        HelperStrings.unlocked,
+                        HelperStrings.rated
                     )
                 )
                 for (i in dataToReceive) {

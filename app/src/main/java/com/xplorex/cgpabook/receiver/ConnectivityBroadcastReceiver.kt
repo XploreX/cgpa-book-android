@@ -35,7 +35,8 @@ class ConnectivityBroadcastReceiver : BroadcastReceiver() {
                     HelperStrings.branch,
                     HelperStrings.course,
                     HelperStrings.semdata,
-                    HelperStrings.unlocked
+                    HelperStrings.unlocked,
+                    HelperStrings.rated
                 )
             )
 

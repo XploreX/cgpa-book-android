@@ -15,19 +15,19 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.SavedStateViewModelFactory
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.material.navigation.NavigationView
 import com.xplorex.cgpabook.BuildConfig
 import com.xplorex.cgpabook.R
 import com.xplorex.cgpabook.receiver.ConnectivityBroadcastReceiver
 import com.xplorex.cgpabook.ui.SharedViewModel
 import com.xplorex.cgpabook.ui.profile.ProfileFragment
-import com.xplorex.cgpabook.ui.updateCGPA.CollegeChoose
+import com.xplorex.cgpabook.ui.updateCGPA.SemesterChooseFragment
 import com.xplorex.cgpabook.utils.HelperStrings
 import com.xplorex.cgpabook.utils.MySingleton
 import com.xplorex.cgpabook.utils.getSyncState
 import com.xplorex.cgpabook.utils.setSyncState
-import com.google.android.gms.auth.api.signin.GoogleSignIn
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.material.navigation.NavigationView
 
 class NavigationActivity : AppCompatActivity() {
 
@@ -155,7 +155,7 @@ class NavigationActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .replace(
                             R.id.nav_host_fragment,
-                            CollegeChoose()
+                            SemesterChooseFragment()
                         ).addToBackStack(getString(R.string.menu_select_college))
                         .commit()
                     lastchecked = it.itemId
