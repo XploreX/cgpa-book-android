@@ -59,12 +59,22 @@ class ShowResultSGPA(private val sgpa: Double?) : Fragment() {
     private fun initViewModelObservers() {
         viewModel.getElement<Double>(HelperStrings.cgpa).observe(viewLifecycleOwner,
             Observer {
-                textView.text = "Your CGPA is ${
+                var str =""
+                if (sgpa!! >=8 )
+                    str+="Congratulations! "
+                else if( sgpa >=7 && sgpa < 8)
+                    str+="Great! "
+                else if( it >=6 && it < 7)
+                    str+="You can do better. "
+                else if( it < 6 )
+                    str+="Please try harder. "
+                str+= "Your SGPA is ${
                     String.format(
                         "%.2f",
-                        it.toDouble()
+                        sgpa
                     )
-                } with an SGPA of ${String.format("%.2f", sgpa)}"
+                } making your CGPA ${String.format("%.2f", it.toDouble())}"
+                textView.text = str
             }
         )
     }
