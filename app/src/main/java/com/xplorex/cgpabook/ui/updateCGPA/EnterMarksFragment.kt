@@ -4,10 +4,8 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.view.animation.AnimationUtils
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -40,6 +38,7 @@ class EnterMarksFragment : Fragment() {
 
     // all the live data objects which need not be persistent, hence, not in view model
     private val subjectsLiveData = MutableLiveData<String>()
+    private val anim_ltr = MutableLiveData<Boolean>()
     private val creditsLiveData = MutableLiveData<Double>()
     private val subjectsLeftLiveData = MutableLiveData<Int>()
 
@@ -65,6 +64,7 @@ class EnterMarksFragment : Fragment() {
         // undo button
         v.findViewById<ImageView>(R.id.btn_undo).setOnClickListener {
             if (index > 0) {
+                anim_ltr.value = false
                 index--
                 userCreditsArray.removeAt(index)
                 totalCreditsArray.removeAt(index)
@@ -172,6 +172,7 @@ class EnterMarksFragment : Fragment() {
     }
 
     private fun gradesOnClick(v: View) {
+        anim_ltr.value = true
         // increment the index
         index++
 
@@ -210,7 +211,7 @@ class EnterMarksFragment : Fragment() {
     private fun initViewModelObservers() {
 
         subjectsLiveData.observe(viewLifecycleOwner, Observer {
-            requireView().findViewById<TextView>(R.id.txt_subname).text = "Subject Name: $it "
+            requireView().findViewById<TextSwitcher>(R.id.txt_subname).setText("Subject Name: $it ")
         })
 
         creditsLiveData.observe(viewLifecycleOwner, Observer {
@@ -228,6 +229,21 @@ class EnterMarksFragment : Fragment() {
             else
                 requireView().findViewById<TextView>(R.id.txt_cgpa).text =
                     "SGPA: ${String.format("%.2f", it)}"
+        })
+
+        anim_ltr.observe(viewLifecycleOwner, Observer {
+            val viewIdList = ArrayList(listOf(R.id.txt_subname))
+            for (viewId in viewIdList) {
+                val view = requireView().findViewById<TextSwitcher>(viewId)
+                if (it) {
+                    view.inAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_ltr_enter)
+                    view.outAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_ltr_exit)
+                } else {
+                    view.inAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_rtl_enter)
+                    view.outAnimation = AnimationUtils.loadAnimation(context, R.anim.slide_rtl_exit)
+                }
+            }
+
         })
 
     }
