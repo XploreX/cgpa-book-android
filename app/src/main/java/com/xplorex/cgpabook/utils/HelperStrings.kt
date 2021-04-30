@@ -1,5 +1,7 @@
 package com.xplorex.cgpabook.utils
 
+import com.xplorex.cgpabook.BuildConfig
+
 class HelperStrings {
     companion object {
 
@@ -10,7 +12,7 @@ class HelperStrings {
         const val NavigationActivity = "NavigationActivity"
 
         // Global requirements
-        const val url = "https://api-rhapsody.herokuapp.com"
+        const val url = BuildConfig.API_URL
 
         // Navigation Activity requirements
         const val unlocked = "unlocked"

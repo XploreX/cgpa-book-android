@@ -39,14 +39,16 @@ jobs:
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
           RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }} 
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          RELEASE_API_URL: ${{ secrets.DEBUG_API_URL }}
+          DEBUG_API_URL: ${{ secrets.DEBUG_API_URL }}
         run: |
           echo -e "android.enableJetifier=true\nandroid.useAndroidX=true\nandroid.enableBuildCache=true\nkotlin.code.style=official\nkotlin.incremental=true\norg.gradle.configureondemand=true\norg.gradle.daemon=true\norg.gradle.parallel=true\norg.gradle.caching=true" > gradle.properties
           echo "RELEASE_STORE_FILE=$RELEASE_STORE_FILE" >> gradle.properties
           echo "RELEASE_STORE_PASSWORD=$RELEASE_STORE_PASSWORD" >> gradle.properties
           echo "RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS" >> gradle.properties
           echo "RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD" >> gradle.properties
-          cat ./gradle.properties | wc -l
-          echo `pwd`
+          echo "RELEASE_API_URL=$RELEASE_API_URL" >> gradle.properties
+          echo "DEBUG_API_URL=$DEBUG_API_URL" >> gradle.properties
           ./gradlew assembleDebug
           
       - name: Upload a Build Artifact
