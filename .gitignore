@@ -10,6 +10,7 @@
 /.idea/assetWizardSettings.xml
 .idea/shelf/
 gradle.properties
+.envrc
 *.pepk
 *.jks
 app/release/app-release.*
