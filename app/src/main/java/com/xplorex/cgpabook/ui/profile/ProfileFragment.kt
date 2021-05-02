@@ -252,7 +252,7 @@ class ProfileFragment : Fragment() {
                         val semData: JSONObject = JSONObject(allSemData.getString(currentKey))
 
                         // Setup the Data from semData to view
-                        v1.findViewById<TextView>(R.id.semno).text = "Semester No: $currentKey"
+                        v1.findViewById<TextView>(R.id.semno).text = "Semester: $currentKey"
                         v1.findViewById<TextView>(R.id.sgpa).text =
                             "SGPA: ${String.format(
                                 "%.2f",
