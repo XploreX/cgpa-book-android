@@ -99,19 +99,26 @@ class EnterMarksFragment : Fragment() {
         val jsonObject = JsonObjectRequestCached(Request.Method.GET, url, null, Response.Listener {
 
             // get all the subjects data
-            val subjectsDataAll = it.getJSONArray("subjects")
+            if (!it.has("subjects")) {
+                showToast("Subject data not found", Toast.LENGTH_SHORT)
+                progressBarDestroy(v, pb)
+                pullToRefreshLayout.isRefreshing = false
+                goToProfile()
+            } else {
+                val subjectsDataAll = it.getJSONArray("subjects")
 
-            // convert from json to object
-            for (i in 0 until subjectsDataAll.length()) {
-                subjectsData.add(
-                    SubjectsData(
-                        subjectsDataAll.getJSONObject(i)
+                // convert from json to object
+                for (i in 0 until subjectsDataAll.length()) {
+                    subjectsData.add(
+                        SubjectsData(
+                            subjectsDataAll.getJSONObject(i)
+                        )
                     )
-                )
+                }
+                updateSub()
+                progressBarDestroy(v, pb)
+                pullToRefreshLayout.isRefreshing = false
             }
-            updateSub()
-            progressBarDestroy(v, pb)
-            pullToRefreshLayout.isRefreshing = false
 
         }, Response.ErrorListener {
             errorHandler(it)
