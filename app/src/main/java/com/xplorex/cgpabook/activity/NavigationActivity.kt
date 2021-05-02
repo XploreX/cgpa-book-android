@@ -104,7 +104,21 @@ class NavigationActivity : AppCompatActivity() {
                             }
                             .show()
 
-                    } else signOut()
+                    } else {
+                        AlertDialog.Builder(this)
+                            .setTitle("Confirm")
+                            .setMessage("Are you sure you want to sign out?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                                signOut()
+                            }
+                            .setNegativeButton(android.R.string.no) { _, _ ->
+                                navView.setCheckedItem(
+                                    lastchecked
+                                )
+                            }
+                            .show()
+                    }
 
                 }
                 R.id.nav_feedback -> {
