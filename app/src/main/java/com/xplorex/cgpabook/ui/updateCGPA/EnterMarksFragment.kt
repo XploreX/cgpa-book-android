@@ -101,6 +101,7 @@ class EnterMarksFragment : Fragment() {
             // get all the subjects data
             if (!it.has("subjects")) {
                 showToast("Subject data not found", Toast.LENGTH_SHORT)
+                viewModel.setVal(HelperStrings.semester,null)
                 progressBarDestroy(v, pb)
                 pullToRefreshLayout.isRefreshing = false
                 goToProfile()
