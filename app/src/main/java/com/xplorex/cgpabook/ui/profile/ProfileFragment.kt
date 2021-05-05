@@ -123,10 +123,10 @@ class ProfileFragment : Fragment() {
                             .setTitle("Confirm")
                             .setMessage("Your Profile page isn't updated, update profile?")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                            .setPositiveButton(R.string.yes) { _, _ ->
                                 goToUpdateProfile()
                             }
-                            .setNegativeButton(android.R.string.no) { _, _ ->
+                            .setNegativeButton(R.string.no) { _, _ ->
                             }
                             .show()
                         viewModel.setVal(
@@ -155,10 +155,10 @@ class ProfileFragment : Fragment() {
                         .setTitle("Confirm")
                         .setMessage("You have some changes which aren't backup up, it will be lost, do you really want to refresh?")
                         .setIcon(android.R.drawable.ic_dialog_alert)
-                        .setPositiveButton(android.R.string.yes) { _, _ ->
+                        .setPositiveButton(R.string.yes) { _, _ ->
                             volleyQueue?.addToRequestQueue(userGpaDataRequest)
                         }
-                        .setNegativeButton(android.R.string.no) { _, _ ->
+                        .setNegativeButton(R.string.no) { _, _ ->
                             pullToRefreshLayout.isRefreshing = false
                         }
                         .show()
@@ -276,7 +276,7 @@ class ProfileFragment : Fragment() {
                                 .setTitle("Confirm")
                                 .setMessage("Do you really want to delete semester $currentKey result?")
                                 .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(android.R.string.yes) { _, _ ->
+                                .setPositiveButton(R.string.yes) { _, _ ->
                                     // set sync state false so that profile fragment doesn't download data before uploading the new data
                                     context?.let { it1 -> setSyncState(it1, false, viewModel) }
                                     allSemData.remove(currentKey)
@@ -285,7 +285,7 @@ class ProfileFragment : Fragment() {
                                     else
                                         viewModel.setVal(HelperStrings.semdata, null)
                                 }
-                                .setNegativeButton(android.R.string.no, null).show()
+                                .setNegativeButton(R.string.no, null).show()
                         }
 
                         // Add the SGPAs for final CGPA

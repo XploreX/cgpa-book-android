@@ -94,10 +94,10 @@ class NavigationActivity : AppCompatActivity() {
                             .setTitle("Confirm")
                             .setMessage("Your Data isn't backup up yet, if you logout it will be lost, do you really want to log out?")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                            .setPositiveButton(R.string.yes) { _, _ ->
                                 signOut()
                             }
-                            .setNegativeButton(android.R.string.no) { _, _ ->
+                            .setNegativeButton(R.string.no) { _, _ ->
                                 navView.setCheckedItem(
                                     lastchecked
                                 )
@@ -109,10 +109,10 @@ class NavigationActivity : AppCompatActivity() {
                             .setTitle("Confirm")
                             .setMessage("Are you sure you want to sign out?")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                            .setPositiveButton(R.string.yes) { _, _ ->
                                 signOut()
                             }
-                            .setNegativeButton(android.R.string.no) { _, _ ->
+                            .setNegativeButton(R.string.no) { _, _ ->
                                 navView.setCheckedItem(
                                     lastchecked
                                 )
