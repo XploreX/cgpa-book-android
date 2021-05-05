@@ -99,14 +99,14 @@ class EnterMarksFragment : Fragment() {
         val jsonObject = JsonObjectRequestCached(Request.Method.GET, url, null, Response.Listener {
 
             // get all the subjects data
-            if (!it.has("subjects")) {
+            if (!it.has(HelperStrings.subjects)) {
                 showToast("Subject data not found", Toast.LENGTH_SHORT)
-                viewModel.setVal(HelperStrings.semester,null)
+                viewModel.setVal(HelperStrings.semester, null)
                 progressBarDestroy(v, pb)
                 pullToRefreshLayout.isRefreshing = false
                 goToProfile()
             } else {
-                val subjectsDataAll = it.getJSONArray("subjects")
+                val subjectsDataAll = it.getJSONArray(HelperStrings.subjects)
 
                 // convert from json to object
                 for (i in 0 until subjectsDataAll.length()) {
@@ -289,7 +289,7 @@ class EnterMarksFragment : Fragment() {
         // update cgpa as well
         var cgpa: Double = 0.0
         for (currentKey in allSemData.keys()) {
-            val semData: JSONObject = JSONObject(allSemData.getString(currentKey))
+            val semData = JSONObject(allSemData.getString(currentKey))
             cgpa += (semData.get(HelperStrings.sgpa).toString().toDouble())
         }
         cgpa /= allSemData.length()
