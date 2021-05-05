@@ -125,6 +125,7 @@ class EnterMarksFragment : Fragment() {
             errorHandler(it)
             progressBarDestroy(v, pb)
             pullToRefreshLayout.isRefreshing = false
+            goToProfile()
         })
         volleyQueue?.addToRequestQueue(jsonObject)
         // swipe
