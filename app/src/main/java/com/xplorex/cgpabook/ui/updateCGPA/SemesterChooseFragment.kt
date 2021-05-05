@@ -69,10 +69,10 @@ class SemesterChooseFragment : Fragment() {
                             .setTitle("Confirm")
                             .setMessage("Your Profile page isn't updated, update profile?")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                            .setPositiveButton(R.string.yes) { _, _ ->
                                 goToUpdateProfile()
                             }
-                            .setNegativeButton(android.R.string.no) { _, _ ->
+                            .setNegativeButton(R.string.no) { _, _ ->
                             }
                             .show()
                     }

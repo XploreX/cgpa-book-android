@@ -94,17 +94,31 @@ class NavigationActivity : AppCompatActivity() {
                             .setTitle("Confirm")
                             .setMessage("Your Data isn't backup up yet, if you logout it will be lost, do you really want to log out?")
                             .setIcon(android.R.drawable.ic_dialog_alert)
-                            .setPositiveButton(android.R.string.yes) { _, _ ->
+                            .setPositiveButton(R.string.yes) { _, _ ->
                                 signOut()
                             }
-                            .setNegativeButton(android.R.string.no) { _, _ ->
+                            .setNegativeButton(R.string.no) { _, _ ->
                                 navView.setCheckedItem(
                                     lastchecked
                                 )
                             }
                             .show()
 
-                    } else signOut()
+                    } else {
+                        AlertDialog.Builder(this)
+                            .setTitle("Confirm")
+                            .setMessage("Are you sure you want to sign out?")
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .setPositiveButton(R.string.yes) { _, _ ->
+                                signOut()
+                            }
+                            .setNegativeButton(R.string.no) { _, _ ->
+                                navView.setCheckedItem(
+                                    lastchecked
+                                )
+                            }
+                            .show()
+                    }
 
                 }
                 R.id.nav_feedback -> {
@@ -177,8 +191,11 @@ class NavigationActivity : AppCompatActivity() {
             navView.getHeaderView(0).findViewById<TextView>(R.id.txt_email).text = it
         })
         viewModel.getElement<Double>(HelperStrings.cgpa).observe(this, Observer {
-            navView.getHeaderView(0).findViewById<TextView>(R.id.txt_cgpa).text =
-                "CGPA: ${String.format("%.2f", it)}"
+            val view = navView.getHeaderView(0).findViewById<TextView>(R.id.txt_cgpa)
+            if (it == 0.0 || it == null)
+                view.text = "CGPA: None"
+            else
+                view.text = "CGPA: ${String.format("%.2f", it.toDouble())}"
         })
         viewModel.getElement<String>(HelperStrings.photoUrl).observe(this, Observer {
             if (it != null)

@@ -237,11 +237,11 @@ class ProfileEditFragment : Fragment() {
                                 .setTitle("Confirm")
                                 .setMessage("If you change this, your existing data will be deleted. Continue?")
                                 .setIcon(android.R.drawable.ic_dialog_alert)
-                                .setPositiveButton(android.R.string.yes) { _, _ ->
+                                .setPositiveButton(R.string.yes) { _, _ ->
                                     viewModel.setVal(HelperStrings.semdata, null)
                                     updateField(concernedField, filteredRecvString, requestCode)
                                 }
-                                .setNegativeButton(android.R.string.no) { _, _ ->
+                                .setNegativeButton(R.string.no) { _, _ ->
                                 }
                                 .show()
                         } else
