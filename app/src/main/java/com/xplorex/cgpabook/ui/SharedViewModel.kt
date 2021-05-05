@@ -71,6 +71,8 @@ class SharedViewModel(application: Application, private val state: SavedStateHan
     // delete the backups ( To be called when signing out
     fun deleteViewModel() {
         backup = JSONObject()
+        // weird bug issues
+        writeToDisk()
         val file = File(filename)
         if (file.exists())
             file.delete()
