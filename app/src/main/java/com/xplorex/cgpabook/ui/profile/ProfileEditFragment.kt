@@ -231,6 +231,7 @@ class ProfileEditFragment : Fragment() {
                         // update the new chosen lists
                         val semDataAll =
                             viewModel.getVal<JSONObject>(HelperStrings.semdata) ?: JSONObject()
+                        viewModel.setVal(HelperStrings.semester, null)
                         if (requestCode < 2 && semDataAll.length() != 0) {
                             AlertDialog.Builder(context)
                                 .setTitle("Confirm")
