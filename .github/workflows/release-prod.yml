@@ -1,0 +1,83 @@
+name: Package build
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - if: github.event.base_ref == 'refs/heads/master'
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+         java-version: 1.8
+         
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+          
+      - name: Setup Environment
+        env: 
+          RELEASE_STORE_FILE: ${{ secrets.RELEASE_STORE_FILE }}
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }} 
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          RELEASE_API_URL: ${{ secrets.RELEASE_API_URL }}
+          DEBUG_API_URL: ${{ secrets.DEBUG_API_URL }}
+          RELEASE_SIGN_FILE: ${{ secrets.RELEASE_SIGN_FILE }}
+        run: |
+          echo -e "android.enableJetifier=true\nandroid.useAndroidX=true\nandroid.enableBuildCache=true\nkotlin.code.style=official\nkotlin.incremental=true\norg.gradle.configureondemand=true\norg.gradle.daemon=true\norg.gradle.parallel=true\norg.gradle.caching=true" > gradle.properties
+          echo "RELEASE_STORE_FILE=../sign.jks" >> gradle.properties
+          echo "RELEASE_STORE_PASSWORD=$RELEASE_STORE_PASSWORD" >> gradle.properties
+          echo "RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS" >> gradle.properties
+          echo "RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD" >> gradle.properties
+          echo "RELEASE_API_URL=$RELEASE_API_URL" >> gradle.properties
+          echo "DEBUG_API_URL=$DEBUG_API_URL" >> gradle.properties
+          echo "$RELEASE_SIGN_FILE" | base64 -d > sign.jks
+          
+      - name: Release APK Build
+        run: ./gradlew assembleRelease
+          
+      - name: Release Bundle Build
+        run: ./gradlew bundleRelease
+          
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        
+      - name: Setup release drafter
+        id: release-drafter
+        uses: release-drafter/release-drafter@v5
+        with:
+          tag: ${{ steps.get_version.outputs.VERSION }}
+          name: ${{ steps.get_version.outputs.VERSION }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+     
+      - name: Upload APK
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release-drafter.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./app/build/outputs/apk/release/app-release.apk
+          asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.apk
+          asset_content_type: application/vnd.android.package-archive
+          
+      - name: Upload AAB
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release-drafter.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./app/build/outputs/bundle/release/app-release.aab
+          asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.aab
+          asset_content_type: application/octet-stream
