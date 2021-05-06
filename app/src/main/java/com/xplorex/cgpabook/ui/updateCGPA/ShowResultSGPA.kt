@@ -79,22 +79,24 @@ class ShowResultSGPA(private val sgpa: Double?) : Fragment() {
                 textView.text = str
             }
         )
-        viewModel.getElement<Boolean>(HelperStrings.rated).observe(viewLifecycleOwner, Observer {
-            if (it) {
-                val rateButton = v.findViewById<Button>(R.id.rate_button)
-                rateButton.background =
-                    context?.let { it1 -> ContextCompat.getDrawable(it1, R.drawable.grade_buttons) }
-                rateButton.text = "Thank you for rating our app!"
-                context?.let { it1 ->
-                    rateButton.setTextColor(ContextCompat.getColor(it1, R.color.black))
+        viewModel.getElement<Boolean>(HelperStrings.rated)
+            .observe(viewLifecycleOwner, Observer { rated ->
+                if (rated) {
+                    val rateButton = v.findViewById<Button>(R.id.rate_button)
+                    context?.let { context ->
+                        rateButton.background =
+                            ContextCompat.getDrawable(context, R.drawable.grade_buttons)
+                        rateButton.text = "Thank you for rating our app!"
+                        rateButton.setTextColor(ContextCompat.getColor(context, R.color.black))
+                        setSyncState(context, false, viewModel)
+                    }
+                } else {
+                    showToast(
+                        "If you like our app, please consider rating it. Thank you!",
+                        Toast.LENGTH_LONG
+                    )
                 }
-            } else {
-                showToast(
-                    "If you like our app, please consider rating it. Thank you!",
-                    Toast.LENGTH_LONG
-                )
-            }
-        })
+            })
     }
 
 
