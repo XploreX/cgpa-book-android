@@ -48,6 +48,7 @@ jobs:
           echo "RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS" >> gradle.properties
           echo "RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD" >> gradle.properties
           echo "RELEASE_API_URL=$RELEASE_API_URL" >> gradle.properties
+          echo "STAGING_API_URL=$STAGING_API_URL" >> gradle.properties
           echo "DEBUG_API_URL=$DEBUG_API_URL" >> gradle.properties
           ./gradlew assembleDebug
           
