@@ -45,6 +45,7 @@ jobs:
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
           RELEASE_API_URL: ${{ secrets.RELEASE_API_URL }}
           DEBUG_API_URL: ${{ secrets.DEBUG_API_URL }}
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
           RELEASE_SIGN_FILE: ${{ secrets.RELEASE_SIGN_FILE }}
         run: |
           echo -e "android.enableJetifier=true\nandroid.useAndroidX=true\nandroid.enableBuildCache=true\nkotlin.code.style=official\nkotlin.incremental=true\norg.gradle.configureondemand=true\norg.gradle.daemon=true\norg.gradle.parallel=true\norg.gradle.caching=true" > gradle.properties
