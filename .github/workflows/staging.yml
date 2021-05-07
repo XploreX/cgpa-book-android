@@ -3,7 +3,7 @@ name: Staging Build
 on:
   push:
     branches:
-      [staging]
+      [staging-CI]
 
 jobs:
   get-tag:
