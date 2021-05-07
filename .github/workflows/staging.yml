@@ -18,6 +18,7 @@ jobs:
           SHA=$(git log -n1 --format=format:"%H")
           git checkout master
           git describe $SHA
+          echo "The tag is " $(git describe $SHA)
           echo ::set-output name=tagname::$(git describe $SHA) # change to exact-match 
     outputs:
       tagname: ${{ steps.check.outputs.tagname }}
@@ -90,7 +91,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release-drafter.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./app/build/outputs/apk/release/app-release.apk
+          asset_path: ./app/build/outputs/apk/staging/app-staging.apk
           asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.apk
           asset_content_type: application/vnd.android.package-archive
           
@@ -100,6 +101,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release-drafter.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
-          asset_path: ./app/build/outputs/bundle/release/app-release.aab
+          asset_path: ./app/build/outputs/bundle/staging/app-staging.aab
           asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.aab
           asset_content_type: application/octet-stream
