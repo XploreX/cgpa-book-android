@@ -17,7 +17,7 @@ jobs:
         run: |
           BRANCH=$(git branch | grep "*" | cut -f 2 -d ' ')
           SHA=$(git log -n1 --format=format:"%H")
-          git checkout fix
+          git checkout master
           git merge-base --is-ancestor $SHA HEAD
         
   release:
