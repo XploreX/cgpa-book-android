@@ -1,0 +1,104 @@
+name: Staging Build
+
+on:
+  push:
+    branches: 
+      - staging
+
+jobs:
+  get-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Get tagname of push
+        id: check
+        run: |
+          SHA=$(git log -n1 --format=format:"%H")
+          git checkout master
+          echo ::set-output name=tagname::$(git describe --exact-match $SHA)
+    outputs:
+      tagname: ${{ steps.check.outputs.tagname }}
+
+  staging:
+    runs-on: ubuntu-latest
+    needs: get-tag
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+      - name: set up JDK 1.8
+        uses: actions/setup-java@v1
+        with:
+         java-version: 1.8
+         
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+          
+      - name: Setup Environment
+        env: 
+          RELEASE_STORE_FILE: ${{ secrets.RELEASE_STORE_FILE }}
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }} 
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+          RELEASE_API_URL: ${{ secrets.RELEASE_API_URL }}
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+          DEBUG_API_URL: ${{ secrets.DEBUG_API_URL }}
+          RELEASE_SIGN_FILE: ${{ secrets.RELEASE_SIGN_FILE }}
+        run: |
+          echo -e "android.enableJetifier=true\nandroid.useAndroidX=true\nandroid.enableBuildCache=true\nkotlin.code.style=official\nkotlin.incremental=true\norg.gradle.configureondemand=true\norg.gradle.daemon=true\norg.gradle.parallel=true\norg.gradle.caching=true" > gradle.properties
+          echo "RELEASE_STORE_FILE=../sign.jks" >> gradle.properties
+          echo "RELEASE_STORE_PASSWORD=$RELEASE_STORE_PASSWORD" >> gradle.properties
+          echo "RELEASE_KEY_ALIAS=$RELEASE_KEY_ALIAS" >> gradle.properties
+          echo "RELEASE_KEY_PASSWORD=$RELEASE_KEY_PASSWORD" >> gradle.properties
+          echo "RELEASE_API_URL=$RELEASE_API_URL" >> gradle.properties
+          echo "DEBUG_API_URL=$DEBUG_API_URL" >> gradle.properties
+          echo "STAGING_API_URL=$STAGING_API_URL" >> gradle.properties
+          echo "$RELEASE_SIGN_FILE" | base64 -d > sign.jks
+          
+      - name: Staging APK Build
+        run: ./gradlew assembleStaging
+          
+      - name: Staging Bundle Build
+        run: ./gradlew bundleStaging
+          
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${{ needs.get-tag.outputs.tagname }}-rc1
+        
+      - name: Setup Create Release
+        id: release-drafter
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: ${{ steps.get_version.outputs.VERSION }}
+          release_name: Release ${{ steps.get_version.outputs.VERSION }}
+          body: |
+            Pre-release: ${{ steps.get_version.outputs.VERSION }}
+          draft: true
+          prerelease: true
+
+      - name: Upload APK
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release-drafter.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./app/build/outputs/apk/release/app-release.apk
+          asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.apk
+          asset_content_type: application/vnd.android.package-archive
+          
+      - name: Upload AAB
+        uses: actions/upload-release-asset@v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.release-drafter.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./app/build/outputs/bundle/release/app-release.aab
+          asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.aab
+          asset_content_type: application/octet-stream
