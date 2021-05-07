@@ -17,7 +17,8 @@ jobs:
         run: |
           SHA=$(git log -n1 --format=format:"%H")
           git checkout master
-          echo ::set-output name=tagname::$(git describe --exact-match $SHA)
+          git describe $SHA
+          echo ::set-output name=tagname::$(git describe $SHA) # change to exact-match 
     outputs:
       tagname: ${{ steps.check.outputs.tagname }}
 
