@@ -33,6 +33,12 @@ android {
             signingConfig signingConfigs.releaseSign
             buildConfigField "String", "API_URL", "\"$RELEASE_API_URL\""
         }
+        staging {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.releaseSign
+            buildConfigField "String", "API_URL", "\"$STAGING_API_URL\""
+        }
         debug {
             buildConfigField "String", "API_URL", "\"$DEBUG_API_URL\""
         }
