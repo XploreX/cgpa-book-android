@@ -2,8 +2,8 @@ name: Staging Build
 
 on:
   push:
-    branches: 
-      - staging
+    branches:
+      [staging]
 
 jobs:
   get-tag:
