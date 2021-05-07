@@ -4,6 +4,8 @@ on:
   push:
     branches:
       [staging-CI]
+    tags:
+      - v*
 
 jobs:
   get-tag:
@@ -12,11 +14,11 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+          ref: staging
       - name: Get tagname of push
         id: check
         run: |
           SHA=$(git log -n1 --format=format:"%H")
-          git checkout master
           git describe $SHA
           echo "The tag is " $(git describe $SHA)
           echo ::set-output name=tagname::$(git describe $SHA) # change to exact-match 
@@ -29,6 +31,9 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
+        with:
+          ref: staging
+
       - name: set up JDK 1.8
         uses: actions/setup-java@v1
         with:
