@@ -3,7 +3,7 @@ name: Production Build
 on:
   push:
     tags:
-      - 'v[0-9]+.[0-9]+.[0-9]+'
+      - 'v[0-9]+.[0-9]+.[0-9]+-prod'
 
 jobs:
   check-production:
@@ -29,10 +29,9 @@ jobs:
       - name: Get tagname of push
         id: check
         run: |
-          SHA=$(git log -n1 --format=format:"%H")
-          git describe --exact-match $SHA
-          echo "The tag is " $(git describe --exact-match $SHA)
-          echo ::set-output name=tagname::$(git describe --exact-match $SHA)
+          git describe --exact-match --match "v*-prod" HEAD
+          echo "The tag is " $(git describe --exact-match --match "v*-prod" HEAD)
+          echo ::set-output name=tagname::$(git describe --exact-match --match "v*-prod" HEAD)
     outputs:
       tagname: ${{ steps.check.outputs.tagname }}
         

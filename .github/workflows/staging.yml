@@ -31,10 +31,9 @@ jobs:
       - name: Get tagname of push
         id: check
         run: |
-          SHA=$(git log -n1 --format=format:"%H")
-          git describe --exact-match $SHA
-          echo "The tag is " $(git describe --exact-match $SHA)
-          echo ::set-output name=tagname::$(git describe --exact-match $SHA)
+          git describe --exact-match --exclude "v*-prod" HEAD
+          echo "The tag is " $(git describe --exact-match --exclude "v*-prod" HEAD)
+          echo ::set-output name=tagname::$(git describe --exact-match --exclude "v*-prod" HEAD)
     outputs:
       tagname: ${{ steps.check.outputs.tagname }}
 
