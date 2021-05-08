@@ -20,10 +20,29 @@ jobs:
           SHA=$(git log -n1 --format=format:"%H")
           git checkout production
           git merge-base --is-ancestor $SHA HEAD
+
+  get-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          ref: production
+      - name: Get tagname of push
+        id: check
+        run: |
+          SHA=$(git log -n1 --format=format:"%H")
+          git describe --exact-match $SHA
+          echo "The tag is " $(git describe --exact-match $SHA)
+          echo ::set-output name=tagname::$(git describe --exact-match $SHA)
+    outputs:
+      tagname: ${{ steps.check.outputs.tagname }}
         
   release:
     runs-on: ubuntu-latest
-    needs: check-production
+    needs: 
+      - check-production
+      - get-tag
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
@@ -71,7 +90,7 @@ jobs:
           
       - name: Get the version
         id: get_version
-        run: echo ::set-output name=VERSION::${GITHUB_REF/refs\/tags\//}
+        run: echo ::set-output name=VERSION::${{ needs.get-tag.outputs.tagname }}
         
       - name: Setup release drafter
         id: release-drafter
