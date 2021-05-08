@@ -3,7 +3,7 @@ name: Staging Build
 on:
   push:
     branches:
-      [staging-CI]
+      [staging]
     tags:
       - 'v[0-9]+.[0-9]+.[0-9]+-rc1'
       - 'v[0-9]+.[0-9]+.[0-9]+-beta'
