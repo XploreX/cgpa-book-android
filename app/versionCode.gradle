@@ -1,0 +1,21 @@
+task('increaseVersionCode') {
+  doLast
+  {
+      def versionCode = Integer.parseInt(VERSION_CODE) + 1
+      ant.propertyfile(file: "../version.properties") {
+        entry(key: "VERSION_CODE", value: versionCode)
+      }
+      ant.propertyfile(file: "../gradle.properties") {
+        entry(key: "VERSION_CODE", value: versionCode)
+      }
+  }
+}
+
+tasks.whenTaskAdded { task ->
+  if (
+      task.name == 'generateReleaseBuildConfig' || 
+      task.name == 'generateStagingBuildConfig'
+     ) {
+    task.dependsOn 'increaseVersionCode'
+  }
+}
