@@ -51,6 +51,7 @@ jobs:
           echo "RELEASE_API_URL=$RELEASE_API_URL" >> gradle.properties
           echo "STAGING_API_URL=$STAGING_API_URL" >> gradle.properties
           echo "DEBUG_API_URL=$DEBUG_API_URL" >> gradle.properties
+          cat version.properties >> gradle.properties
           ./gradlew assembleDebug
           
       - name: Upload a Build Artifact
