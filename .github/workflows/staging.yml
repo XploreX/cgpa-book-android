@@ -123,3 +123,22 @@ jobs:
           asset_path: ./app/build/outputs/bundle/staging/app-staging.aab
           asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.aab
           asset_content_type: application/octet-stream
+
+      - name: Commit new version Code
+        run: |
+          git add version.properties
+          git config user.name Github
+          git config user.email noreply@github.com
+          git commit -m "version code bump"
+
+      - name: Update version Code
+        uses: peter-evans/create-pull-request@v3
+        with:
+          base: ${{ github.head_ref }}
+          title: '[Auto Bump] Staging version code bump'
+          branch: staging-bump
+          delete-branch: true
+          body: |
+            version code bump after staging
+          labels: |
+            automated-pr
