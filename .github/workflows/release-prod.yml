@@ -77,6 +77,7 @@ jobs:
           echo "RELEASE_API_URL=$RELEASE_API_URL" >> gradle.properties
           echo "STAGING_API_URL=$STAGING_API_URL" >> gradle.properties
           echo "DEBUG_API_URL=$DEBUG_API_URL" >> gradle.properties
+          cat version.properties >> gradle.properties
           echo "$RELEASE_SIGN_FILE" | base64 -d > sign.jks
           
       - name: Release APK Build
@@ -117,3 +118,22 @@ jobs:
           asset_path: ./app/build/outputs/bundle/release/app-release.aab
           asset_name: CGPABook-release-${{ steps.get_version.outputs.VERSION }}.aab
           asset_content_type: application/octet-stream
+
+      - name: Commit new version Code
+        run: |
+          git add version.properties
+          git config user.name Github
+          git config user.email noreply@github.com
+          git commit -m "version code bump"
+
+      - name: Update version Code
+        uses: peter-evans/create-pull-request@v3
+        with:
+          base: ${{ github.head_ref }}
+          title: '[Auto Bump] Production version code bump'
+          branch: production-bump
+          delete-branch: true
+          body: |
+            version code bump after production
+          labels: |
+            automated-pr

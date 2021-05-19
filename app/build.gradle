@@ -2,6 +2,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
+apply from: 'versionCode.gradle'
+
 
 android {
     signingConfigs {
@@ -19,8 +21,8 @@ android {
         applicationId "com.xplorex.cgpabook"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 5
-        versionName "1.1.2"
+        versionName VERSION_NAME
+        versionCode Integer.parseInt(VERSION_CODE)
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
