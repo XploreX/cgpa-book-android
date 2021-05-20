@@ -4,6 +4,10 @@ categories:
     label: feature
   - title: 🐛 Bug Fixes
     label: fix
+exclude-labels:
+  - 'automated-pr'
+  - 'dev-work'
+  - 're-fix-pr'
 template: |
   ## What’s Changed
 
