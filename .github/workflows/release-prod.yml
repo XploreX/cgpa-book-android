@@ -80,6 +80,9 @@ jobs:
           cat version.properties >> gradle.properties
           echo "$RELEASE_SIGN_FILE" | base64 -d > sign.jks
           
+      - name: Increase Version Code
+        run: ./gradlew increaseVersionCode
+
       - name: Release APK Build
         run: ./gradlew assembleRelease
           
