@@ -10,12 +10,3 @@ task('increaseVersionCode') {
       }
   }
 }
-
-tasks.whenTaskAdded { task ->
-  if (
-      task.name == 'generateReleaseBuildConfig' || 
-      task.name == 'generateStagingBuildConfig'
-     ) {
-    task.dependsOn 'increaseVersionCode'
-  }
-}

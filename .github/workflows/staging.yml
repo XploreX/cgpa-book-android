@@ -81,6 +81,9 @@ jobs:
           echo "STAGING_API_URL=$STAGING_API_URL" >> gradle.properties
           cat version.properties >> gradle.properties
           echo "$RELEASE_SIGN_FILE" | base64 -d > sign.jks
+
+      - name: Increase Version code
+        run: ./gradlew increaseVersionCode
           
       - name: Staging APK Build
         run: ./gradlew assembleStaging
